@@ -1,13 +1,26 @@
+import { useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineStarRate } from "react-icons/md";
 
 const Card = () => {
+  const [hover, setHover] = useState<boolean>(false);
   return (
-    <div className="card bg-base-100 w-full max-w-72 shadow-xl rounded-lg ">
-      <div className="w-full">
+    <div
+      className={`card bg-base-100 w-full hover:shadow-xl  rounded-lg`}
+      onMouseEnter={() => {
+        !hover && setHover(!hover);
+      }}
+      onMouseLeave={() => {
+        hover && setHover(!hover);
+      }}
+    >
+      <div className="w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1675953935267-e039f13ddd79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+          src="https://images.unsplash.com/photo-1757946718516-fddeb8d3ed9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
           alt="Shoes"
+          className={`object-cover ${
+            hover && "scale-110"
+          } transition duration-150`}
         />
       </div>
       <div className="card-body">
