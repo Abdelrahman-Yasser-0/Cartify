@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineStarRate } from "react-icons/md";
 
+type CardProps = {};
 const Card = () => {
   const [hover, setHover] = useState<boolean>(false);
   return (

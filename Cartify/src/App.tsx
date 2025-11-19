@@ -35,6 +35,8 @@ import ShippingReturns from "./pages/support and Legal/ShippingReturns";
 import TermsOfService from "./pages/support and Legal/TermsOfService";
 import Home from "./pages/home/Home";
 import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Detail";
+import NotFound from "./pages/NotFound";
+
 const App = () => {
   return (
     <div>
@@ -94,6 +96,7 @@ const App = () => {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/shipping-returns" element={<ShippingReturns />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
