@@ -4,6 +4,7 @@ import Header from "../../components/Header";
 import Card from "./../../components/Card";
 import Footer from "./../../components/Footer";
 import { products } from "../types";
+import ShopByCategory from "./ShopByCategory";
 
 const Home = () => {
   const [products, setProducts] = useState<products[]>([
