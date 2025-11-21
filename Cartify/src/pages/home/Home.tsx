@@ -45,6 +45,7 @@ const Home = () => {
     <div>
       <Header />
       <DiscoverBanner />
+      <ShopByCategory />
       <div className="flex justify-center">
         <div className="p-12 max-w-screen-2xl">
           <div className="flex-col gap-8 flex ">

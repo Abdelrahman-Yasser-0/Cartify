@@ -1,5 +1,5 @@
 import React from "react";
-import CategoryCard from "../../components/categoryPannel/CategoryCard";
+import CategoryCard from "../../components/categoryPanel/CategoryCard";
 import { CiHeadphones } from "react-icons/ci";
 import { FiWatch } from "react-icons/fi";
 import { MdComputer } from "react-icons/md";
@@ -31,13 +31,13 @@ function ShopByCategory() {
     //   </div>
     // </div>
 
-    <section className="py-8 bg-base-100">
+    <section className="py-8 bg-gray-50		">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-base-content mb-2">
+          <h2 className="text-3xl font-bold text-base-content mb-5 mt-20">
             Shop by Category
           </h2>
-          <p className="text-base-content/70">
+          <p className="text-base-content/70 mb-16">
             Explore our wide range of products
           </p>
         </div>
