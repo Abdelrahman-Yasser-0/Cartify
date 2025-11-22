@@ -4,6 +4,7 @@ import Header from "../../components/Header";
 import Card from "./../../components/Card";
 import Footer from "./../../components/Footer";
 import { products } from "../types";
+import ShopByCategory from "./ShopByCategory";
 
 const Home = () => {
   const [products, setProducts] = useState<products[]>([
@@ -44,6 +45,7 @@ const Home = () => {
     <div>
       <Header />
       <DiscoverBanner />
+      <ShopByCategory />
       <div className="flex justify-center">
         <div className="p-12 max-w-screen-2xl">
           <div className="flex-col gap-8 flex ">
