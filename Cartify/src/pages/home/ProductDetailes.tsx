@@ -137,8 +137,10 @@ const ProductDetailes = () => {
               </div>
 
               {/* Availability */}
-              {product.inStock && (
+              {product.inStock ? (
                 <div className="text-green-600 font-medium">In Stock</div>
+              ) : (
+                <div className="text-red-600 font-medium">Out of Stock</div>
               )}
 
               {/* SKU */}
