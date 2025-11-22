@@ -16,9 +16,9 @@ const ProductDetailes = () => {
     product.colors?.[0] || ""
   );
   const [quantity, setQuantity] = useState<number>(1);
-  const [activeTab, setActiveTab] = useState<"description" | "specifications" | "reviews">(
-    "description"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "description" | "specifications" | "reviews"
+  >("description");
 
   const rating = parseFloat(product.rate.split(" ")[0]);
   const reviewCount = product.rate.split("(")[1]?.replace(")", "") || "0";
@@ -30,7 +30,10 @@ const ProductDetailes = () => {
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <MdOutlineStarRate key={i} className="text-yellow-400 fill-yellow-400" />
+        <MdOutlineStarRate
+          key={i}
+          className="text-yellow-400 fill-yellow-400"
+        />
       );
     }
     if (hasHalfStar && fullStars < 5) {
@@ -42,9 +45,7 @@ const ProductDetailes = () => {
       );
     }
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
-      stars.push(
-        <MdOutlineStarRate key={i} className="text-gray-300" />
-      );
+      stars.push(<MdOutlineStarRate key={i} className="text-gray-300" />);
     }
     return stars;
   };
@@ -56,7 +57,7 @@ const ProductDetailes = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="pt-20 pb-12 flex-1">
+      <div className="pt-20 pb-12 flex-1 mt-4">
         <div className="max-w-screen-2xl mx-auto px-12">
           {/* Breadcrumbs */}
           <div className="mb-6 text-sm text-gray-600">
@@ -108,17 +109,19 @@ const ProductDetailes = () => {
 
               {/* Rating */}
               <div className="flex items-center gap-2">
-                <div className="flex items-center">
-                  {renderStars(rating)}
-                </div>
+                <div className="flex items-center">{renderStars(rating)}</div>
                 <span className="text-gray-600">
-                  {product.rate.includes("(") ? product.rate : `${rating} (${reviewCount} reviews)`}
+                  {product.rate.includes("(")
+                    ? product.rate
+                    : `${rating} (${reviewCount} reviews)`}
                 </span>
               </div>
 
               {/* Price */}
               <div className="flex items-center gap-4">
-                <span className="text-4xl font-bold">${product.price.toFixed(2)}</span>
+                <span className="text-4xl font-bold">
+                  ${product.price.toFixed(2)}
+                </span>
                 {product.originalPrice && (
                   <>
                     <span className="text-2xl text-gray-400 line-through">
@@ -213,14 +216,18 @@ const ProductDetailes = () => {
                   <FiTruck className="text-2xl text-teal-600 mt-1" />
                   <div>
                     <div className="font-medium">Free Shipping</div>
-                    <div className="text-sm text-gray-600">On orders over $50</div>
+                    <div className="text-sm text-gray-600">
+                      On orders over $50
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <FiCheckCircle className="text-2xl text-teal-600 mt-1" />
                   <div>
                     <div className="font-medium">Warranty</div>
-                    <div className="text-sm text-gray-600">1 year guarantee</div>
+                    <div className="text-sm text-gray-600">
+                      1 year guarantee
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -274,20 +281,22 @@ const ProductDetailes = () => {
               {activeTab === "description" && (
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p>{product.shortDescription}</p>
-                  {product.description && (
-                    <p>{product.description}</p>
-                  )}
+                  {product.description && <p>{product.description}</p>}
                 </div>
               )}
 
               {activeTab === "specifications" && product.specifications && (
                 <div className="space-y-3">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key} className="flex border-b pb-2">
-                      <div className="w-1/3 font-medium text-gray-700">{key}</div>
-                      <div className="flex-1 text-gray-600">{value}</div>
-                    </div>
-                  ))}
+                  {Object.entries(product.specifications).map(
+                    ([key, value]) => (
+                      <div key={key} className="flex border-b pb-2">
+                        <div className="w-1/3 font-medium text-gray-700">
+                          {key}
+                        </div>
+                        <div className="flex-1 text-gray-600">{value}</div>
+                      </div>
+                    )
+                  )}
                 </div>
               )}
 
@@ -301,13 +310,17 @@ const ProductDetailes = () => {
                           <div className="flex items-center">
                             {renderStars(review.rating)}
                           </div>
-                          <div className="text-sm text-gray-500">{review.date}</div>
+                          <div className="text-sm text-gray-500">
+                            {review.date}
+                          </div>
                         </div>
                         <p className="text-gray-700">{review.comment}</p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-600">No reviews yet. Be the first to review this product!</p>
+                    <p className="text-gray-600">
+                      No reviews yet. Be the first to review this product!
+                    </p>
                   )}
                 </div>
               )}
