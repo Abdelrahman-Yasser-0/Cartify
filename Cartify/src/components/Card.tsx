@@ -7,12 +7,11 @@ import { products } from "../pages/types";
 type CardProps = {
   product: products;
 };
-const Card = ({
-  product: { title, brand, rate, price, imgurl },
-}: CardProps) => {
+const Card = ({ product }: CardProps) => {
+  const { title, brand, rate, price, imgurl, id } = product;
   const [hover, setHover] = useState<boolean>(false);
   return (
-    <Link to="/product_detailes ">
+    <Link to={`/product_detailes/${id || "1"}`}>
       <div
         className={`card bg-base-100 w-full hover:shadow-xl rounded-lg `}
         onMouseEnter={() => {
@@ -33,10 +32,8 @@ const Card = ({
         </div>
         <div className="card-body flex-1">
           <div className="pb-5 flex flex-col ">
-            <h3 className="text-gray-500 text-sm">SoundMax</h3>
-            <h2 className="card-title text-base">
-              Premium Wireless Headphones
-            </h2>
+            <h3 className="text-gray-500 text-sm">{brand}</h3>
+            <h2 className="card-title text-base">{title}</h2>
           </div>
           <div className="flex gap-5">
             <div className="flex items-center text-yellow-400">
@@ -44,9 +41,9 @@ const Card = ({
               <MdOutlineStarRate />
               <MdOutlineStarRate />
             </div>
-            <p className="text-gray-400 text-sm">4.6(892)</p>
+            <p className="text-gray-400 text-sm">{rate}</p>
           </div>
-          <p className="text-lg font-medium">$179.99</p>
+          <p className="text-lg font-medium">${price.toFixed(2)}</p>
           <div className="card-actions justify-end">
             <button className="btn w-full btn-sm text-white bg-[#0D9488]">
               <IoCartOutline className="text-lg" />

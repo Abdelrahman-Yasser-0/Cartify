@@ -1,45 +1,11 @@
 import DiscoverBanner from "../../components/DiscoverBanner/DiscoverBanner";
-import { useState } from "react";
 import Header from "../../components/Header";
 import Card from "./../../components/Card";
 import Footer from "./../../components/Footer";
-import { products } from "../types";
+import { productsData } from "../productsData";
 
 const Home = () => {
-  const [products, setProducts] = useState<products[]>([
-    {
-      title: "Premium Wireless Headphones",
-      brand: "Soundmax",
-      rate: "4.8 (1247)",
-      price: 299.99,
-      imgurl:
-        "https://images.unsplash.com/photo-1757946718516-fddeb8d3ed9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    },
-    {
-      title: "Smart Fitness Watch Ultra",
-      brand: "FitTrack",
-      rate: "4.9 (2134)",
-      price: 399.99,
-      imgurl:
-        "https://images.unsplash.com/photo-1713989635340-b25bfc893f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    },
-    {
-      title: "Ultra Slim Laptop Pro 15",
-      brand: "TechBook",
-      rate: "4.7 (516)",
-      price: 1299.99,
-      imgurl:
-        "https://images.unsplash.com/flagged/photo-1576697010739-6373b63f3204?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    },
-    {
-      title: "5G Smartphone Pro Max",
-      brand: "TechPhone",
-      rate: "4.8 (1856)",
-      price: 999.99,
-      imgurl:
-        "https://images.unsplash.com/photo-1675953935267-e039f13ddd79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    },
-  ]);
+  const products = productsData;
   return (
     <div>
       <Header />
