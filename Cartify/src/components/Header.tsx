@@ -3,22 +3,23 @@ import { FiShoppingCart } from "react-icons/fi";
 import { FiHeart } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
 import { FiMenu } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
       <div className="mx-auto max-w-screen-2xl w-full px-12">
         <div className="navbar-start flex-1 w-full">
-          <div className="flex items-center gap-3 select-none">
+          <Link to="/" className="flex items-center gap-3 select-none">
             <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
-            <a className="ml-2 text-xl font-semibold">Cartify</a>
-          </div>
+            <span className="ml-2 text-xl font-semibold">Cartify</span>
+          </Link>
         </div>
         <div className="navbar-center flex">
           <div className="hidden lg:flex w-96">
             <ul className="text-lg menu menu-horizontal px-1 w-full">
               <li>
-                <a className="hover:text-teal-600 rounded">Home</a>
+                <Link to="/" className="hover:text-teal-600 rounded">Home</Link>
               </li>
               <li>
                 <details>
@@ -97,7 +98,7 @@ const Header = () => {
             <ul className="menu bg-base-200 min-h-full w-80 p-4 text-black">
               {/* Sidebar content here */}
               <li>
-                <a>Home</a>
+                <Link to="/">Home</Link>
               </li>
               <li>
                 <a>Shop</a>
