@@ -33,10 +33,8 @@ const Card = ({
         </div>
         <div className="card-body flex-1">
           <div className="pb-5 flex flex-col ">
-            <h3 className="text-gray-500 text-sm">SoundMax</h3>
-            <h2 className="card-title text-base">
-              Premium Wireless Headphones
-            </h2>
+            <h3 className="text-gray-500 text-sm">{brand}</h3>
+            <h2 className="card-title text-base">{title}</h2>
           </div>
           <div className="flex gap-5">
             <div className="flex items-center text-yellow-400">
@@ -44,9 +42,9 @@ const Card = ({
               <MdOutlineStarRate />
               <MdOutlineStarRate />
             </div>
-            <p className="text-gray-400 text-sm">4.6(892)</p>
+            <p className="text-gray-400 text-sm">{rate}(892)</p>
           </div>
-          <p className="text-lg font-medium">$179.99</p>
+          <p className="text-lg font-medium">${price}</p>
           <div className="card-actions justify-end">
             <button className="btn w-full btn-sm text-white bg-[#0D9488]">
               <IoCartOutline className="text-lg" />
