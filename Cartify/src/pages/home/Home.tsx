@@ -3,13 +3,16 @@ import Header from "../../components/Header";
 import Card from "./../../components/Card";
 import Footer from "./../../components/Footer";
 import { productsData } from "../productsData";
+import ShopByCategory from "./ShopByCategory";
 
 const Home = () => {
   const products = productsData;
+
   return (
     <div>
       <Header />
       <DiscoverBanner />
+      <ShopByCategory />
       <div className="flex justify-center">
         <div className="p-12 max-w-screen-2xl">
           <div className="flex-col gap-8 flex ">
