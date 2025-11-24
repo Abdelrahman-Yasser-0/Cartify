@@ -152,11 +152,7 @@ const Auth_Login = () => {
           <div className="flex w-full justify-between">
             <div>
               <label className="cursor-pointer label flex gap-4">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="checkbox checkbox-xs"
-                />
+                <input type="checkbox" className="checkbox checkbox-xs" />
                 <span className="label-text">Remember me</span>
               </label>
             </div>
