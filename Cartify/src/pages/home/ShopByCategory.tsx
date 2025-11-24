@@ -44,7 +44,7 @@ function ShopByCategory() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((category, index) => (
-            <CategoryCard category={category} index={index} />
+            <CategoryCard category={category} index={index} key={index} />
           ))}
         </div>
       </div>
