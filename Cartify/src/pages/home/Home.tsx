@@ -41,6 +41,7 @@ const Home = () => {
         "https://images.unsplash.com/photo-1675953935267-e039f13ddd79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
     },
   ]);
+
   return (
     <div>
       <Header />
