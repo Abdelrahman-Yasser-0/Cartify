@@ -10,7 +10,7 @@ const Auth_Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [pass_see, setPass_see] = useState<boolean>(false);
-  const [emailTouched, setEmailTouched] = useState<boolean>(false);
+  const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
 
   const validateEmail = (email: string): boolean => {
@@ -36,7 +36,9 @@ const Auth_Login = () => {
       console.log("no not valied");
     }
   };
-  console.log("Email state :" + !validateEmail(email) && emailTouched);
+  // console.log("Email state :" + !validateEmail(email) && emailTouched);
+  // console.log("email toched :" + emailTouched);
+  // console.log("email valid :" + validateEmail(email));
 
   return (
     <div className="flex w-full h-screen justify-center items-center gap-24">
@@ -136,7 +138,10 @@ const Auth_Login = () => {
                   setPasswordTouched(true);
                 }}
               />
-              <button onClick={() => setPass_see((prev) => !prev)}>
+              <button
+                type="button"
+                onClick={() => setPass_see((prev) => !prev)}
+              >
                 {pass_see ? (
                   <FaRegEye className="shrink-0" />
                 ) : (
