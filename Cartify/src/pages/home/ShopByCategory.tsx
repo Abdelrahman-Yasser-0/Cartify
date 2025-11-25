@@ -34,7 +34,7 @@ function ShopByCategory() {
     <section className="py-8 bg-gray-50		">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-base-content mb-5 mt-20">
+          <h2 className="text-3xl font-bold text-base-content mb-5 mt-5">
             Shop by Category
           </h2>
           <p className="text-base-content/70 mb-16">
