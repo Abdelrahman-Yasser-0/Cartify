@@ -115,29 +115,31 @@ const ProductListing = () => {
   );
   const priceBounds = useMemo(() => {
     const prices = allProducts.map((product) => product.price);
+    if (!prices.length) {
+      return { min: 0, max: 0 };
+    }
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
     return {
-      min: Math.floor(Math.min(...prices)),
-      max: Math.ceil(Math.max(...prices)),
+      min: Number.isFinite(minPrice) ? Math.floor(minPrice) : 0,
+      max: Number.isFinite(maxPrice) ? Math.ceil(maxPrice) : 0,
     };
   }, [allProducts]);
 
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") ?? "");
-  const [selectedCategories, setSelectedCategories] =
-    useState<string[]>(
-      searchParams.get("category")
-        ? searchParams.get("category")!.split(",")
-        : []
-    );
-  const [selectedBrands, setSelectedBrands] =
-    useState<string[]>(
-      searchParams.get("brands")
-        ? searchParams.get("brands")!.split(",")
-        : []
-    );
-  const [priceFilter, setPriceFilter] = useState(
-    Number(searchParams.get("maxPrice")) || priceBounds.max
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    searchParams.get("category") ? searchParams.get("category")!.split(",") : []
   );
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(
+    searchParams.get("brands") ? searchParams.get("brands")!.split(",") : []
+  );
+  const [priceFilter, setPriceFilter] = useState<number>(() => {
+    const param = searchParams.get("maxPrice");
+    if (param === null) return priceBounds.max;
+    const parsed = Number(param);
+    return !isNaN(parsed) ? parsed : priceBounds.max;
+  });
   const [ratingFilter, setRatingFilter] = useState(
     Number(searchParams.get("rating")) || 0
   );
@@ -165,7 +167,9 @@ const ProductListing = () => {
       : [];
     const urlSearch = searchParams.get("q") ?? "";
     const urlRating = Number(searchParams.get("rating")) || 0;
-    const urlPrice = Number(searchParams.get("maxPrice")) || priceBounds.max;
+    const maxPriceParam = searchParams.get("maxPrice");
+    const parsedUrlPrice = maxPriceParam !== null ? Number(maxPriceParam) : NaN;
+    const urlPrice = !isNaN(parsedUrlPrice) ? parsedUrlPrice : priceBounds.max;
     const urlSort = searchParams.get("sort") || "popular";
 
     if (!arraysEqual(urlCategories, selectedCategories)) {
@@ -186,16 +190,7 @@ const ProductListing = () => {
     if (urlSort !== sortOption) {
       setSortOption(urlSort);
     }
-  }, [
-    searchParams,
-    selectedCategories,
-    selectedBrands,
-    searchTerm,
-    ratingFilter,
-    priceFilter,
-    sortOption,
-    priceBounds.max,
-  ]);
+  }, [searchParams, priceBounds.max]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -392,7 +387,17 @@ const ProductListing = () => {
             min={priceBounds.min}
             max={priceBounds.max}
             value={priceFilter}
-            onChange={(event) => setPriceFilter(Number(event.target.value))}
+            step={1}
+            onChange={(event) => {
+              const val = event.currentTarget.valueAsNumber;
+              const clamped = Math.min(
+                Math.max(val, priceBounds.min),
+                priceBounds.max
+              );
+              setPriceFilter(
+                Number.isFinite(clamped) ? clamped : priceBounds.min
+              );
+            }}
             className="range range-success"
           />
           <div className="flex justify-between text-sm text-gray-500 mt-2">
@@ -478,9 +483,7 @@ const ProductListing = () => {
               <div className="flex gap-2">
                 <button
                   className="btn btn-outline border-gray-300 lg:hidden"
-                  onClick={() =>
-                    setMobileFiltersOpen((previous) => !previous)
-                  }
+                  onClick={() => setMobileFiltersOpen((previous) => !previous)}
                 >
                   <FiSliders />
                   Filters
