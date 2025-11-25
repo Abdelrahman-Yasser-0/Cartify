@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import bgImage from "../../images/photo-1464854860390-e95991b46441.jpeg";
 
 const DiscoverBanner = () => {
@@ -30,13 +31,13 @@ const DiscoverBanner = () => {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="#"
+            <Link
+              to="/product_listing"
               className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-5 py-1 rounded-md shadow"
             >
               Shop Now
               <span aria-hidden>→</span>
-            </a>
+            </Link>
 
             <a
               href="#"

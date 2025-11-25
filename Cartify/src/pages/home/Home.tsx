@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import DiscoverBanner from "../../components/DiscoverBanner/DiscoverBanner";
 import Header from "../../components/Header";
 import Card from "./../../components/Card";
@@ -20,9 +21,9 @@ const Home = () => {
                   Hand-picked products just for you
                 </h2>
               </div>
-              <a role="button" className="btn btn-sm">
+              <Link to="/product_listing" className="btn btn-sm">
                 View All →
-              </a>
+              </Link>
             </div>
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
               {products.map((product) => (

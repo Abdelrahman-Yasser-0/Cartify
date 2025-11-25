@@ -1,11 +1,39 @@
+import { FormEvent, useEffect, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import { FiShoppingCart } from "react-icons/fi";
 import { FiHeart } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
 import { FiMenu } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+const navCategories = [
+  "Electronics",
+  "Audio",
+  "Wearables",
+  "Computers",
+  "Gaming",
+  "Photography",
+];
 
 const Header = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setSearchTerm(params.get("q") ?? "");
+  }, [location.search]);
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmed = searchTerm.trim();
+    const destination = trimmed
+      ? `/product_listing?q=${encodeURIComponent(trimmed)}`
+      : "/product_listing";
+    navigate(destination);
+  };
+
   return (
     <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
       <div className="mx-auto max-w-screen-2xl w-full px-12">
@@ -27,29 +55,28 @@ const Header = () => {
                     Categories
                   </summary>
                   <ul className="text-sm p-1 text-left border border-gray-300 rounded-md shadow-md bg-white w-52">
-                    <li>
-                      <a className="rounded">Electronics</a>
-                    </li>
-                    <li>
-                      <a className="rounded">Audio</a>
-                    </li>
-                    <li>
-                      <a className="rounded">Wearables</a>
-                    </li>
-                    <li>
-                      <a className="rounded">Computers</a>
-                    </li>
-                    <li>
-                      <a className="rounded">Gaming</a>
-                    </li>
-                    <li>
-                      <a className="rounded">Photography</a>
-                    </li>
+                    {navCategories.map((category) => (
+                      <li key={category}>
+                        <Link
+                          className="rounded"
+                          to={`/product_listing?category=${encodeURIComponent(
+                            category
+                          )}`}
+                        >
+                          {category}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </details>
               </li>
               <li>
-                <a className="hover:text-teal-600 rounded">Shop</a>
+                <Link
+                  to="/product_listing"
+                  className="hover:text-teal-600 rounded"
+                >
+                  Shop
+                </Link>
               </li>
               <li>
                 <a className="hover:text-teal-600 rounded">Deals</a>
@@ -59,14 +86,19 @@ const Header = () => {
         </div>
         <div className="navbar-center flex">
           <div className="flex items-center">
-            <div className="form-control flex-row h-12 items-center gap-2 rounded-md bg-gray-200 px-2 w-96 hidden md:flex">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="form-control flex-row h-12 items-center gap-2 rounded-md bg-gray-200 px-2 w-96 hidden md:flex"
+            >
               <FiSearch className="text-xl" />
               <input
                 type="text"
                 placeholder="Search products..."
                 className="input w-96 md:w-auto bg-gray-200 border-none focus:outline-none"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
               />
-            </div>
+            </form>
           </div>
         </div>
         <div className="navbar-end flex gap-1 text-xl w-44  justify-end">
@@ -101,7 +133,7 @@ const Header = () => {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <a>Shop</a>
+                <Link to="/product_listing">Shop</Link>
               </li>
               <div className="w-full h-px bg-gray-300"></div>
 
@@ -133,24 +165,15 @@ const Header = () => {
 
               <a className="p-3 text-gray-500">Categories</a>
 
-              <li>
-                <a>Electronics</a>
-              </li>
-              <li>
-                <a>Audio</a>
-              </li>
-              <li>
-                <a>Wearables</a>
-              </li>
-              <li>
-                <a>Computers</a>
-              </li>
-              <li>
-                <a>Gaming</a>
-              </li>
-              <li>
-                <a>Photography</a>
-              </li>
+              {navCategories.map((category) => (
+                <li key={category}>
+                  <Link to={`/product_listing?category=${encodeURIComponent(
+                    category
+                  )}`}>
+                    {category}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
