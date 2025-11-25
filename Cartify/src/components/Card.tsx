@@ -59,7 +59,7 @@ const Card = ({ product }: CardProps) => {
           <div className="card-actions justify-end ">
             <button
               type="button"
-              className="btn w-full btn-sm text-white bg-[#0D9488]"
+              className="btn w-full btn-sm text-white bg-[#0D9488] btn-accent"
               onClick={handleAddToCart}
             >
               <IoCartOutline className="text-lg" />
