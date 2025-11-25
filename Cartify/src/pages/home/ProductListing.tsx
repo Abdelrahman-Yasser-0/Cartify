@@ -6,6 +6,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { productsData } from "../productsData";
 import { products } from "../types";
+import { useCart } from "../../context/CartContext";
 
 type ViewMode = "grid" | "list";
 
@@ -26,6 +27,7 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
     shortDescription,
   } = product;
   const parsedRating = parseFloat(rate);
+  const { addItem } = useCart();
 
   return (
     <div
@@ -83,7 +85,10 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
           )}
         </div>
         <div className="flex gap-3 pt-2 flex-wrap">
-          <button className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white">
+          <button
+            className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white"
+            onClick={() => addItem(product)}
+          >
             Add to Cart
           </button>
           <Link

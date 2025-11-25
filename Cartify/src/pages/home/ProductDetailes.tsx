@@ -7,10 +7,12 @@ import { FiHeart, FiShare2 } from "react-icons/fi";
 import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineStarRate } from "react-icons/md";
 import { FiTruck, FiCheckCircle, FiRefreshCw } from "react-icons/fi";
+import { useCart } from "../../context/CartContext";
 
 const ProductDetailes = () => {
   const { id } = useParams<{ id: string }>();
   const product = productsData.find((p) => p.id === id) || productsData[0];
+  const { addItem } = useCart();
 
   const [selectedColor, setSelectedColor] = useState<string>(
     product.colors?.[0] || ""
@@ -203,7 +205,11 @@ const ProductDetailes = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-4">
-                <button className="flex-1 bg-teal-600 text-white py-4 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-teal-700 transition">
+                <button
+                  className="flex-1 bg-teal-600 text-white py-4 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-teal-700 transition disabled:opacity-50"
+                  onClick={() => addItem(product, quantity)}
+                  disabled={!product.inStock}
+                >
                   <IoCartOutline className="text-xl" />
                   Add to Cart
                 </button>

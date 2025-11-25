@@ -5,6 +5,7 @@ import { FiHeart } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
 import { FiMenu } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const navCategories = [
   "Electronics",
@@ -19,6 +20,7 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -47,7 +49,9 @@ const Header = () => {
           <div className="hidden lg:flex w-96">
             <ul className="text-lg menu menu-horizontal px-1 w-full">
               <li>
-                <Link to="/" className="hover:text-teal-600 rounded">Home</Link>
+                <Link to="/" className="hover:text-teal-600 rounded">
+                  Home
+                </Link>
               </li>
               <li>
                 <details>
@@ -105,9 +109,17 @@ const Header = () => {
           <a className=" text-xl hover:bg-gray-200 duration-100 rounded-md p-3">
             <FiHeart className="hidden p-0 lg:block" />
           </a>
-          <a className=" text-xl hover:bg-gray-200 duration-100 rounded-md p-3">
+          <Link
+            to="/cart"
+            className="relative text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
+          >
             <FiShoppingCart />
-          </a>
+            {totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 text-[10px] font-semibold bg-teal-600 text-white rounded-full px-1.5 ">
+                {totalItems}
+              </span>
+            )}
+          </Link>
           <a className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3">
             <FiUser />
           </a>
@@ -134,6 +146,9 @@ const Header = () => {
               </li>
               <li>
                 <Link to="/product_listing">Shop</Link>
+              </li>
+              <li>
+                <Link to="/cart">Cart</Link>
               </li>
               <div className="w-full h-px bg-gray-300"></div>
 
@@ -167,9 +182,11 @@ const Header = () => {
 
               {navCategories.map((category) => (
                 <li key={category}>
-                  <Link to={`/product_listing?category=${encodeURIComponent(
-                    category
-                  )}`}>
+                  <Link
+                    to={`/product_listing?category=${encodeURIComponent(
+                      category
+                    )}`}
+                  >
                     {category}
                   </Link>
                 </li>

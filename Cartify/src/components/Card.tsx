@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineStarRate } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { products } from "../pages/types";
+import { useCart } from "../context/CartContext";
 
 type CardProps = {
   product: products;
@@ -10,6 +11,12 @@ type CardProps = {
 const Card = ({ product }: CardProps) => {
   const { title, brand, rate, price, imgurl, id } = product;
   const [hover, setHover] = useState<boolean>(false);
+  const { addItem } = useCart();
+
+  const handleAddToCart = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    addItem(product);
+  };
   return (
     <Link
       to={`/product_detailes/${id || "1"}`}
@@ -50,7 +57,11 @@ const Card = ({ product }: CardProps) => {
           <p className="text-lg font-medium">${price.toFixed(2)}</p>
 
           <div className="card-actions justify-end ">
-            <button className="btn w-full btn-sm text-white bg-[#0D9488]">
+            <button
+              type="button"
+              className="btn w-full btn-sm text-white bg-[#0D9488]"
+              onClick={handleAddToCart}
+            >
               <IoCartOutline className="text-lg" />
               Add to Cart
             </button>

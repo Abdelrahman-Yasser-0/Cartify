@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 
 import ProductDetailes from "./pages/home/ProductDetailes";
 import ProductListing from "./pages/home/ProductListing";
+import Cart from "./pages/home/Cart";
 import Admin_Analytics from "./pages/admin Account Hub/Admin_Analytics";
 import Admin_Categories from "./pages/admin Account Hub/Admin_Categories";
 import Admin_Customers from "./pages/admin Account Hub/Admin_Customers";
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/product_detailes/:id" element={<ProductDetailes />} />
         <Route path="/product_listing" element={<ProductListing />} />
+        <Route path="/cart" element={<Cart />} />
         //-----------------------------------------------------Admin-----------------------------------------------------//
         <Route path="/admin/analytics" element={<Admin_Analytics />} />
         <Route path="/admin/categories" element={<Admin_Categories />} />
