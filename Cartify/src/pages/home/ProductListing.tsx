@@ -83,7 +83,7 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
           )}
         </div>
         <div className="flex gap-3 pt-2 flex-wrap">
-          <button className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none">
+          <button className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white">
             Add to Cart
           </button>
           <Link
@@ -607,7 +607,7 @@ const ProductListing = () => {
                     Try adjusting the filters or clear them to see all products.
                   </p>
                   <button
-                    className="btn btn-primary bg-teal-600 border-none mt-6"
+                    className="btn btn-primary bg-teal-600 border-none mt-6 text-white"
                     onClick={clearAllFilters}
                   >
                     Reset Filters
