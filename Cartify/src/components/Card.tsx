@@ -11,9 +11,12 @@ const Card = ({ product }: CardProps) => {
   const { title, brand, rate, price, imgurl, id } = product;
   const [hover, setHover] = useState<boolean>(false);
   return (
-    <Link to={`/product_detailes/${id || "1"}`}>
+    <Link
+      to={`/product_detailes/${id || "1"}`}
+      className="flex flex-col h-full"
+    >
       <div
-        className={`card bg-base-100 w-full hover:shadow-xl rounded-lg `}
+        className={`card bg-base-100 w-full hover:shadow-xl rounded-lg h-full `}
         onMouseEnter={() => {
           !hover && setHover(!hover);
         }}
@@ -21,15 +24,15 @@ const Card = ({ product }: CardProps) => {
           hover && setHover(!hover);
         }}
       >
-        <div className="w-full overflow-hidden aspect-square ">
+        <figure className="w-full overflow-hidden aspect-square ">
           <img
             src={`${imgurl}`}
             alt="Shoes"
-            className={`object-cover w-full h-full  ${
+            className={`object-cover w-full h-full ${
               hover && "scale-110"
             } transition duration-150`}
           />
-        </div>
+        </figure>
         <div className="card-body flex-1">
           <div className="pb-5 flex flex-col ">
             <h3 className="text-gray-500 text-sm">{brand}</h3>
@@ -41,10 +44,12 @@ const Card = ({ product }: CardProps) => {
               <MdOutlineStarRate />
               <MdOutlineStarRate />
             </div>
+
             <p className="text-gray-400 text-sm">{rate}</p>
           </div>
           <p className="text-lg font-medium">${price.toFixed(2)}</p>
-          <div className="card-actions justify-end">
+
+          <div className="card-actions justify-end ">
             <button className="btn w-full btn-sm text-white bg-[#0D9488]">
               <IoCartOutline className="text-lg" />
               Add to Cart

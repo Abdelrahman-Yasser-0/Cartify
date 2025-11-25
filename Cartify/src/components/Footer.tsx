@@ -2,6 +2,7 @@ import { FaInstagram } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa";
 import { FaYoutube } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -48,7 +49,9 @@ const Footer = () => {
             <h6 className="footer-title font-bold !text-neutral-700 opacity-100">
               Support
             </h6>
-            <a className="link link-hover text-gray-500">Contact us</a>
+            <Link to="/contact-us" className="link link-hover text-gray-500">
+              Contact us
+            </Link>
             <a className="link link-hover text-gray-500">FAQs</a>
             <a className="link link-hover text-gray-500">Shipping & Returns</a>
             <a className="link link-hover text-gray-500">Track Order</a>

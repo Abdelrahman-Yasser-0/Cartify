@@ -36,6 +36,7 @@ import TermsOfService from "./pages/support and Legal/TermsOfService";
 import Home from "./pages/home/Home";
 import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Detail";
 import NotFound from "./pages/NotFound";
+import Forgot_pass from "./pages/authentication/Forgot_pass";
 
 const App = () => {
   return (
@@ -87,6 +88,7 @@ const App = () => {
         //-----------------------------------------------------Auth-----------------------------------------------------//
         <Route path="/auth/login" element={<Auth_Login />} />
         <Route path="/auth/signup" element={<Auth_Signup />} />
+        <Route path="/auth/forgot_pass" element={<Forgot_pass />} />
         //-----------------------------------------------------Support_Legal--------------------------------------------------//
         <Route path="/accessibility" element={<Accessibility />} />
         <Route path="/contact-us" element={<ContactUs />} />
