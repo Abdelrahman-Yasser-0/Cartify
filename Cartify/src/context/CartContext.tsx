@@ -29,7 +29,8 @@ const CartContext = createContext<CartContextValue | undefined>(undefined);
 
 const storageKey = "cartify.cart.v1";
 
-const getProductId = (product: products) => product.id || product.sku || product.title;
+const getProductId = (product: products) =>
+  product.id || product.sku || product.title;
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
@@ -79,11 +80,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const updateQuantity = (productId: string, quantity: number) => {
     setItems((previous) =>
-      previous.map((item) =>
-        item.productId === productId
-          ? { ...item, quantity: Math.max(1, quantity) }
-          : item
-      )
+      previous
+        .map((item) =>
+          item.productId === productId ? { ...item, quantity } : item
+        )
+        .filter((item) => item.quantity > 0)
     );
   };
 
@@ -135,4 +136,3 @@ export const useCart = () => {
   }
   return context;
 };
-

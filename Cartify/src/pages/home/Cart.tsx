@@ -35,7 +35,7 @@ const Cart = () => {
               </p>
               <Link
                 to="/product_listing"
-                className="btn btn-primary bg-teal-600 border-none mt-6"
+                className="btn btn-accent bg-teal-600 border-none mt-6 text-white"
               >
                 Start Shopping
               </Link>
@@ -83,10 +83,7 @@ const Cart = () => {
                           <button
                             className="px-4 py-2 text-lg"
                             onClick={() =>
-                              updateQuantity(
-                                item.productId,
-                                Math.max(1, item.quantity - 1)
-                              )
+                              updateQuantity(item.productId, item.quantity - 1)
                             }
                           >
                             -
