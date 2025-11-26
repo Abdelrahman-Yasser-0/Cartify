@@ -4,6 +4,9 @@ import * as z from "zod";
 import ProductModel from "../models/productModel.ts";
 import productValidationSchema from "../validation/productValidation.ts";
 import { log } from "node:console";
+import userValidationSchema from "../validation/userValidation.ts";
+import UserModel from "../models/userModel.ts";
+import bcrypt from "bcryptjs";
 
 const getProducts = os
   .route({ method: "GET", path: "/products" })
@@ -33,9 +36,36 @@ const makeProduct = os
     return input;
   });
 
+const register = os
+  .route({ method: "POST", path: "/auth/register" })
+  .input(userValidationSchema)
+  .output(z.object({ id: z.string(), email: z.string(), role: z.string() }))
+  .handler(async ({ input: { name, email, password, role } }) => {
+    const existing = await UserModel.findOne({ email });
+    if (existing) throw new Error("Email already exists");
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = await UserModel.create({
+      name,
+      email,
+      passwordHash,
+      role,
+    });
+
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    };
+  });
+
 export const router = {
-  user: {
+  products: {
     getProducts: getProducts,
     makeProduct: makeProduct,
+  },
+  user: {
+    register: register,
   },
 };
