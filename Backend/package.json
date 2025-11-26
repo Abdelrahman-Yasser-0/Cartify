@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Cartify backend server and mongo database",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@orpc/client": "^1.11.3",
+    "@orpc/server": "^1.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  }
+}
