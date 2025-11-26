@@ -5,6 +5,21 @@ import { FaRegEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
 
+/**
+ * --------------------------------------------------------------------------
+ * What happens when a usestate gets changed ???
+ * --------------------------------------------------------------------------
+ * 1-The pages related to this usestate gets updated
+ *
+ *  1.1-Every statment outside the return get reexcuted ex:All consts (validateEmail, isEmailError) are re-calculated with the new state.
+ *      console.logs run again But the Use State elments dosnt get recalc it is outside of the scope.
+ *
+ *  1.2-The statments inside the Return also gets updated if and only if the statment is reltated to the use State directly or indirectly
+ *      if there is a function use this usestate inside the componetn even if the element dosnt use the use state directly and use the function only it gets updated
+ *      cuz it uses the funciton which is using the use state
+ * --------------------------------------------------------------------------
+ */
+
 const Auth_Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
