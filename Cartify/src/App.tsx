@@ -38,6 +38,8 @@ import Home from "./pages/home/Home";
 import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Detail";
 import NotFound from "./pages/NotFound";
 import Forgot_pass from "./pages/authentication/Forgot_pass";
+import Checkout from "./pages/home/Checkout";
+import OrderPlaced from "./pages/home/OrderPlaced";
 
 const App = () => {
   return (
@@ -48,6 +50,8 @@ const App = () => {
         <Route path="/product_detailes/:id" element={<ProductDetailes />} />
         <Route path="/product_listing" element={<ProductListing />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order_placed" element={<OrderPlaced />} />
         //-----------------------------------------------------Admin-----------------------------------------------------//
         <Route path="/admin/analytics" element={<Admin_Analytics />} />
         <Route path="/admin/categories" element={<Admin_Categories />} />
