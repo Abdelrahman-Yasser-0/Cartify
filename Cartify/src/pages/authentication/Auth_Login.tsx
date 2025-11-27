@@ -4,6 +4,8 @@ import { FiShoppingCart } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import { FaCheckCircle } from "react-icons/fa";
+import { IoMdCloseCircle } from "react-icons/io";
 
 /**
  * --------------------------------------------------------------------------
@@ -27,18 +29,79 @@ const Auth_Login = () => {
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
 
+  const containWhiteSpace = (email: string): boolean => {
+    const spaceRegex = /\s/;
+    return spaceRegex.test(email);
+  };
+
+  const containAtSymbol = (email: string): boolean => {
+    const atSymbolRegex = /@/;
+    return atSymbolRegex.test(email);
+  };
+
+  // const validUserName = (email: string): boolean => {
+  //   const usernameRegex = /^[a-zA-Z0-9._%+-]+@/;
+  //   return usernameRegex.test(email);
+  // };
+  const validDomain = (email: string): boolean => {
+    const domainRegex = /@(gmail|yahoo|outlook|hotmail)\.com$/i;
+    return domainRegex.test(email);
+  };
+  const validExtinsion = (email: string): boolean => {
+    const extensionRegex = /\.[a-zA-Z]{2,}$/;
+    return extensionRegex.test(email);
+  };
+
   const validateEmail = (email: string): boolean => {
     //this function checks the email and being called every time the email changes cuz the email is a usestate so every element related to it rerenders
     //the regex logic
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
+
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return (
+      !containWhiteSpace(email) &&
+      containAtSymbol(email) &&
+      validDomain(email) &&
+      validExtinsion(email)
+    );
+  };
+
+  const passLenGt8 = (password: string): boolean => {
+    if (password.length >= 8) {
+      return true;
+    }
+    return false;
+  };
+
+  const containLowerCase = (password: string): boolean => {
+    const containlowercase = /[a-z]/;
+    return containlowercase.test(password);
+  };
+
+  const containUpperCase = (password: string): boolean => {
+    const containuppercase = /[A-Z]/;
+    return containuppercase.test(password);
+  };
+  const containNumber = (password: string): boolean => {
+    const containNumber = /\d/;
+    return containNumber.test(password);
+  };
+  const containSpecialChar = (password: string): boolean => {
+    const containspeacialchar = /[@$!%*?&]/;
+    return containspeacialchar.test(password);
   };
 
   const vaildatePassword = (password: string): boolean => {
     //the regex logic
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
+    // const passwordRegex =
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    password = password.trim();
+    return (
+      containLowerCase(password) &&
+      containUpperCase(password) &&
+      containNumber(password) &&
+      containSpecialChar(password) &&
+      passLenGt8(password)
+    );
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     //submition handelr
@@ -52,7 +115,8 @@ const Auth_Login = () => {
   };
   // console.log("Email state :" + !validateEmail(email) && emailTouched);
   // console.log("email toched :" + emailTouched);
-  // console.log("email valid :" + validateEmail(email));
+  console.log("email valid :" + validateEmail(email));
+  console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="flex w-full h-screen justify-center items-center gap-24">
@@ -110,6 +174,56 @@ const Auth_Login = () => {
                 }}
               />
             </label>
+            <div
+              className={`w-full ${
+                !validateEmail(email) && emailTouched ? "" : "hidden"
+              }  bg-gray-100 rounded-lg mt-3 p-3 `}
+            >
+              <ul className={`flex flex-col gap-2`}>
+                <li
+                  className={`flex gap-2  items-center ${
+                    !containWhiteSpace(email) && "hidden"
+                  }`}
+                >
+                  {containWhiteSpace(email) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">Email address cannot contain spaces</p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containAtSymbol(email) && "hidden"
+                  }`}
+                >
+                  {!containAtSymbol(email) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">Email is missing the '@' symbol</p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    validDomain(email) && "hidden"
+                  }`}
+                >
+                  {!validDomain(email) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0 " />
+                  )}
+                  <p className="text-xs ">Please enter a valid domain</p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    validExtinsion(email) && "hidden"
+                  }`}
+                >
+                  {!validExtinsion(email) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0 " />
+                  )}
+                  <p className="text-xs ">
+                    Invalid extension. Must be at least 2 letters(e,g .com)
+                  </p>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div>
@@ -163,6 +277,74 @@ const Auth_Login = () => {
                 )}
               </button>
             </label>
+            <div
+              className={`w-full ${
+                !vaildatePassword(password) && passwordTouched ? "" : "hidden"
+              }  bg-gray-100 rounded-lg mt-3 p-3 `}
+            >
+              <ul className={`flex flex-col gap-2`}>
+                <li
+                  className={`flex gap-2  items-center ${
+                    passLenGt8(password) && "hidden"
+                  }`}
+                >
+                  {!passLenGt8(password) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least 8 char
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containLowerCase(password) && "hidden"
+                  }`}
+                >
+                  {!containLowerCase(password) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least one Lowercase{" "}
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containUpperCase(password) && "hidden"
+                  }`}
+                >
+                  {!containUpperCase(password) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least one Upper case char
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containNumber(password) && "hidden"
+                  }`}
+                >
+                  {!containNumber(password) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at one singel Number
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containSpecialChar(password) && "hidden"
+                  }`}
+                >
+                  {!containSpecialChar(password) && (
+                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least one Spacial
+                  </p>
+                </li>
+              </ul>
+            </div>
           </div>
           <div className="flex w-full justify-between">
             <div>
