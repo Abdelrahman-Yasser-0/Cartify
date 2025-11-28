@@ -4,8 +4,7 @@ import { FiShoppingCart } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
-import { FaCheckCircle } from "react-icons/fa";
-import { IoMdCloseCircle } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
 
 /**
  * --------------------------------------------------------------------------
@@ -109,6 +108,11 @@ const Auth_Login = () => {
     if (validateEmail(email) && vaildatePassword(password)) {
       //send data using api
       console.log("yes valied");
+      const formdata = {
+        Email: email,
+        Password: password,
+      };
+      console.log(formdata);
     } else {
       console.log("no not valied");
     }
@@ -119,14 +123,17 @@ const Auth_Login = () => {
   console.log("space :" + !containWhiteSpace(email));
 
   return (
-    <div className="flex w-full h-screen justify-center items-center gap-24">
+    <div className="flex w-full min-h-screen justify-center items-center gap-24p pt-10">
+      {/*--------------------------------Left Img-------------------------------- */}
       <div className=" overflow-hidden max-w-md lg:block hidden  ">
         <img src={main_img} alt="img_Not_Found 404" className="w-full" />
       </div>
+      {/*--------------------------------Form-------------------------------- */}
       <form
         onSubmit={handleSubmit}
         className="lg:basis-[30%] lg:max-w-sm w-[80%] p-5 border rounded-2xl flex flex-col gap-5"
       >
+        {/*--------------------------------Header-------------------------------- */}
         <Link to="/" className="flex gap-4 cursor-pointer">
           <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
           <h2 className="py-1.5">Cartify</h2>
@@ -135,8 +142,11 @@ const Auth_Login = () => {
         <p className="text-sm text-gray-500">
           Log in to your Cartify account to continue
         </p>
+        {/*--------------------------------Input Fields-------------------------------- */}
         <div className="flex flex-col gap-4">
+          {/*--------------------------------Email-------------------------------- */}
           <div>
+            {/*--------------------------------Input Label Name-------------------------------- */}
             <div className="label">
               <span
                 className={`label-text ${
@@ -146,6 +156,7 @@ const Auth_Login = () => {
                 Email
               </span>
             </div>
+            {/*--------------------------------Input -------------------------------- */}
             <label
               className={`input input-bordered flex items-center gap-2 ${
                 !validateEmail(email) && emailTouched
@@ -163,7 +174,7 @@ const Auth_Login = () => {
                 <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
               </svg>
               <input
-                type="text"
+                type="email"
                 className="grow"
                 placeholder="Email"
                 onChange={(e) => {
@@ -174,6 +185,7 @@ const Auth_Login = () => {
                 }}
               />
             </label>
+            {/*--------------------------------Error List -------------------------------- */}
             <div
               className={`w-full ${
                 !validateEmail(email) && emailTouched ? "" : "hidden"
@@ -186,7 +198,7 @@ const Auth_Login = () => {
                   }`}
                 >
                   {containWhiteSpace(email) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">Email address cannot contain spaces</p>
                 </li>
@@ -196,7 +208,7 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!containAtSymbol(email) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">Email is missing the '@' symbol</p>
                 </li>
@@ -206,7 +218,7 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!validDomain(email) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0 " />
+                    <IoClose className="text-red-600 text-[16px] shrink-0 " />
                   )}
                   <p className="text-xs ">Please enter a valid domain</p>
                 </li>
@@ -216,7 +228,7 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!validExtinsion(email) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0 " />
+                    <IoClose className="text-red-600 text-[16px] shrink-0 " />
                   )}
                   <p className="text-xs ">
                     Invalid extension. Must be at least 2 letters(e,g .com)
@@ -289,10 +301,10 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!passLenGt8(password) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">
-                    Password must contain at least 8 char
+                    Password must contain at least 8 character
                   </p>
                 </li>
                 <li
@@ -301,7 +313,7 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!containLowerCase(password) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">
                     Password must contain at least one Lowercase{" "}
@@ -313,10 +325,10 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!containUpperCase(password) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">
-                    Password must contain at least one Upper case char
+                    Password must contain at least one Uppercase character
                   </p>
                 </li>
                 <li
@@ -325,10 +337,10 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!containNumber(password) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">
-                    Password must contain at one singel Number
+                    Password must contain at one single Number
                   </p>
                 </li>
                 <li
@@ -337,15 +349,16 @@ const Auth_Login = () => {
                   }`}
                 >
                   {!containSpecialChar(password) && (
-                    <IoMdCloseCircle className="text-red-600 text-[16px] shrink-0" />
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
                   )}
                   <p className="text-xs">
-                    Password must contain at least one Spacial
+                    Password must contain at least one Special character
                   </p>
                 </li>
               </ul>
             </div>
           </div>
+          {/*--------------------------------Remeber me + Forgot Password-------------------------------- */}
           <div className="flex w-full justify-between">
             <div>
               <label className="cursor-pointer label flex gap-4">
