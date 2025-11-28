@@ -165,16 +165,16 @@ const Header = () => {
               <a className="p-3 text-gray-500">Help Center</a>
 
               <li>
-                <a>Track Order</a>
+                <Link to="/track-order">Track Order</Link>
               </li>
               <li>
-                <a>FAQs</a>
+                <Link to="/faqs">FAQs</Link>
               </li>
               <li>
-                <a>Contact Us</a>
+                <Link to="/contact-us">Contact Us</Link>
               </li>
               <li>
-                <a>Shipping & Returns</a>
+                <Link to="/shipping-returns">Shipping & Returns</Link>
               </li>
               <div className="w-full h-px bg-gray-300"></div>
 
