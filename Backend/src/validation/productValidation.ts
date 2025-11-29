@@ -4,12 +4,16 @@ import { de } from "zod/v4/locales";
 
 extendZod(z);
 const productValidationSchema = z.object({
-  _id: z.any().optional(),
+  // _id: z.union([z.string(), z.any()]).optional(),
+  // __v: z.number().optional(),
+  // id: z.string().unique(),
   title: z.string(),
   brand: z.string(),
-  rate: z.string(),
+  rate: z.union([z.string(), z.any()]),
   price: z.number(),
+
   imgurl: z.string(),
+  quatity: z.number(),
   inStock: z.boolean(),
   category: z.string(),
   originalPrice: z.number().optional(),
