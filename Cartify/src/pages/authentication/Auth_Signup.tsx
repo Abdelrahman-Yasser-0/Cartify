@@ -124,7 +124,7 @@ const Auth_Signup = () => {
       streetAddress.length > 0 &&
       apartment.length > 0 &&
       zip.length > 0 &&
-      /^01[0125][0-9]{8}$/.test(phoneNumber) &&
+      /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
       "btn-disabled"
     ) {
       //send data using api
@@ -204,6 +204,8 @@ const Auth_Signup = () => {
               <input
                 type="text"
                 className="grow"
+                name="name"
+                autoComplete="name"
                 placeholder="Enter Your Full Name"
                 onChange={(e) => {
                   setfullName(e.target.value);
@@ -269,6 +271,8 @@ const Auth_Signup = () => {
               <input
                 type="email"
                 className="grow"
+                name="email"
+                autoComplete="username"
                 placeholder="Enter Your Email"
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -364,6 +368,8 @@ const Auth_Signup = () => {
               <input
                 type={`${pass_see ? "text" : "password"}`}
                 className="grow min-w-0"
+                name="password"
+                autoComplete="new-password"
                 placeholder="Enter Your Password"
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => {
@@ -545,7 +551,7 @@ const Auth_Signup = () => {
                 streetAddress.length > 0 &&
                 apartment.length > 0 &&
                 zip.length > 0 &&
-                /^01[0125][0-9]{8}$/.test(phoneNumber)
+                /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber)
               ) && "btn-disabled"
             }`}
             type="submit"

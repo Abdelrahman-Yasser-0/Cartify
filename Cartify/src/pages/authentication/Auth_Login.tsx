@@ -177,6 +177,8 @@ const Auth_Login = () => {
                 type="email"
                 className="grow"
                 placeholder="Email"
+                name="email"
+                autoComplete="email"
                 onChange={(e) => {
                   setEmail(e.target.value);
                 }}
@@ -273,6 +275,8 @@ const Auth_Login = () => {
                 type={`${pass_see ? "text" : "password"}`}
                 className="grow min-w-0"
                 placeholder="Password"
+                name="password"
+                autoComplete="new-password"
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => {
                   setPasswordTouched(true);

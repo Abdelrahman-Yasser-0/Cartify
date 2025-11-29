@@ -52,6 +52,8 @@ const Auth_Signup_2 = ({
             <input
               type="text"
               className="grow"
+              name="country"
+              autoComplete="shipping country"
               placeholder="e.g., Egypt"
               onChange={(e) => {
                 setCountry(e.target.value);
@@ -83,6 +85,9 @@ const Auth_Signup_2 = ({
             <input
               type="text"
               className="grow"
+              name="city"
+              // "address-level2" is the standard code for City
+              autoComplete="shipping address-level2"
               placeholder="e.g., New Cairo"
               onChange={(e) => {
                 setCity(e.target.value);
@@ -119,6 +124,8 @@ const Auth_Signup_2 = ({
           <input
             type="text"
             className="grow"
+            name="address"
+            autoComplete="shipping address-line1"
             placeholder="e.g., 123 Main Street"
             onChange={(e) => {
               setStreetAddress(e.target.value);
@@ -153,7 +160,9 @@ const Auth_Signup_2 = ({
             <input
               type="text"
               className="grow"
-              placeholder="e.g., Egypt"
+              name="apartment"
+              autoComplete="shipping address-line2"
+              placeholder="e.g., 123"
               onChange={(e) => {
                 setApartment(e.target.value);
               }}
@@ -184,6 +193,8 @@ const Auth_Signup_2 = ({
             <input
               type="text"
               className="grow"
+              name="zip"
+              autoComplete="shipping postal-code"
               placeholder="e.g., New Cairo"
               onChange={(e) => {
                 setZip(e.target.value);
@@ -212,7 +223,7 @@ const Auth_Signup_2 = ({
         {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
-            !/^01[0125][0-9]{8}$/.test(phoneNumber) && phnoeNumberTouched
+            !/^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) && phnoeNumberTouched
               ? "input input-error"
               : "input"
           }`}
@@ -220,7 +231,9 @@ const Auth_Signup_2 = ({
           <input
             type="text"
             className="grow"
-            placeholder="e.g., 123 Main Street"
+            name="phone"
+            autoComplete="tel"
+            placeholder="+2012345678901"
             onChange={(e) => {
               setPhoneNumber(e.target.value);
             }}

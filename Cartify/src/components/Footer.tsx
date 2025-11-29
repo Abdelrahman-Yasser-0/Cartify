@@ -33,22 +33,34 @@ const footerColumns = [
 ];
 
 const socialLinks = [
-  { icon: <FaFacebook className="text-xl text-[#1877F2]" />, href: "https://facebook.com" },
-  { icon: <FaInstagram className="text-xl text-[#E4405F]" />, href: "https://instagram.com" },
-  { icon: <FaTwitter className="text-xl text-[#1DA1F2]" />, href: "https://twitter.com" },
-  { icon: <FaYoutube className="text-xl text-[#FF0000]" />, href: "https://youtube.com" },
+  {
+    icon: <FaFacebook className="text-xl text-[#1877F2]" />,
+    href: "https://facebook.com",
+  },
+  {
+    icon: <FaInstagram className="text-xl text-[#E4405F]" />,
+    href: "https://instagram.com",
+  },
+  {
+    icon: <FaTwitter className="text-xl text-[#1DA1F2]" />,
+    href: "https://twitter.com",
+  },
+  {
+    icon: <FaYoutube className="text-xl text-[#FF0000]" />,
+    href: "https://youtube.com",
+  },
 ];
 
 const Footer = () => {
   return (
     <footer className="w-full border-t border-gray-200 bg-white">
-      <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-10 px-6 py-12 lg:px-12">
+      <div className="flex w-full  flex-col gap-10 px-6 py-12 lg:px-12 justify-center">
         <div className="grid gap-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
           <div className="space-y-4">
             <h6 className="text-lg font-semibold text-slate-900">Cartify</h6>
             <p className="text-sm text-gray-500">
-              Your one-stop shop for premium electronics, gadgets, and tech accessories. Quality products,
-              fast shipping, excellent service.
+              Your one-stop shop for premium electronics, gadgets, and tech
+              accessories. Quality products, fast shipping, excellent service.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social) => (
@@ -73,7 +85,10 @@ const Footer = () => {
               <ul className="space-y-2 text-sm text-gray-500">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <Link to={link.to} className="transition hover:text-teal-600">
+                    <Link
+                      to={link.to}
+                      className="transition hover:text-teal-600"
+                    >
                       {link.label}
                     </Link>
                   </li>
