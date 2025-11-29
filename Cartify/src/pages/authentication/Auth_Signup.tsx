@@ -4,8 +4,6 @@ import { FiShoppingCart } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
-import { FaCheckCircle } from "react-icons/fa";
-import { IoMdCloseCircle } from "react-icons/io";
 import { RiAccountCircleFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import Auth_Signup_2 from "./Auth_Signup_2";

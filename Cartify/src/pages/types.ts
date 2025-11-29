@@ -48,3 +48,10 @@ export type Auth_Signup_2_props = {
   setZip: (value: string) => void;
   setStreetAddress: (value: string) => void;
 };
+
+export type CustomInput_props = {
+  value: string;
+  setValue: (value: string) => void;
+  valueTouched: boolean;
+  setValueTouched: (value: boolean) => void;
+};
