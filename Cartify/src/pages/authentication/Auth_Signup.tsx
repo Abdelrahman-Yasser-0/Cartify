@@ -4,11 +4,10 @@ import { FiShoppingCart } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
-<<<<<<< HEAD
-=======
+
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdCloseCircle } from "react-icons/io";
->>>>>>> main
+
 import { RiAccountCircleFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import Auth_Signup_2 from "./Auth_Signup_2";
@@ -127,11 +126,7 @@ const Auth_Signup = () => {
       streetAddress.length > 0 &&
       apartment.length > 0 &&
       zip.length > 0 &&
-<<<<<<< HEAD
-      /^01[0125][0-9]{8}$/.test(phoneNumber) &&
-=======
       /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
->>>>>>> main
       "btn-disabled"
     ) {
       //send data using api
@@ -211,11 +206,8 @@ const Auth_Signup = () => {
               <input
                 type="text"
                 className="grow"
-<<<<<<< HEAD
-=======
                 name="name"
                 autoComplete="name"
->>>>>>> main
                 placeholder="Enter Your Full Name"
                 onChange={(e) => {
                   setfullName(e.target.value);
@@ -281,11 +273,8 @@ const Auth_Signup = () => {
               <input
                 type="email"
                 className="grow"
-<<<<<<< HEAD
-=======
                 name="email"
                 autoComplete="username"
->>>>>>> main
                 placeholder="Enter Your Email"
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -381,11 +370,8 @@ const Auth_Signup = () => {
               <input
                 type={`${pass_see ? "text" : "password"}`}
                 className="grow min-w-0"
-<<<<<<< HEAD
-=======
                 name="password"
                 autoComplete="new-password"
->>>>>>> main
                 placeholder="Enter Your Password"
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => {
@@ -567,11 +553,7 @@ const Auth_Signup = () => {
                 streetAddress.length > 0 &&
                 apartment.length > 0 &&
                 zip.length > 0 &&
-<<<<<<< HEAD
-                /^01[0125][0-9]{8}$/.test(phoneNumber)
-=======
                 /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber)
->>>>>>> main
               ) && "btn-disabled"
             }`}
             type="submit"

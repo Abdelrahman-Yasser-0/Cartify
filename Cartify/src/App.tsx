@@ -37,12 +37,8 @@ import TermsOfService from "./pages/support and Legal/TermsOfService";
 import Home from "./pages/home/Home";
 import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Detail";
 import NotFound from "./pages/NotFound";
-<<<<<<< HEAD
-=======
-import Forgot_pass from "./pages/authentication/Forgot_pass";
 import Checkout from "./pages/home/Checkout";
 import OrderPlaced from "./pages/home/OrderPlaced";
->>>>>>> main
 
 const App = () => {
   return (
