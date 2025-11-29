@@ -49,3 +49,10 @@ export type Auth_Signup_2_props = {
   setStreetAddress: (value: string) => void;
   isEditing?: boolean;
 };
+
+export type CustomInput_props = {
+  value: string;
+  setValue: (value: string) => void;
+  valueTouched: boolean;
+  setValueTouched: (value: boolean) => void;
+};

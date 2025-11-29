@@ -25,6 +25,7 @@ const Auth_signup_confirm = ({ stepper }: { stepper: number }) => {
       {/*--------------------------------Congrats Message-------------------------------- */}
       <div className="w-full h-full flex flex-col items-center pt-4 text-center text-xl">
         <FaCircleCheck className="text-accent text-5xl shrink-0 " />
+
         <p>
           Your Account Have been created
           <span className="text-accent"> Successfully!</span>
