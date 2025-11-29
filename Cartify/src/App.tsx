@@ -76,10 +76,7 @@ const App = () => {
         />
         <Route path="/admin/settings" element={<Admin_Settings />} />
         //-----------------------------------------------------User-----------------------------------------------------//
-        <Route
-          path="/account/order-detail"
-          element={<Account_Order_Detail />}
-        />
+        <Route path="/account/orders/:id" element={<Account_Order_Detail />} />
         <Route path="/account/orders" element={<Account_Orders />} />
         <Route path="/account/overview" element={<Account_Overview />} />
         <Route

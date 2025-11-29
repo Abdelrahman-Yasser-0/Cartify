@@ -153,3 +153,99 @@ export const productsData: products[] = [
     inStock: true,
   },
 ];
+export const orders = [
+  {
+    id: "ORD-2024-1156",
+    status: "Delivered",
+    orderDate: "Nov 10, 2024",
+    itemsCount: 3,
+    expectedDate: "Nov 12, 2024",
+    totalPrice: 284.99,
+  },
+  {
+    id: "ORD-2024-1134",
+    status: "Shipped",
+    orderDate: "Nov 5, 2024",
+    itemsCount: 1,
+    expectedDate: "Nov 15, 2024",
+    totalPrice: 89.99,
+  },
+  {
+    id: "ORD-2024-1098",
+    status: "Processing",
+    orderDate: "Oct 28, 2024",
+    itemsCount: 2,
+    expectedDate: "Nov 18, 2024",
+    totalPrice: 156.47,
+  },
+  {
+    id: "ORD-2024-1067",
+    status: "Delivered",
+    orderDate: "Oct 15, 2024",
+    itemsCount: 5,
+    expectedDate: "Oct 18, 2024",
+    totalPrice: 429.99,
+  },
+  {
+    id: "ORD-2024-1023",
+    status: "Delivered",
+    orderDate: "Oct 3, 2024",
+    itemsCount: 1,
+    expectedDate: "Oct 6, 2024",
+    totalPrice: 67.5,
+  },
+];
+
+export const orderDetails = {
+  id: "ORD-2024-1156",
+  status: "Delivered",
+  placedAt: "Nov 10, 2024",
+  expectedAt: "Nov 12, 2024",
+
+  // User Info
+  shippingAddress: {
+    name: "Abdelrahman Yasser",
+    street: "123 Main Street",
+    city: "New Cairo",
+    country: "Egypt",
+    phone: "+20 101 234 5678",
+  },
+
+  // Payment Info
+  paymentMethod: {
+    type: "Credit Card",
+    last4: "4242",
+    brand: "Visa",
+  },
+
+  // The Products in this order
+  items: [
+    {
+      id: 1,
+      name: "Sony WH-1000XM4 Noise Cancelling Headphones",
+      brand: "Sony",
+      price: 249.99,
+      quantity: 1,
+      image:
+        "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=1000&auto=format&fit=crop",
+    },
+    {
+      id: 2,
+      name: "Apple AirTag (4 Pack)",
+      brand: "Apple",
+      price: 29.0,
+      quantity: 1,
+      image:
+        "https://images.unsplash.com/photo-1621259020476-e2b21b2d0764?q=80&w=1000&auto=format&fit=crop",
+    },
+  ],
+
+  // Money breakdown
+  summary: {
+    subtotal: 278.99,
+    discount: 0,
+    shipping: 10.0,
+    tax: 30.0,
+    total: 318.99,
+  },
+};
