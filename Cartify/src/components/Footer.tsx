@@ -1,80 +1,106 @@
-import { FaInstagram } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
-import { FaYoutube } from "react-icons/fa";
-import { FaTwitter } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaYoutube, FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
+
+const footerColumns = [
+  {
+    title: "Shop",
+    links: [
+      { label: "New Arrivals", to: "/product_listing" },
+      { label: "Best Sellers", to: "/product_listing" },
+      { label: "Sale", to: "/product_listing" },
+      { label: "All Products", to: "/product_listing" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "Contact us", to: "/contact-us" },
+      { label: "FAQs", to: "/faqs" },
+      { label: "Shipping & Returns", to: "/shipping-returns" },
+      { label: "Track Order", to: "/track-order" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Legal Hub", to: "/legal-hub" },
+      { label: "Privacy Policy", to: "/privacy-policy" },
+      { label: "Terms of Service", to: "/terms-of-service" },
+      { label: "Cookie Policy", to: "/cookie-policy" },
+      { label: "Accessibility", to: "/accessibility" },
+    ],
+  },
+];
+
+const socialLinks = [
+  { icon: <FaFacebook className="text-xl text-[#1877F2]" />, href: "https://facebook.com" },
+  { icon: <FaInstagram className="text-xl text-[#E4405F]" />, href: "https://instagram.com" },
+  { icon: <FaTwitter className="text-xl text-[#1DA1F2]" />, href: "https://twitter.com" },
+  { icon: <FaYoutube className="text-xl text-[#FF0000]" />, href: "https://youtube.com" },
+];
 
 const Footer = () => {
   return (
-    <div>
-      <footer className="flex flex-col p-10 gap-5 ">
-        <div className="footer text-base-content ">
-          <div className="grid grid-flow-row gap-4">
-            <nav>
-              <h6 className="footer-title font-bold !text-neutral-700 opacity-100">
-                Cartify
-              </h6>
-
-              <p className="text-gray-500">
-                Your one-stop shop for premium electronics, gadgets, and tech
-                accessories. Quality products, fast shipping, excellent service.
-              </p>
-            </nav>
-
-            <div className="flex gap-10">
-              <a>
-                <FaFacebook className="text-[#1877F2] text-xl" />
-              </a>
-              <a>
-                <FaInstagram className="text-[#E4405F] text-xl" />
-              </a>
-              <a>
-                <FaTwitter className="text-[#1DA1F2] text-xl" />
-              </a>
-              <a>
-                <FaYoutube className="text-[#FF0000] text-xl" />
-              </a>
+    <footer className="w-full border-t border-gray-200 bg-white">
+      <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-10 px-6 py-12 lg:px-12">
+        <div className="grid gap-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
+          <div className="space-y-4">
+            <h6 className="text-lg font-semibold text-slate-900">Cartify</h6>
+            <p className="text-sm text-gray-500">
+              Your one-stop shop for premium electronics, gadgets, and tech accessories. Quality products,
+              fast shipping, excellent service.
+            </p>
+            <div className="flex gap-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.href}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-gray-200 p-2 transition hover:border-teal-200 hover:bg-teal-50"
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
-          <nav>
-            <h6 className="footer-title font-bold !text-neutral-700 opacity-100">
-              Shop
-            </h6>
-            <a className="link link-hover text-gray-500	">New Arrivals</a>
-            <a className="link link-hover text-gray-500	">Best Sellers</a>
-            <a className="link link-hover text-gray-500	">Sale</a>
-            <a className="link link-hover text-gray-500	">All Products</a>
-          </nav>
-          <nav>
-            <h6 className="footer-title font-bold !text-neutral-700 opacity-100">
-              Support
-            </h6>
-            <Link to="/contact-us" className="link link-hover text-gray-500">
-              Contact us
+
+          {footerColumns.map((column) => (
+            <nav key={column.title} className="space-y-3">
+              <h6 className="text-sm font-semibold uppercase tracking-wide text-slate-900">
+                {column.title}
+              </h6>
+              <ul className="space-y-2 text-sm text-gray-500">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <Link to={link.to} className="transition hover:text-teal-600">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        <div className="border-t border-gray-200" />
+
+        <div className="flex flex-col gap-4 text-xs text-gray-500 md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Cartify. All rights reserved.</p>
+          <div className="flex flex-wrap gap-4">
+            <Link to="/privacy-policy" className="hover:text-teal-600">
+              Privacy
             </Link>
-            <a className="link link-hover text-gray-500">FAQs</a>
-            <a className="link link-hover text-gray-500">Shipping & Returns</a>
-            <a className="link link-hover text-gray-500">Track Order</a>
-          </nav>
-          <nav>
-            <h6 className="footer-title font-bold !text-neutral-700 opacity-100">
-              Legal
-            </h6>
-            <a className="link link-hover text-gray-500">Legal Hub</a>
-            <a className="link link-hover text-gray-500">Privacy and Policy</a>
-            <a className="link link-hover text-gray-500">Terms of Service</a>
-            <a className="link link-hover text-gray-500">Cookie Policy </a>
-            <a className="link link-hover text-gray-500">Accessibility </a>
-          </nav>
+            <Link to="/terms-of-service" className="hover:text-teal-600">
+              Terms
+            </Link>
+            <Link to="/cookie-policy" className="hover:text-teal-600">
+              Cookies
+            </Link>
+          </div>
         </div>
-        <div className="w-full h-[0.2px] bg-gray-300 mb-10"></div>
-        <div className="flex justify-center w-full">
-          <p className="text-gray-500 text-xs">
-            © 2025 Cartify. All rights reserved.
-          </p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </footer>
   );
 };
 
