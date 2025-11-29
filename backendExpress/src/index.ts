@@ -1,5 +1,7 @@
 import express from "express";
 import { connect } from "mongoose";
+import userRouter from "./routes/user.ts";
+import productRouter from "./routes/product.ts";
 // import userRouter from "./routes/users.ts";
 
 connect("mongodb://127.0.0.1:27017/s9")
