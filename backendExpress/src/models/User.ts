@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   phone: String,
 
   // store only the hashed password
-  passwordHash: { type: String, required: true },
+  passwordHash: { type: String },
 
   role: { type: String, enum: ["user", "admin"], default: "user" },
 
