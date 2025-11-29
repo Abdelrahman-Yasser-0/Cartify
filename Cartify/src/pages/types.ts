@@ -47,6 +47,7 @@ export type Auth_Signup_2_props = {
   setPhoneNumber: (value: string) => void;
   setZip: (value: string) => void;
   setStreetAddress: (value: string) => void;
+  isEditing?: boolean;
 };
 
 export type CustomInput_props = {

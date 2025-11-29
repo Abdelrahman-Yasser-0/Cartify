@@ -37,6 +37,12 @@ import TermsOfService from "./pages/support and Legal/TermsOfService";
 import Home from "./pages/home/Home";
 import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Detail";
 import NotFound from "./pages/NotFound";
+<<<<<<< HEAD
+=======
+import Forgot_pass from "./pages/authentication/Forgot_pass";
+import Checkout from "./pages/home/Checkout";
+import OrderPlaced from "./pages/home/OrderPlaced";
+>>>>>>> main
 
 const App = () => {
   return (
@@ -47,6 +53,8 @@ const App = () => {
         <Route path="/product_detailes/:id" element={<ProductDetailes />} />
         <Route path="/product_listing" element={<ProductListing />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order_placed" element={<OrderPlaced />} />
         //-----------------------------------------------------Admin-----------------------------------------------------//
         <Route path="/admin/analytics" element={<Admin_Analytics />} />
         <Route path="/admin/categories" element={<Admin_Categories />} />
@@ -71,7 +79,6 @@ const App = () => {
         />
         <Route path="/admin/settings" element={<Admin_Settings />} />
         //-----------------------------------------------------User-----------------------------------------------------//
-        <Route path="/account/addresses" element={<Account_Addresses />} />
         <Route
           path="/account/order-detail"
           element={<Account_Order_Detail />}
