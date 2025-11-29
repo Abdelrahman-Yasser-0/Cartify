@@ -14,7 +14,7 @@ const Account_Overview = () => {
     <div>
       <Header />
 
-      <div className=" w-full flex justify-center pt-28">
+      <div className=" w-full flex justify-center pt-28 px-5">
         <div className="max-w-screen-2xl w-full flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <h1 className="font-semibold text-2xl">My Account</h1>
