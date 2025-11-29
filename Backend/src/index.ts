@@ -4,6 +4,8 @@ import { CORSPlugin } from "@orpc/server/plugins";
 import { onError } from "@orpc/server";
 import { connect } from "mongoose";
 import { router } from "./apis/routes.ts";
+import "dotenv/config";
+import { authInterceptor } from "./middleWare/auth.ts";
 // import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 // import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 // import router from "./procedures.ts";
