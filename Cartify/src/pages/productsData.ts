@@ -42,6 +42,7 @@ export const productsData: products[] = [
         date: "2024-01-20",
       },
     ],
+    stock: 25,
     inStock: true,
   },
   {
@@ -78,6 +79,7 @@ export const productsData: products[] = [
         date: "2024-02-01",
       },
     ],
+    stock: 40,
     inStock: true,
   },
   {
@@ -114,6 +116,7 @@ export const productsData: products[] = [
         date: "2024-02-10",
       },
     ],
+    stock: 15,
     inStock: true,
   },
   {
@@ -150,6 +153,7 @@ export const productsData: products[] = [
         date: "2024-02-15",
       },
     ],
+    stock: 30,
     inStock: true,
   },
 ];
