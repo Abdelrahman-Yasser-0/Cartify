@@ -82,7 +82,7 @@ const Account_Order_Detail = () => {
       <div className="w-full max-w-screen-2xl px-5 py-8">
         {/* Back to Orders Button */}
         <Link
-          to="/account/orders"
+          to="/account/overview"
           className="flex items-center gap-2 text-gray-700 hover:text-cyan-600 transition-colors mb-6"
         >
           <FiArrowLeft className="text-lg" />

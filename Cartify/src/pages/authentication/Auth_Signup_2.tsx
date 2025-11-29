@@ -212,7 +212,7 @@ const Auth_Signup_2 = ({
         <div className="label">
           <span
             className={`label-text ${
-              !/^01[0125][0-9]{8}$/.test(phoneNumber) &&
+              !/^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
               phnoeNumberTouched &&
               "text-red-700"
             }`}

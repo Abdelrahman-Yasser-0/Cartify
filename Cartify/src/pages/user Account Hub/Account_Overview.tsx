@@ -10,6 +10,8 @@ import { profile } from "console";
 import Account_Orders from "./Account_Orders";
 const Account_Overview = () => {
   const [mode, setMode] = useState<string>("profile");
+  console.log(mode);
+
   return (
     <div>
       <Header />
