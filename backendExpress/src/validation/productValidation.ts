@@ -1,14 +1,14 @@
 import Joi from "joi";
-
 export const productValidation = Joi.object({
   title: Joi.string().min(2).max(200).required(),
 
   brand: Joi.string().min(2).max(100).required(),
 
-  rate: Joi.string().optional(),
-
   price: Joi.number().min(0).required(),
 
+  quantity: Joi.number().min(0).required(),
+
+  rate: Joi.string().optional(),
   originalPrice: Joi.number().min(0).optional(),
 
   discount: Joi.number().min(0).max(100).optional(),
