@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { FaRegEye } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { RiAccountCircleFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import Account_Addresses from "./Account_Addresses";
-import { users } from "../usersData";
 
 const Account_Profile = () => {
   const userstring = localStorage.getItem("user");
@@ -116,9 +114,50 @@ const Account_Profile = () => {
       passLenGt8(password)
     );
   };
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   //submition handelr
+  //   e.preventDefault();
+  //   if (
+  //     validateEmail(email) &&
+  //     country.length > 0 &&
+  //     city.length > 0 &&
+  //     streetAddress.length > 0 &&
+  //     apartment.length > 0 &&
+  //     zip.length > 0 &&
+  //     /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber)
+  //   ) {
+  //     //send data using api
+  //     if (password.length > 0) {
+  //       if (!vaildatePassword(password)) {
+  //         console.log("INvlaid pass");
+
+  //         return;
+  //       }
+  //       const updatedUser = {
+  //         ...user,
+  //         fullname: fullName,
+  //         email: email,
+  //         country: country,
+  //         city: city,
+  //         streetAddress: streetAddress,
+  //         apartment: apartment,
+  //         zip: zip,
+  //         phoneNumber: phoneNumber,
+  //         password: password.length > 0 ? password : user.password,
+  //       };
+
+  //       localStorage.setItem("user", JSON.stringify(updatedUser));
+
+  //       setIsEditing(false);
+  //       console.log("yes valied");
+  //     }
+  //   } else {
+  //     console.log("no not valied");
+  //   }
+  // };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    //submition handelr
     e.preventDefault();
+
     if (
       validateEmail(email) &&
       country.length > 0 &&
@@ -128,39 +167,39 @@ const Account_Profile = () => {
       zip.length > 0 &&
       /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber)
     ) {
-      //send data using api
       if (password.length > 0) {
         if (!vaildatePassword(password)) {
-          console.log("INvlaid pass");
-
+          console.log("Invalid password format");
           return;
         }
-        const updatedUser = {
-          ...user,
-          fullname: fullName,
-          email: email,
-          country: country,
-          city: city,
-          streetAddress: streetAddress,
-          apartment: apartment,
-          zip: zip,
-          phoneNumber: phoneNumber,
-          password: password.length > 0 ? password : user.password,
-        };
-
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-
-        setIsEditing(false);
-        console.log("yes valied");
       }
+
+      // 3. Save Logic (Runs for everyone now!)
+      const updatedUser = {
+        ...user,
+        fullname: fullName,
+        email: email,
+        country: country,
+        city: city,
+        streetAddress: streetAddress,
+        apartment: apartment,
+        zip: zip,
+        phoneNumber: phoneNumber,
+
+        password: password.length > 0 ? password : user.password,
+      };
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setIsEditing(false);
+      console.log("Saved Successfully!");
     } else {
-      console.log("no not valied");
+      console.log("Validation Failed: Check empty fields");
     }
   };
   // console.log("Email state :" + !validateEmail(email) && emailTouched);
   // console.log("email toched :" + emailTouched);
-  console.log("email valid :" + validateEmail(email));
-  console.log("space :" + !containWhiteSpace(email));
+  // console.log("email valid :" + validateEmail(email));
+  // console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="w-full flex justify-center">
