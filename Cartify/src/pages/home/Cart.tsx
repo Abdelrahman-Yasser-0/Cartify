@@ -132,9 +132,12 @@ const Cart = () => {
                   <span>Total</span>
                   <span>${grandTotal.toFixed(2)}</span>
                 </div>
-                <button className="btn btn-accent bg-teal-600 border-none mt-2 text-white">
+                <Link
+                  to="/checkout"
+                  className="btn btn-accent bg-teal-600 border-none mt-2 text-white"
+                >
                   Proceed to Checkout
-                </button>
+                </Link>
                 <button
                   className="btn btn-ghost"
                   onClick={clearCart}
@@ -159,4 +162,3 @@ const Cart = () => {
 };
 
 export default Cart;
-

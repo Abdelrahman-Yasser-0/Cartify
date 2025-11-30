@@ -37,7 +37,8 @@ import TermsOfService from "./pages/support and Legal/TermsOfService";
 import Home from "./pages/home/Home";
 import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Detail";
 import NotFound from "./pages/NotFound";
-import Forgot_pass from "./pages/authentication/Forgot_pass";
+import Checkout from "./pages/home/Checkout";
+import OrderPlaced from "./pages/home/OrderPlaced";
 
 const App = () => {
   return (
@@ -48,6 +49,8 @@ const App = () => {
         <Route path="/product_detailes/:id" element={<ProductDetailes />} />
         <Route path="/product_listing" element={<ProductListing />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order_placed" element={<OrderPlaced />} />
         //-----------------------------------------------------Admin-----------------------------------------------------//
         <Route path="/admin/analytics" element={<Admin_Analytics />} />
         <Route path="/admin/categories" element={<Admin_Categories />} />
@@ -62,6 +65,10 @@ const App = () => {
         <Route path="/admin/overview" element={<Admin_Overview />} />
         <Route path="/admin/payments" element={<Admin_Payments />} />
         <Route
+          path="/admin/product-add-edit/:id"
+          element={<Admin_Product_Add_Edit />}
+        />
+        <Route
           path="/admin/product-add-edit"
           element={<Admin_Product_Add_Edit />}
         />
@@ -72,11 +79,7 @@ const App = () => {
         />
         <Route path="/admin/settings" element={<Admin_Settings />} />
         //-----------------------------------------------------User-----------------------------------------------------//
-        <Route path="/account/addresses" element={<Account_Addresses />} />
-        <Route
-          path="/account/order-detail"
-          element={<Account_Order_Detail />}
-        />
+        <Route path="/account/orders/:id" element={<Account_Order_Detail />} />
         <Route path="/account/orders" element={<Account_Orders />} />
         <Route path="/account/overview" element={<Account_Overview />} />
         <Route
@@ -90,7 +93,6 @@ const App = () => {
         //-----------------------------------------------------Auth-----------------------------------------------------//
         <Route path="/auth/login" element={<Auth_Login />} />
         <Route path="/auth/signup" element={<Auth_Signup />} />
-        <Route path="/auth/forgot_pass" element={<Forgot_pass />} />
         //-----------------------------------------------------Support_Legal--------------------------------------------------//
         <Route path="/accessibility" element={<Accessibility />} />
         <Route path="/contact-us" element={<ContactUs />} />

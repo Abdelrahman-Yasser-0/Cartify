@@ -1,5 +1,5 @@
 import { Auth_Signup_2_props } from "../types";
-const Account_Addresses = ({
+const Auth_Signup_2 = ({
   country,
   setCountry,
   city,
@@ -24,10 +24,9 @@ const Account_Addresses = ({
   setPhoneNumberTouched,
   streetAddressTouched,
   setstreetAddressTouched,
-  isEditing,
 }: Auth_Signup_2_props) => {
   return (
-    <div className="">
+    <div>
       {/*--------------------------------Country+City-------------------------------- */}
       <div className=" w-full flex flex-col  md:flex-row gap-3 ">
         {/*--------------------------------Country-------------------------------- */}
@@ -62,8 +61,6 @@ const Account_Addresses = ({
               onBlur={() => {
                 setcountryTouched(true);
               }}
-              disabled={!isEditing}
-              value={country}
             />
           </label>
         </div>
@@ -98,8 +95,6 @@ const Account_Addresses = ({
               onBlur={() => {
                 setcityTouched(true);
               }}
-              disabled={!isEditing}
-              value={city}
             />
           </label>
         </div>
@@ -138,8 +133,6 @@ const Account_Addresses = ({
             onBlur={() => {
               setstreetAddressTouched(true);
             }}
-            disabled={!isEditing}
-            value={streetAddress}
           />
         </label>
       </div>
@@ -169,15 +162,13 @@ const Account_Addresses = ({
               className="grow"
               name="apartment"
               autoComplete="shipping address-line2"
-              placeholder="e.g., Egypt"
+              placeholder="e.g., 123"
               onChange={(e) => {
                 setApartment(e.target.value);
               }}
               onBlur={() => {
                 setApartmentTouched(true);
               }}
-              disabled={!isEditing}
-              value={apartment}
             />
           </label>
         </div>
@@ -211,8 +202,6 @@ const Account_Addresses = ({
               onBlur={() => {
                 setZipTouched(true);
               }}
-              disabled={!isEditing}
-              value={zip}
             />
           </label>
         </div>
@@ -234,7 +223,7 @@ const Account_Addresses = ({
         {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
-            !/^01[0125][0-9]{8}$/.test(phoneNumber) && phnoeNumberTouched
+            !/^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) && phnoeNumberTouched
               ? "input input-error"
               : "input"
           }`}
@@ -244,15 +233,13 @@ const Account_Addresses = ({
             className="grow"
             name="phone"
             autoComplete="tel"
-            placeholder="e.g., 123 Main Street"
+            placeholder="+2012345678901"
             onChange={(e) => {
               setPhoneNumber(e.target.value);
             }}
             onBlur={() => {
               setPhoneNumberTouched(true);
             }}
-            disabled={!isEditing}
-            value={phoneNumber}
           />
         </label>
       </div>
@@ -260,4 +247,4 @@ const Account_Addresses = ({
   );
 };
 
-export default Account_Addresses;
+export default Auth_Signup_2;
