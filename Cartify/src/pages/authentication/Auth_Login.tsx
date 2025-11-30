@@ -396,7 +396,10 @@ const Auth_Login = () => {
           </span>
           Incorrect email or password.
         </p>
-        <button className="btn bg-teal-600 w-full btn-sm" type="submit">
+        <button
+          className={`text-white btn bg-teal-600 w-full btn-sm `}
+          type="submit"
+        >
           Log in
         </button>
         <div className="flex w-full justify-center gap-3">
