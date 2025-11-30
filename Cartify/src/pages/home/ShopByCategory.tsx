@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import CategoryCard from "../../components/categoryPanel/CategoryCard";
 import { CiHeadphones } from "react-icons/ci";
 import { FiWatch } from "react-icons/fi";
@@ -6,16 +6,33 @@ import { MdComputer } from "react-icons/md";
 import { IoCameraOutline } from "react-icons/io5";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { CiMobile2 } from "react-icons/ci";
+import { productsData } from "../productsData";
+
+// Map category names to icons
+const categoryIcons: Record<string, React.ReactNode> = {
+  Audio: <CiHeadphones />,
+  Wearables: <FiWatch />,
+  Computers: <MdComputer />,
+  Photography: <IoCameraOutline />,
+  Gaming: <IoGameControllerOutline />,
+  Electronics: <CiMobile2 />,
+};
 
 function ShopByCategory() {
-  const categories = [
-    { name: "Audio", itemCount: 2, icon: <CiHeadphones /> },
-    { name: "Wearables", itemCount: 1, icon: <FiWatch /> },
-    { name: "Computers", itemCount: 1, icon: <MdComputer /> },
-    { name: "Photography", itemCount: 1, icon: <IoCameraOutline /> },
-    { name: "Gaming", itemCount: 2, icon: <IoGameControllerOutline /> },
-    { name: "Electronics", itemCount: 1, icon: <CiMobile2 /> },
-  ];
+  // Dynamically calculate categories and item counts from productsData
+  const categories = useMemo(() => {
+    const categoryCounts = productsData.reduce((acc, product) => {
+      const category = product.category || "Other";
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(categoryCounts).map(([name, itemCount]) => ({
+      name,
+      itemCount,
+      icon: categoryIcons[name] || <CiMobile2 />,
+    }));
+  }, []);
 
   return (
     // <div className="flex flex-col items-center p-16">
