@@ -5,6 +5,7 @@ import { FaRegEyeSlash } from "react-icons/fa6";
 import { RiAccountCircleFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import Account_Addresses from "./Account_Addresses";
+import { users } from "../usersData";
 
 const Account_Profile = () => {
   const userstring = localStorage.getItem("user");
@@ -120,18 +121,38 @@ const Account_Profile = () => {
     e.preventDefault();
     if (
       validateEmail(email) &&
-      vaildatePassword(password) &&
       country.length > 0 &&
       city.length > 0 &&
       streetAddress.length > 0 &&
       apartment.length > 0 &&
       zip.length > 0 &&
-      /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
-      "btn-disabled"
+      /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber)
     ) {
       //send data using api
+      if (password.length > 0) {
+        if (!vaildatePassword(password)) {
+          console.log("INvlaid pass");
 
-      console.log("yes valied");
+          return;
+        }
+        const updatedUser = {
+          ...user,
+          fullname: fullName,
+          email: email,
+          country: country,
+          city: city,
+          streetAddress: streetAddress,
+          apartment: apartment,
+          zip: zip,
+          phoneNumber: phoneNumber,
+          password: password.length > 0 ? password : user.password,
+        };
+
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        setIsEditing(false);
+        console.log("yes valied");
+      }
     } else {
       console.log("no not valied");
     }
