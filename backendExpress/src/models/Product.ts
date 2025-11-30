@@ -5,24 +5,29 @@ const productSchema = new mongoose.Schema({
   brand: { type: String, required: true },
   price: { type: Number, required: true },
   quantity: { type: Number, required: true },
-  rate: { type: String },
-  originalPrice: { type: Number },
-  discount: { type: Number },
+  rate: { type: String, default: 0 },
+  discountPrice: { type: Number },
+  discount: { type: Number, default: 0 },
+  inStock: { type: Boolean, required: true },
+  hasDiscount: { type: Boolean, default: false },
   imgurl: { type: String },
   sku: { type: String },
-  category: { type: String },
+  category: { type: String, default: "not categorised" },
   colors: { type: [String] },
   description: { type: String },
   specifications: { type: [String] },
-  reviews: [
-    {
-      author: { type: String },
-      rating: { type: Number },
-      comment: { type: String },
-      date: { type: String },
-    },
-  ],
-  inStock: { type: Boolean, required: true },
+  reviews: {
+    type: [
+      {
+        author: { type: String },
+        rating: { type: Number },
+        comment: { type: String },
+        date: { type: String },
+      },
+    ],
+    default: [],
+  },
+
   shortDescription: { type: String },
 });
 

@@ -1,3 +1,4 @@
+// import { optional } from "joi";
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
@@ -28,24 +29,42 @@ const UserSchema = new mongoose.Schema({
     sms: Boolean,
   },
 
-  cart: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-      quantity: Number,
-    },
-  ],
-  purchased: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-      quantity: Number,
-      status: String,
-    },
-  ],
-  wishingList: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    },
-  ],
+  cart: {
+    type: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "Product",
+        },
+        quantity: { type: Number, required: true },
+      },
+    ],
+    default: [],
+  },
+  purchased: {
+    type: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "Product",
+        },
+        quantity: { type: Number, required: true },
+        status: String,
+        date: Number,
+      },
+    ],
+    default: [],
+  },
+  wishingList: {
+    type: [
+      {
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      },
+    ],
+    default: [],
+  },
 });
 const User = mongoose.model("users", UserSchema);
 export default User;
