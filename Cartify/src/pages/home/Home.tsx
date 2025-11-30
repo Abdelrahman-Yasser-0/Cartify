@@ -5,6 +5,7 @@ import Card from "./../../components/Card";
 import Footer from "./../../components/Footer";
 import { productsData } from "../productsData";
 import ShopByCategory from "./ShopByCategory";
+import Spacer from "./Spacer";
 
 const Home = () => {
   const products = productsData;
@@ -29,9 +30,54 @@ const Home = () => {
               </Link>
             </div>
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
-              {products.map((product) => (
-                <Card key={product.title} product={product} />
-              ))}
+              {products
+                .filter((product) => product.isFeatured == true)
+                .map((product) => (
+                  <Card key={product.title} product={product} />
+                ))}
+            </div>
+          </div>
+          <Spacer />
+          {/*-------------------------------------SEC----------------------------------------------------- */}
+          <div className="flex-col gap-8 flex ">
+            <div className="flex justify-between">
+              <div className="flex flex-col gap-2">
+                <h1 className="font-semibold">Featured Products</h1>
+                <h2 className="text-gray-400">
+                  Hand-picked products just for you
+                </h2>
+              </div>
+              <Link to="/product_listing" className="btn btn-sm">
+                View All →
+              </Link>
+            </div>
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
+              {products
+                .filter((product) => product.isBestSeller == true)
+                .map((product) => (
+                  <Card key={product.title} product={product} />
+                ))}
+            </div>
+          </div>
+          {/*-------------------------------------3rd----------------------------------------------------- */}
+          <div className="flex-col gap-8 flex ">
+            <div className="flex justify-between">
+              <div className="flex flex-col gap-2">
+                <h1 className="font-semibold">Featured Products</h1>
+                <h2 className="text-gray-400">
+                  Hand-picked products just for you
+                </h2>
+              </div>
+              <Link to="/product_listing" className="btn btn-sm">
+                View All →
+              </Link>
+            </div>
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
+              {products
+                .filter((product) => product.isNew == true)
+                .map((product) => (
+                  <Card key={product.title} product={product} />
+                ))}
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { products } from "./types";
 
 export const productsData: products[] = [
+  // 1. Headphones (Featured & Best Seller)
   {
     id: "1",
     title: "Premium Wireless Headphones",
@@ -15,36 +16,16 @@ export const productsData: products[] = [
     category: "Audio",
     colors: ["Black", "Silver", "Blue"],
     shortDescription:
-      "Experience crystal-clear sound with active noise cancellation and 30-hour battery life.",
-    description:
-      "Experience crystal-clear sound with active noise cancellation and 30-hour battery life. This premium product combines cutting-edge technology with elegant design. Perfect for professionals and enthusiasts alike, it delivers exceptional performance in a sleek, modern package.",
-    specifications: {
-      "Driver Size": "40mm",
-      "Frequency Response": "20Hz - 20kHz",
-      "Battery Life": "30 hours",
-      "Charging Time": "2 hours",
-      Connectivity: "Bluetooth 5.0, 3.5mm Jack",
-      Weight: "250g",
-      "Noise Cancellation": "Active",
-    },
-    reviews: [
-      {
-        author: "John Doe",
-        rating: 5,
-        comment:
-          "Excellent sound quality and comfortable to wear for long periods.",
-        date: "2024-01-15",
-      },
-      {
-        author: "Jane Smith",
-        rating: 4,
-        comment: "Great headphones, but the battery could last a bit longer.",
-        date: "2024-01-20",
-      },
-    ],
+      "Experience crystal-clear sound with active noise cancellation.",
+    description: "Full description here...",
+    specifications: { Connectivity: "Bluetooth 5.0" },
+    reviews: [],
     stock: 25,
     inStock: true,
+    isFeatured: true,
+    isBestSeller: true,
   },
+  // 2. Watch (Featured & Best Seller)
   {
     id: "2",
     title: "Smart Fitness Watch Ultra",
@@ -57,31 +38,18 @@ export const productsData: products[] = [
       "https://images.unsplash.com/photo-1713989635340-b25bfc893f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
     sku: "FIT-WT-002",
     category: "Wearables",
-    colors: ["Black", "Silver", "Rose Gold"],
+    colors: ["Black", "Silver"],
     shortDescription:
-      "Track your fitness goals with advanced health monitoring and GPS tracking.",
-    description:
-      "Track your fitness goals with advanced health monitoring and GPS tracking. This smartwatch features a comprehensive suite of health metrics, including heart rate monitoring, sleep tracking, and workout detection. Stay connected with notifications and music control.",
-    specifications: {
-      Display: "1.4 inch AMOLED",
-      "Battery Life": "7 days",
-      "Water Resistance": "5 ATM",
-      GPS: "Built-in",
-      "Heart Rate Monitor": "Yes",
-      "Sleep Tracking": "Yes",
-      Compatibility: "iOS & Android",
-    },
-    reviews: [
-      {
-        author: "Mike Johnson",
-        rating: 5,
-        comment: "Best fitness watch I've ever owned. Highly recommend!",
-        date: "2024-02-01",
-      },
-    ],
+      "Track your fitness goals with advanced health monitoring.",
+    description: "Full description here...",
+    specifications: { GPS: "Yes" },
+    reviews: [],
     stock: 40,
     inStock: true,
+    isFeatured: true,
+    isBestSeller: true,
   },
+  // 3. Laptop (Featured)
   {
     id: "3",
     title: "Ultra Slim Laptop Pro 15",
@@ -94,31 +62,16 @@ export const productsData: products[] = [
       "https://images.unsplash.com/flagged/photo-1576697010739-6373b63f3204?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
     sku: "LAP-TB-003",
     category: "Computers",
-    colors: ["Silver", "Space Gray"],
-    shortDescription:
-      "Powerful performance in an ultra-slim design with stunning display quality.",
-    description:
-      "Powerful performance in an ultra-slim design with stunning display quality. This laptop features the latest processor technology, ample storage, and a beautiful high-resolution display. Perfect for professionals who need power and portability.",
-    specifications: {
-      Processor: "Intel Core i7 12th Gen",
-      RAM: "16GB",
-      Storage: "512GB SSD",
-      Display: "15.6 inch 4K",
-      Graphics: "Integrated",
-      "Battery Life": "10 hours",
-      Weight: "1.5kg",
-    },
-    reviews: [
-      {
-        author: "Sarah Williams",
-        rating: 5,
-        comment: "Fast, lightweight, and beautiful. Perfect for my work!",
-        date: "2024-02-10",
-      },
-    ],
+    colors: ["Silver"],
+    shortDescription: "Powerful performance in an ultra-slim design.",
+    description: "Full description here...",
+    specifications: { Processor: "i7" },
+    reviews: [],
     stock: 15,
     inStock: true,
+    isFeatured: true,
   },
+  // 4. Phone (Featured & Best Seller)
   {
     id: "4",
     title: "5G Smartphone Pro Max",
@@ -131,30 +84,95 @@ export const productsData: products[] = [
       "https://images.unsplash.com/photo-1675953935267-e039f13ddd79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
     sku: "PHN-TP-004",
     category: "Electronics",
-    colors: ["Black", "White", "Blue", "Purple"],
-    shortDescription:
-      "Next-generation smartphone with advanced camera system and lightning-fast 5G connectivity.",
-    description:
-      "Next-generation smartphone with advanced camera system and lightning-fast 5G connectivity. Featuring a powerful processor, stunning display, and professional-grade cameras, this device delivers an exceptional mobile experience.",
-    specifications: {
-      Display: "6.7 inch OLED",
-      Processor: "Snapdragon 8 Gen 2",
-      RAM: "12GB",
-      Storage: "256GB",
-      Camera: "108MP Triple Camera",
-      Battery: "5000mAh",
-      Charging: "Fast Wireless",
-    },
-    reviews: [
-      {
-        author: "David Lee",
-        rating: 5,
-        comment: "Amazing camera quality and super fast performance!",
-        date: "2024-02-15",
-      },
-    ],
+    colors: ["Black", "Blue"],
+    shortDescription: "Next-gen 5G connectivity with pro camera system.",
+    description: "Full description here...",
+    specifications: { Storage: "256GB" },
+    reviews: [],
     stock: 30,
     inStock: true,
+    isFeatured: true,
+    isBestSeller: true,
+  },
+  // 5. Keyboard (Best Seller) - NEW FROM IMAGE
+  {
+    id: "5",
+    title: "RGB Mechanical Gaming Keyboard",
+    brand: "GameTech",
+    rate: "4.8 (1156)",
+    price: 149.99,
+    imgurl:
+      "https://images.unsplash.com/photo-1643869094356-4dc3f74f22eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    sku: "GT-KB-005",
+    category: "Gaming",
+    colors: ["Black"],
+    shortDescription: "Tactile switches with customizable RGB lighting.",
+    description: "Full description here...",
+    specifications: { Switch: "Cherry MX Red" },
+    reviews: [],
+    stock: 50,
+    inStock: true,
+    isBestSeller: true,
+  },
+  // 6. Earbuds (New Arrival) - NEW FROM IMAGE
+  {
+    id: "6",
+    title: "True Wireless Earbuds Pro",
+    brand: "SoundMax",
+    rate: "4.6 (897)",
+    price: 179.99,
+    imgurl:
+      "https://images.unsplash.com/photo-1755182529034-189a6051faae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    sku: "AUD-EB-006",
+    category: "Audio",
+    colors: ["White"],
+    shortDescription: "Immersive sound with all-day battery life.",
+    description: "Full description here...",
+    specifications: { Battery: "24h" },
+    reviews: [],
+    stock: 100,
+    inStock: true,
+    isNew: true,
+  },
+  // 7. Camera (New Arrival) - NEW FROM IMAGE
+  {
+    id: "7",
+    title: "Professional Mirrorless Camera",
+    brand: "ProShot",
+    rate: "5.0 (328)",
+    price: 2499.99,
+    imgurl:
+      "https://images.unsplash.com/photo-1729857001644-ade54ca81f53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    sku: "CAM-PS-007",
+    category: "Photography",
+    colors: ["Black"],
+    shortDescription: "Capture stunning 8K video and 45MP photos.",
+    description: "Full description here...",
+    specifications: { Sensor: "Full Frame" },
+    reviews: [],
+    stock: 5,
+    inStock: true,
+    isNew: true,
+  },
+  // 8. Mouse (New Arrival) - NEW FROM IMAGE
+  {
+    id: "8",
+    title: "Wireless Gaming Mouse",
+    brand: "GameTech",
+    rate: "4.6 (972)",
+    price: 89.99,
+    imgurl:
+      "https://images.unsplash.com/photo-1527814050087-3793815479db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    sku: "GT-MS-008",
+    category: "Gaming",
+    colors: ["White"],
+    shortDescription: "Ultra-low latency for competitive gaming.",
+    description: "Full description here...",
+    specifications: { DPI: "25000" },
+    reviews: [],
+    stock: 60,
+    inStock: true,
+    isNew: true,
   },
 ];
 export const orders = [

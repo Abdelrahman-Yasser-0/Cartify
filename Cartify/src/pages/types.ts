@@ -1,5 +1,5 @@
 export type products = {
-  id?: string;
+  id: string;
   title: string;
   brand: string;
   rate: string;
@@ -7,20 +7,19 @@ export type products = {
   originalPrice?: number;
   discount?: number;
   imgurl: string;
-  sku?: string;
-  category?: string;
-  colors?: string[];
-  description?: string;
-  specifications?: { [key: string]: string };
-  reviews?: Array<{
-    author: string;
-    rating: number;
-    comment: string;
-    date: string;
-  }>;
+  sku: string;
+  category: string;
+  colors: string[];
+  shortDescription: string;
+  description: string;
+  specifications: Record<string, string>;
+  reviews: { author: string; rating: number; comment: string; date: string }[];
   stock: number;
-  inStock?: boolean;
-  shortDescription?: string;
+  inStock: boolean;
+  // Added these flags to make filtering easy!
+  isNew?: boolean;
+  isBestSeller?: boolean;
+  isFeatured?: boolean;
 };
 
 export type Auth_Signup_2_props = {
