@@ -36,6 +36,7 @@ const Header = () => {
     navigate(destination);
   };
 
+  const currentuser = localStorage.getItem("user");
   return (
     <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
       <div className="mx-auto max-w-screen-2xl w-full px-12">
@@ -120,9 +121,12 @@ const Header = () => {
               </span>
             )}
           </Link>
-          <a className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3">
+          <Link
+            to={`${currentuser ? "/account/overview" : "/auth/login"}`}
+            className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
+          >
             <FiUser />
-          </a>
+          </Link>
         </div>
 
         <div className="drawer drawer-end justify-end w-7">

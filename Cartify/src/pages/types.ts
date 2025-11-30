@@ -56,3 +56,16 @@ export type CustomInput_props = {
   valueTouched: boolean;
   setValueTouched: (value: boolean) => void;
 };
+
+export type user = {
+  fullname: string;
+  email: string;
+  password: string;
+  country: string;
+  city: string;
+  streetAddress: string;
+  apartment: string;
+  zip: string;
+  phoneNumber: string;
+  id: number;
+};

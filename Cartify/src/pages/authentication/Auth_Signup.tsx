@@ -13,6 +13,8 @@ import { IoClose } from "react-icons/io5";
 import Auth_Signup_2 from "./Auth_Signup_2";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Auth_signup_confirm from "./Auth_signup_confirm";
+import { user } from "../types";
+import { users } from "../usersData";
 
 const Auth_Signup = () => {
   const [email, setEmail] = useState<string>("");
@@ -131,6 +133,19 @@ const Auth_Signup = () => {
     ) {
       //send data using api
       setStepper((prev) => (prev += 1));
+      const userData: user = {
+        fullname: fullName,
+        email: email,
+        password: password,
+        country: country,
+        city: city,
+        streetAddress: streetAddress,
+        apartment: apartment,
+        zip: zip,
+        phoneNumber: phoneNumber,
+        id: users.length + 1,
+      };
+      users.push(userData);
       console.log("yes valied");
     } else {
       console.log("no not valied");

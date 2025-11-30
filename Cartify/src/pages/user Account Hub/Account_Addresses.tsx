@@ -63,6 +63,7 @@ const Account_Addresses = ({
                 setcountryTouched(true);
               }}
               disabled={!isEditing}
+              value={country}
             />
           </label>
         </div>
@@ -98,6 +99,7 @@ const Account_Addresses = ({
                 setcityTouched(true);
               }}
               disabled={!isEditing}
+              value={city}
             />
           </label>
         </div>
@@ -137,6 +139,7 @@ const Account_Addresses = ({
               setstreetAddressTouched(true);
             }}
             disabled={!isEditing}
+            value={streetAddress}
           />
         </label>
       </div>
@@ -174,6 +177,7 @@ const Account_Addresses = ({
                 setApartmentTouched(true);
               }}
               disabled={!isEditing}
+              value={apartment}
             />
           </label>
         </div>
@@ -208,6 +212,7 @@ const Account_Addresses = ({
                 setZipTouched(true);
               }}
               disabled={!isEditing}
+              value={zip}
             />
           </label>
         </div>
@@ -247,6 +252,7 @@ const Account_Addresses = ({
               setPhoneNumberTouched(true);
             }}
             disabled={!isEditing}
+            value={phoneNumber}
           />
         </label>
       </div>

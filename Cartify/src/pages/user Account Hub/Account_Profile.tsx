@@ -7,15 +7,23 @@ import { IoClose } from "react-icons/io5";
 import Account_Addresses from "./Account_Addresses";
 
 const Account_Profile = () => {
+  const userstring = localStorage.getItem("user");
+  const user = userstring ? JSON.parse(userstring) : null;
   const [isEditing, setIsEditing] = useState(false);
-  const [email, setEmail] = useState<string>("");
-  const [country, setCountry] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [apartment, setApartment] = useState<string>("");
-  const [zip, setZip] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [streetAddress, setStreetAddress] = useState<string>("");
-  const [fullName, setfullName] = useState<string>("");
+  const [email, setEmail] = useState<string>(user ? user.email : "");
+  const [country, setCountry] = useState<string>(user ? user.country : "");
+  const [city, setCity] = useState<string>(user ? user.city : "");
+  const [apartment, setApartment] = useState<string>(
+    user ? user.apartment : ""
+  );
+  const [zip, setZip] = useState<string>(user ? user.zip : "");
+  const [phoneNumber, setPhoneNumber] = useState<string>(
+    user ? user.phoneNumber : ""
+  );
+  const [streetAddress, setStreetAddress] = useState<string>(
+    user ? user.streetAddress : ""
+  );
+  const [fullName, setfullName] = useState<string>(user ? user.fullname : "");
   const [password, setPassword] = useState<string>("");
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
@@ -185,6 +193,7 @@ const Account_Profile = () => {
                     setfullNameTouched(true);
                   }}
                   disabled={!isEditing}
+                  value={fullName}
                 />
               </label>
               {/*--------------------------------Error List -------------------------------- */}
@@ -253,6 +262,7 @@ const Account_Profile = () => {
                     setEmailTouched(true);
                   }}
                   disabled={!isEditing}
+                  value={email}
                 />
               </label>
               <div
@@ -351,6 +361,7 @@ const Account_Profile = () => {
                     setPasswordTouched(true);
                   }}
                   disabled={!isEditing}
+                  value={password}
                 />
                 <button
                   type="button"

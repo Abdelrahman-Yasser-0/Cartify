@@ -2,9 +2,10 @@ import { useState } from "react";
 import main_img from "../../images/cartify_login_img.png";
 import { FiShoppingCart } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
+import { users } from "../usersData";
 
 /**
  * --------------------------------------------------------------------------
@@ -27,7 +28,8 @@ const Auth_Login = () => {
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
-
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<boolean>(false);
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;
     return spaceRegex.test(email);
@@ -107,20 +109,26 @@ const Auth_Login = () => {
     e.preventDefault();
     if (validateEmail(email) && vaildatePassword(password)) {
       //send data using api
-      console.log("yes valied");
-      const formdata = {
-        Email: email,
-        Password: password,
-      };
-      console.log(formdata);
+
+      const founduser = users.find(
+        (user) => user.email == email && user.password == password
+      );
+      if (founduser) {
+        const { password, ...userWithoutpassword } = founduser;
+        localStorage.setItem("user", JSON.stringify(userWithoutpassword));
+        console.log("yes valied");
+        navigate("/");
+      } else {
+        setLoginError(true);
+      }
     } else {
       console.log("no not valied");
     }
   };
   // console.log("Email state :" + !validateEmail(email) && emailTouched);
   // console.log("email toched :" + emailTouched);
-  console.log("email valid :" + validateEmail(email));
-  console.log("space :" + !containWhiteSpace(email));
+  // console.log("email valid :" + validateEmail(email));
+  // console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="flex w-full min-h-screen justify-center items-center gap-24p pt-10">
@@ -378,13 +386,23 @@ const Auth_Login = () => {
             </Link>
           </div>
         </div>
+        <p
+          className={`text-red-600 flex w-full justify-center items-center gap-4 ${
+            !loginError && "hidden  "
+          }`}
+        >
+          <span>
+            <IoClose className="text-red-600 text-[16px] shrink-0" />
+          </span>
+          Incorrect email or password.
+        </p>
         <button className="btn bg-teal-600 w-full btn-sm" type="submit">
           Log in
         </button>
         <div className="flex w-full justify-center gap-3">
           <p>Don't have an account?</p>
           <Link
-            to=""
+            to="/auth/signup"
             className="link link-primary !no-underline !text-cyan-600"
           >
             Create account
