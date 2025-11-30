@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -21,6 +21,11 @@ const ProductDetailes = () => {
   const [activeTab, setActiveTab] = useState<
     "description" | "specifications" | "reviews"
   >("description");
+
+  // Scroll to top when component mounts or product ID changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   const rating = parseFloat(product.rate.split(" ")[0]);
   const reviewCount = product.rate.split("(")[1]?.replace(")", "") || "0";
