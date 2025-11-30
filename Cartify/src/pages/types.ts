@@ -18,6 +18,7 @@ export type products = {
     comment: string;
     date: string;
   }>;
+  stock: number;
   inStock?: boolean;
   shortDescription?: string;
 };

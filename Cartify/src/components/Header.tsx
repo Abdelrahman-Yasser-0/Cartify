@@ -22,6 +22,8 @@ const Header = () => {
   const location = useLocation();
   const { totalItems } = useCart();
 
+  // Show a compact admin header on admin routes instead of the regular header
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setSearchTerm(params.get("q") ?? "");
@@ -37,7 +39,62 @@ const Header = () => {
   };
 
   const currentuser = localStorage.getItem("user");
-  return (
+
+  return location.pathname.startsWith("/admin") ? (
+    <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
+      <div className="mx-auto max-w-screen-2xl w-full px-12">
+        <div className="navbar-start flex-1 w-full">
+          <div className="flex items-center gap-3 select-none">
+            <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
+            <span className="ml-2 text-xl font-semibold">Cartify Admin</span>
+          </div>
+        </div>
+
+        <div className="navbar-end flex gap-1 text-xl w-44  justify-end">
+          <a className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3">
+            <FiUser />
+          </a>
+        </div>
+
+        <div className="drawer justify-end w-7">
+          <input id="my-drawer-5" type="checkbox" className="drawer-toggle " />
+          <div className="drawer-content ">
+            {/* Page content here */}
+            <label htmlFor="my-drawer-5" className="drawer-button lg:hidden">
+              <FiMenu className="" />
+            </label>
+          </div>
+          <div className="drawer-side">
+            <label
+              htmlFor="my-drawer-5"
+              aria-label="close sidebar"
+              className="drawer-overlay"
+            ></label>
+            <ul className="menu bg-base-200 min-h-full w-80 p-4 text-black">
+              {/* Sidebar content here */}
+              <li>
+                <Link to="/">Overview</Link>
+              </li>
+              <li>
+                <Link to="/product_listing">Products</Link>
+              </li>
+              <li>
+                <Link to="/cart">Inventory</Link>
+              </li>
+              <div className="w-full h-px bg-gray-300"></div>
+
+              <a className="p-3 text-gray-500">Website</a>
+
+              <li>
+                <Link to="/">Settings</Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {/* paste before this */}
+      </div>
+    </div>
+  ) : (
     <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
       <div className="mx-auto max-w-screen-2xl w-full px-12">
         <div className="navbar-start flex-1 w-full">
