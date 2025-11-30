@@ -47,46 +47,59 @@ const ProductDetailes = () => {
     // Generate 3 sample reviews
     const sampleReviews = [];
     const names = ["Alex M.", "Sarah K.", "Michael T.", "Emma L.", "David R."];
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
     // Generate reviews based on product category
     const categoryReviews: Record<string, string[]> = {
       Audio: [
         "The sound quality is absolutely incredible! Crystal clear audio with deep bass. Best purchase I've made this year.",
         "Comfortable to wear for hours and the noise cancellation works perfectly. Battery life is impressive too.",
-        "Great value for money. The build quality feels premium and the sound is amazing for the price point."
+        "Great value for money. The build quality feels premium and the sound is amazing for the price point.",
       ],
       Wearables: [
         "Tracks all my activities accurately. The health monitoring features are spot-on and the battery lasts a week!",
         "Love the design and how lightweight it is. The GPS tracking is very precise and the app is user-friendly.",
-        "Excellent fitness companion. The heart rate monitor is accurate and the sleep tracking gives great insights."
+        "Excellent fitness companion. The heart rate monitor is accurate and the sleep tracking gives great insights.",
       ],
       Computers: [
         "Lightning fast performance! Handles all my work tasks effortlessly. The display is crisp and colors are vibrant.",
         "Sleek design and powerful specs. Perfect for both work and entertainment. Battery life is decent for a laptop.",
-        "Great build quality and the keyboard is comfortable to type on. No lag or heating issues even with heavy usage."
+        "Great build quality and the keyboard is comfortable to type on. No lag or heating issues even with heavy usage.",
       ],
       Electronics: [
         "Outstanding camera quality! Photos are sharp and detailed. The performance is smooth and responsive.",
         "Fast charging is a game changer. The display is beautiful and the overall user experience is excellent.",
-        "Well worth the investment. Great features and the build quality feels premium. Highly recommend!"
+        "Well worth the investment. Great features and the build quality feels premium. Highly recommend!",
       ],
       Gaming: [
         "Responsive and precise. The RGB lighting looks amazing and the build quality is solid. Perfect for gaming!",
         "Comfortable grip and excellent tracking. Battery life is great and the customization options are fantastic.",
-        "Best gaming peripheral I've owned. The performance is top-notch and it feels great in hand during long sessions."
+        "Best gaming peripheral I've owned. The performance is top-notch and it feels great in hand during long sessions.",
       ],
       Photography: [
         "Stunning image quality! The autofocus is fast and accurate. Professional results every time.",
         "Excellent camera for both photos and video. The low-light performance is impressive and the build is solid.",
-        "Worth every penny. The image stabilization works great and the color reproduction is accurate and vibrant."
-      ]
+        "Worth every penny. The image stabilization works great and the color reproduction is accurate and vibrant.",
+      ],
     };
 
     const reviews = categoryReviews[product.category] || [
       "Excellent product! Exceeded my expectations. Great quality and fast shipping.",
       "Very satisfied with this purchase. Works perfectly and looks great too!",
-      "Highly recommend! Great value for money and the quality is top-notch."
+      "Highly recommend! Great value for money and the quality is top-notch.",
     ];
 
     // Use product ID as seed for consistent reviews per product
@@ -96,12 +109,12 @@ const ProductDetailes = () => {
       const monthIndex = (seed + i * 2) % months.length;
       const day = ((seed + i * 3) % 28) + 1;
       const reviewRating = rating - 0.2 + ((seed + i) % 5) * 0.1;
-      
+
       sampleReviews.push({
         author: names[nameIndex],
         rating: Math.max(4, Math.min(5, Math.round(reviewRating * 2) / 2)),
         comment: reviews[i] || reviews[0],
-        date: `${months[monthIndex]} ${day}, 2024`
+        date: `${months[monthIndex]} ${day}, 2024`,
       });
     }
 
@@ -407,7 +420,10 @@ const ProductDetailes = () => {
                   {reviewsToDisplay.length > 0 ? (
                     <>
                       {reviewsToDisplay.map((review, index) => (
-                        <div key={index} className="border-b pb-6 last:border-0">
+                        <div
+                          key={index}
+                          className="border-b pb-6 last:border-0"
+                        >
                           <div className="flex items-center gap-4 mb-2">
                             <div className="font-semibold">{review.author}</div>
                             <div className="flex items-center">
@@ -423,7 +439,9 @@ const ProductDetailes = () => {
                       {reviewCountNum > 3 && (
                         <div className="pt-4 text-center">
                           <p className="text-gray-500 italic text-sm">
-                            ...and {reviewCountNum - 3} more {reviewCountNum - 3 === 1 ? 'review' : 'reviews'} from satisfied customers
+                            ...and {reviewCountNum - 3} more{" "}
+                            {reviewCountNum - 3 === 1 ? "review" : "reviews"}{" "}
+                            from satisfied customers
                           </p>
                         </div>
                       )}
@@ -437,11 +455,9 @@ const ProductDetailes = () => {
               )}
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="mt-16">
-            <Footer />
-          </div>
+        </div>
+        <div className="pt-16">
+          <Footer />
         </div>
       </div>
     </div>
