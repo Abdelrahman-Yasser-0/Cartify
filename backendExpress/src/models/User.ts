@@ -1,4 +1,5 @@
-// import { optional } from "joi";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
@@ -66,5 +67,34 @@ const UserSchema = new mongoose.Schema({
     default: [],
   },
 });
+
+/////
+
+// UserSchema.statics.findByCredentials = async function (email, password) {
+//   const user = await User.findOne({ email });
+
+//   if (!user) {
+//     throw new Error("Invalid email or password");
+//   }
+//   const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+//   if (!isPasswordMatch) {
+//     throw new Error("Invalid email or password");
+//   }
+//   return user;
+// };
+
+// UserSchema.methods.generateToken = function () {
+//   return jwt.sign({ id: this._id.toString() }, "this is my secret key");
+// };
+
+// UserSchema.methods.toJSON = function () {
+//   const userObject = this.toObject();
+//   delete userObject.password;
+//   return userObject;
+// };
+
+////
+
 const User = mongoose.model("users", UserSchema);
 export default User;
