@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { productsData } from "../productsData";
@@ -13,6 +13,7 @@ const ProductDetailes = () => {
   const { id } = useParams<{ id: string }>();
   const product = productsData.find((p) => p.id === id) || productsData[0];
   const { addItem } = useCart();
+  const navigate = useNavigate();
 
   const [selectedColor, setSelectedColor] = useState<string>(
     product.colors?.[0] || ""
@@ -28,7 +29,84 @@ const ProductDetailes = () => {
   }, [id]);
 
   const rating = parseFloat(product.rate.split(" ")[0]);
-  const reviewCount = product.rate.split("(")[1]?.replace(")", "") || "0";
+  // Extract review count from rate string (format: "4.8 (1247)" or just "4.8")
+  const reviewCountMatch = product.rate.match(/\((\d+)\)/);
+  const reviewCount = reviewCountMatch ? reviewCountMatch[1] : "0";
+  const reviewCountNum = parseInt(reviewCount, 10);
+
+  // Generate sample reviews if review count is high but reviews array is empty
+  const reviewsToDisplay = useMemo(() => {
+    if (product.reviews && product.reviews.length > 0) {
+      return product.reviews;
+    }
+
+    if (reviewCountNum <= 3) {
+      return [];
+    }
+
+    // Generate 3 sample reviews
+    const sampleReviews = [];
+    const names = ["Alex M.", "Sarah K.", "Michael T.", "Emma L.", "David R."];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    // Generate reviews based on product category
+    const categoryReviews: Record<string, string[]> = {
+      Audio: [
+        "The sound quality is absolutely incredible! Crystal clear audio with deep bass. Best purchase I've made this year.",
+        "Comfortable to wear for hours and the noise cancellation works perfectly. Battery life is impressive too.",
+        "Great value for money. The build quality feels premium and the sound is amazing for the price point."
+      ],
+      Wearables: [
+        "Tracks all my activities accurately. The health monitoring features are spot-on and the battery lasts a week!",
+        "Love the design and how lightweight it is. The GPS tracking is very precise and the app is user-friendly.",
+        "Excellent fitness companion. The heart rate monitor is accurate and the sleep tracking gives great insights."
+      ],
+      Computers: [
+        "Lightning fast performance! Handles all my work tasks effortlessly. The display is crisp and colors are vibrant.",
+        "Sleek design and powerful specs. Perfect for both work and entertainment. Battery life is decent for a laptop.",
+        "Great build quality and the keyboard is comfortable to type on. No lag or heating issues even with heavy usage."
+      ],
+      Electronics: [
+        "Outstanding camera quality! Photos are sharp and detailed. The performance is smooth and responsive.",
+        "Fast charging is a game changer. The display is beautiful and the overall user experience is excellent.",
+        "Well worth the investment. Great features and the build quality feels premium. Highly recommend!"
+      ],
+      Gaming: [
+        "Responsive and precise. The RGB lighting looks amazing and the build quality is solid. Perfect for gaming!",
+        "Comfortable grip and excellent tracking. Battery life is great and the customization options are fantastic.",
+        "Best gaming peripheral I've owned. The performance is top-notch and it feels great in hand during long sessions."
+      ],
+      Photography: [
+        "Stunning image quality! The autofocus is fast and accurate. Professional results every time.",
+        "Excellent camera for both photos and video. The low-light performance is impressive and the build is solid.",
+        "Worth every penny. The image stabilization works great and the color reproduction is accurate and vibrant."
+      ]
+    };
+
+    const reviews = categoryReviews[product.category] || [
+      "Excellent product! Exceeded my expectations. Great quality and fast shipping.",
+      "Very satisfied with this purchase. Works perfectly and looks great too!",
+      "Highly recommend! Great value for money and the quality is top-notch."
+    ];
+
+    // Use product ID as seed for consistent reviews per product
+    const seed = parseInt(product.id, 10);
+    for (let i = 0; i < 3; i++) {
+      const nameIndex = (seed + i) % names.length;
+      const monthIndex = (seed + i * 2) % months.length;
+      const day = ((seed + i * 3) % 28) + 1;
+      const reviewRating = rating - 0.2 + ((seed + i) % 5) * 0.1;
+      
+      sampleReviews.push({
+        author: names[nameIndex],
+        rating: Math.max(4, Math.min(5, Math.round(reviewRating * 2) / 2)),
+        comment: reviews[i] || reviews[0],
+        date: `${months[monthIndex]} ${day}, 2024`
+      });
+    }
+
+    return sampleReviews;
+  }, [product.id, product.category, product.reviews, reviewCountNum, rating]);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -59,6 +137,13 @@ const ProductDetailes = () => {
 
   const handleQuantityChange = (delta: number) => {
     setQuantity((prev) => Math.max(1, prev + delta));
+  };
+
+  const handleBuyNow = () => {
+    if (product.inStock) {
+      addItem(product, quantity);
+      navigate("/checkout");
+    }
   };
 
   return (
@@ -218,7 +303,11 @@ const ProductDetailes = () => {
                   <IoCartOutline className="text-xl" />
                   Add to Cart
                 </button>
-                <button className="flex-1 bg-gray-200 text-gray-800 py-4 rounded-lg font-semibold hover:bg-gray-300 transition">
+                <button
+                  className="flex-1 bg-gray-200 text-gray-800 py-4 rounded-lg font-semibold hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleBuyNow}
+                  disabled={!product.inStock}
+                >
                   Buy Now
                 </button>
               </div>
@@ -315,21 +404,30 @@ const ProductDetailes = () => {
 
               {activeTab === "reviews" && (
                 <div className="space-y-6">
-                  {product.reviews && product.reviews.length > 0 ? (
-                    product.reviews.map((review, index) => (
-                      <div key={index} className="border-b pb-6 last:border-0">
-                        <div className="flex items-center gap-4 mb-2">
-                          <div className="font-semibold">{review.author}</div>
-                          <div className="flex items-center">
-                            {renderStars(review.rating)}
+                  {reviewsToDisplay.length > 0 ? (
+                    <>
+                      {reviewsToDisplay.map((review, index) => (
+                        <div key={index} className="border-b pb-6 last:border-0">
+                          <div className="flex items-center gap-4 mb-2">
+                            <div className="font-semibold">{review.author}</div>
+                            <div className="flex items-center">
+                              {renderStars(review.rating)}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {review.date}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {review.date}
-                          </div>
+                          <p className="text-gray-700">{review.comment}</p>
                         </div>
-                        <p className="text-gray-700">{review.comment}</p>
-                      </div>
-                    ))
+                      ))}
+                      {reviewCountNum > 3 && (
+                        <div className="pt-4 text-center">
+                          <p className="text-gray-500 italic text-sm">
+                            ...and {reviewCountNum - 3} more {reviewCountNum - 3 === 1 ? 'review' : 'reviews'} from satisfied customers
+                          </p>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <p className="text-gray-600">
                       No reviews yet. Be the first to review this product!
