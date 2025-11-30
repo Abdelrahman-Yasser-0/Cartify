@@ -216,10 +216,18 @@ const Header = () => {
               <a className="p-3 text-gray-500">Account</a>
 
               <li>
-                <a>My Profile</a>
+                <Link
+                  to={`${currentuser ? "/account/overview" : "/auth/login"}`}
+                >
+                  My Profile
+                </Link>
               </li>
               <li>
-                <a>My Orders</a>
+                <Link
+                  to={`${currentuser ? "/account/overview" : "/auth/login"}`}
+                >
+                  My Orders
+                </Link>
               </li>
               <div className="w-full h-px bg-gray-300"></div>
 
