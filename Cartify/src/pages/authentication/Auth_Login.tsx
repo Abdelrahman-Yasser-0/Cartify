@@ -2,8 +2,25 @@ import { useState } from "react";
 import main_img from "../../images/cartify_login_img.png";
 import { FiShoppingCart } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
+import { users } from "../usersData";
+
+/**
+ * --------------------------------------------------------------------------
+ * What happens when a usestate gets changed ???
+ * --------------------------------------------------------------------------
+ * 1-The pages related to this usestate gets updated
+ *
+ *  1.1-Every statment outside the return get reexcuted ex:All consts (validateEmail, isEmailError) are re-calculated with the new state.
+ *      console.logs run again But the Use State elments dosnt get recalc it is outside of the scope.
+ *
+ *  1.2-The statments inside the Return also gets updated if and only if the statment is reltated to the use State directly or indirectly
+ *      if there is a function use this usestate inside the componetn even if the element dosnt use the use state directly and use the function only it gets updated
+ *      cuz it uses the funciton which is using the use state
+ * --------------------------------------------------------------------------
+ */
 
 const Auth_Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -11,26 +28,99 @@ const Auth_Login = () => {
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<boolean>(false);
+  const containWhiteSpace = (email: string): boolean => {
+    const spaceRegex = /\s/;
+    return spaceRegex.test(email);
+  };
+
+  const containAtSymbol = (email: string): boolean => {
+    const atSymbolRegex = /@/;
+    return atSymbolRegex.test(email);
+  };
+
+  // const validUserName = (email: string): boolean => {
+  //   const usernameRegex = /^[a-zA-Z0-9._%+-]+@/;
+  //   return usernameRegex.test(email);
+  // };
+  const validDomain = (email: string): boolean => {
+    const domainRegex = /@(gmail|yahoo|outlook|hotmail)\.com$/i;
+    return domainRegex.test(email);
+  };
+  const validExtinsion = (email: string): boolean => {
+    const extensionRegex = /\.[a-zA-Z]{2,}$/;
+    return extensionRegex.test(email);
+  };
 
   const validateEmail = (email: string): boolean => {
     //this function checks the email and being called every time the email changes cuz the email is a usestate so every element related to it rerenders
     //the regex logic
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
+
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return (
+      !containWhiteSpace(email) &&
+      containAtSymbol(email) &&
+      validDomain(email) &&
+      validExtinsion(email)
+    );
+  };
+
+  const passLenGt8 = (password: string): boolean => {
+    if (password.length >= 8) {
+      return true;
+    }
+    return false;
+  };
+
+  const containLowerCase = (password: string): boolean => {
+    const containlowercase = /[a-z]/;
+    return containlowercase.test(password);
+  };
+
+  const containUpperCase = (password: string): boolean => {
+    const containuppercase = /[A-Z]/;
+    return containuppercase.test(password);
+  };
+  const containNumber = (password: string): boolean => {
+    const containNumber = /\d/;
+    return containNumber.test(password);
+  };
+  const containSpecialChar = (password: string): boolean => {
+    const containspeacialchar = /[@$!%*?&]/;
+    return containspeacialchar.test(password);
   };
 
   const vaildatePassword = (password: string): boolean => {
     //the regex logic
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
+    // const passwordRegex =
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    password = password.trim();
+    return (
+      containLowerCase(password) &&
+      containUpperCase(password) &&
+      containNumber(password) &&
+      containSpecialChar(password) &&
+      passLenGt8(password)
+    );
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     //submition handelr
     e.preventDefault();
     if (validateEmail(email) && vaildatePassword(password)) {
       //send data using api
-      console.log("yes valied");
+
+      const founduser = users.find(
+        (user) => user.email == email && user.password == password
+      );
+      if (founduser) {
+        const { password, ...userWithoutpassword } = founduser;
+        localStorage.setItem("user", JSON.stringify(userWithoutpassword));
+        console.log("yes valied");
+        navigate("/");
+      } else {
+        setLoginError(true);
+      }
     } else {
       console.log("no not valied");
     }
@@ -38,16 +128,20 @@ const Auth_Login = () => {
   // console.log("Email state :" + !validateEmail(email) && emailTouched);
   // console.log("email toched :" + emailTouched);
   // console.log("email valid :" + validateEmail(email));
+  // console.log("space :" + !containWhiteSpace(email));
 
   return (
-    <div className="flex w-full h-screen justify-center items-center gap-24">
+    <div className="flex w-full min-h-screen justify-center items-center gap-24p pt-10">
+      {/*--------------------------------Left Img-------------------------------- */}
       <div className=" overflow-hidden max-w-md lg:block hidden  ">
         <img src={main_img} alt="img_Not_Found 404" className="w-full" />
       </div>
+      {/*--------------------------------Form-------------------------------- */}
       <form
         onSubmit={handleSubmit}
         className="lg:basis-[30%] lg:max-w-sm w-[80%] p-5 border rounded-2xl flex flex-col gap-5"
       >
+        {/*--------------------------------Header-------------------------------- */}
         <Link to="/" className="flex gap-4 cursor-pointer">
           <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
           <h2 className="py-1.5">Cartify</h2>
@@ -56,8 +150,11 @@ const Auth_Login = () => {
         <p className="text-sm text-gray-500">
           Log in to your Cartify account to continue
         </p>
+        {/*--------------------------------Input Fields-------------------------------- */}
         <div className="flex flex-col gap-4">
+          {/*--------------------------------Email-------------------------------- */}
           <div>
+            {/*--------------------------------Input Label Name-------------------------------- */}
             <div className="label">
               <span
                 className={`label-text ${
@@ -67,6 +164,7 @@ const Auth_Login = () => {
                 Email
               </span>
             </div>
+            {/*--------------------------------Input -------------------------------- */}
             <label
               className={`input input-bordered flex items-center gap-2 ${
                 !validateEmail(email) && emailTouched
@@ -84,9 +182,11 @@ const Auth_Login = () => {
                 <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
               </svg>
               <input
-                type="text"
+                type="email"
                 className="grow"
                 placeholder="Email"
+                name="email"
+                autoComplete="email"
                 onChange={(e) => {
                   setEmail(e.target.value);
                 }}
@@ -95,6 +195,57 @@ const Auth_Login = () => {
                 }}
               />
             </label>
+            {/*--------------------------------Error List -------------------------------- */}
+            <div
+              className={`w-full ${
+                !validateEmail(email) && emailTouched ? "" : "hidden"
+              }  bg-gray-100 rounded-lg mt-3 p-3 `}
+            >
+              <ul className={`flex flex-col gap-2`}>
+                <li
+                  className={`flex gap-2  items-center ${
+                    !containWhiteSpace(email) && "hidden"
+                  }`}
+                >
+                  {containWhiteSpace(email) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">Email address cannot contain spaces</p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containAtSymbol(email) && "hidden"
+                  }`}
+                >
+                  {!containAtSymbol(email) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">Email is missing the '@' symbol</p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    validDomain(email) && "hidden"
+                  }`}
+                >
+                  {!validDomain(email) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0 " />
+                  )}
+                  <p className="text-xs ">Please enter a valid domain</p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    validExtinsion(email) && "hidden"
+                  }`}
+                >
+                  {!validExtinsion(email) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0 " />
+                  )}
+                  <p className="text-xs ">
+                    Invalid extension. Must be at least 2 letters(e,g .com)
+                  </p>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div>
@@ -132,6 +283,8 @@ const Auth_Login = () => {
                 type={`${pass_see ? "text" : "password"}`}
                 className="grow min-w-0"
                 placeholder="Password"
+                name="password"
+                autoComplete="new-password"
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => {
                   setPasswordTouched(true);
@@ -148,7 +301,76 @@ const Auth_Login = () => {
                 )}
               </button>
             </label>
+            <div
+              className={`w-full ${
+                !vaildatePassword(password) && passwordTouched ? "" : "hidden"
+              }  bg-gray-100 rounded-lg mt-3 p-3 `}
+            >
+              <ul className={`flex flex-col gap-2`}>
+                <li
+                  className={`flex gap-2  items-center ${
+                    passLenGt8(password) && "hidden"
+                  }`}
+                >
+                  {!passLenGt8(password) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least 8 character
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containLowerCase(password) && "hidden"
+                  }`}
+                >
+                  {!containLowerCase(password) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least one Lowercase{" "}
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containUpperCase(password) && "hidden"
+                  }`}
+                >
+                  {!containUpperCase(password) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least one Uppercase character
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containNumber(password) && "hidden"
+                  }`}
+                >
+                  {!containNumber(password) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at one single Number
+                  </p>
+                </li>
+                <li
+                  className={`flex gap-2  items-center ${
+                    containSpecialChar(password) && "hidden"
+                  }`}
+                >
+                  {!containSpecialChar(password) && (
+                    <IoClose className="text-red-600 text-[16px] shrink-0" />
+                  )}
+                  <p className="text-xs">
+                    Password must contain at least one Special character
+                  </p>
+                </li>
+              </ul>
+            </div>
           </div>
+          {/*--------------------------------Remeber me + Forgot Password-------------------------------- */}
           <div className="flex w-full justify-between">
             <div>
               <label className="cursor-pointer label flex gap-4">
@@ -164,12 +386,18 @@ const Auth_Login = () => {
             </Link>
           </div>
         </div>
-        <button
-          className={`btn bg-teal-600 w-full btn-sm text-white ${
-            validateEmail(email) && vaildatePassword(password)
-              ? ""
-              : "btn-disabled"
+        <p
+          className={`text-red-600 flex w-full justify-center items-center gap-4 ${
+            !loginError && "hidden  "
           }`}
+        >
+          <span>
+            <IoClose className="text-red-600 text-[16px] shrink-0" />
+          </span>
+          Incorrect email or password.
+        </p>
+        <button
+          className={`text-white btn bg-teal-600 w-full btn-sm `}
           type="submit"
         >
           Log in
@@ -177,7 +405,7 @@ const Auth_Login = () => {
         <div className="flex w-full justify-center gap-3">
           <p>Don't have an account?</p>
           <Link
-            to=""
+            to="/auth/signup"
             className="link link-primary !no-underline !text-cyan-600"
           >
             Create account
