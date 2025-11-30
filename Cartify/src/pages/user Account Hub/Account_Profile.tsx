@@ -126,7 +126,7 @@ const Account_Profile = () => {
       streetAddress.length > 0 &&
       apartment.length > 0 &&
       zip.length > 0 &&
-      /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber)
+      /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber)
     ) {
       //send data using api
       if (password.length > 0) {
