@@ -54,4 +54,36 @@ userRouter.post("/register", async (req, res) => {
   }
 });
 
+//user login
+userRouter.post("/login", async (req, res) => {
+  try {
+    // console.log(process.env.JWT_SECRET);
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Invalid credentials" });
+    // Compare password
+    else if (user.passwordHash) {
+      const match = await bcrypt.compare(password, user.passwordHash);
+      if (!match)
+        return res.status(401).json({ message: "Invalid credentials" });
+    }
+    // Generate JWT
+    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES,
+    });
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: { id: user._id, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "An error occurred";
+
+    res.status(500).json({ message: errorMessage });
+  }
+});
+
 export default userRouter;
