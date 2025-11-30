@@ -212,7 +212,7 @@ const Auth_Signup_2 = ({
         <div className="label">
           <span
             className={`label-text ${
-              !/^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
+              !/^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
               phnoeNumberTouched &&
               "text-red-700"
             }`}
@@ -223,7 +223,8 @@ const Auth_Signup_2 = ({
         {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
-            !/^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) && phnoeNumberTouched
+            !/^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
+            phnoeNumberTouched
               ? "input input-error"
               : "input"
           }`}
@@ -233,7 +234,7 @@ const Auth_Signup_2 = ({
             className="grow"
             name="phone"
             autoComplete="tel"
-            placeholder="+2012345678901"
+            placeholder="+20 12345678901"
             onChange={(e) => {
               setPhoneNumber(e.target.value);
             }}

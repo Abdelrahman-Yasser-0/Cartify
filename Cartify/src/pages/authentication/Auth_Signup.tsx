@@ -128,7 +128,7 @@ const Auth_Signup = () => {
       streetAddress.length > 0 &&
       apartment.length > 0 &&
       zip.length > 0 &&
-      /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
+      /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
       "btn-disabled"
     ) {
       //send data using api
@@ -568,7 +568,7 @@ const Auth_Signup = () => {
                 streetAddress.length > 0 &&
                 apartment.length > 0 &&
                 zip.length > 0 &&
-                /^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber)
+                /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber)
               ) && "btn-disabled"
             }`}
             type="submit"

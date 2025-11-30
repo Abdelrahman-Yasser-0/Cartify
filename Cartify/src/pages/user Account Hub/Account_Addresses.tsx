@@ -223,7 +223,7 @@ const Account_Addresses = ({
         <div className="label">
           <span
             className={`label-text ${
-              !/^(\+20|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
+              !/^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
               phnoeNumberTouched &&
               "text-red-700"
             }`}
@@ -234,7 +234,8 @@ const Account_Addresses = ({
         {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
-            !/^01[0125][0-9]{8}$/.test(phoneNumber) && phnoeNumberTouched
+            !/^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
+            phnoeNumberTouched
               ? "input input-error"
               : "input"
           }`}
@@ -244,7 +245,7 @@ const Account_Addresses = ({
             className="grow"
             name="phone"
             autoComplete="tel"
-            placeholder="e.g., 123 Main Street"
+            placeholder="+20 01011550362"
             onChange={(e) => {
               setPhoneNumber(e.target.value);
             }}
