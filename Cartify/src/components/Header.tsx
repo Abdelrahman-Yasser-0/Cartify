@@ -164,9 +164,12 @@ const Header = () => {
           </div>
         </div>
         <div className="navbar-end flex gap-1 text-xl w-44  justify-end">
-          <a className=" text-xl hover:bg-gray-200 duration-100 rounded-md p-3">
+          <Link
+            to="/favorites"
+            className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
+          >
             <FiHeart className="hidden p-0 lg:block" />
-          </a>
+          </Link>
           <Link
             to="/cart"
             className="relative text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
@@ -210,6 +213,9 @@ const Header = () => {
               </li>
               <li>
                 <Link to="/cart">Cart</Link>
+              </li>
+              <li>
+                <Link to="/favorites">Favorites</Link>
               </li>
               <div className="w-full h-px bg-gray-300"></div>
 
