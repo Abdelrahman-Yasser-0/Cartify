@@ -29,6 +29,7 @@ const Auth_Login = () => {
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
+  const [loginError, setLoginError] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const validateEmail = (email: string): boolean => {
@@ -209,6 +210,16 @@ const Auth_Login = () => {
             </Link>
           </div>
         </div>
+        <p
+          className={`text-red-600 flex w-full justify-center items-center gap-4 ${
+            !loginError && "hidden  "
+          }`}
+        >
+          <span>
+            <IoClose className="text-red-600 text-[16px] shrink-0" />
+          </span>
+          Incorrect email or password.
+        </p>
         <button
           className={`btn bg-teal-600 w-full btn-sm text-white ${
             validateEmail(email) && vaildatePassword(password)
@@ -216,15 +227,11 @@ const Auth_Login = () => {
               : "btn-disabled"
           }`}
           type="submit"
+          onClick={() => setLoginError(true)}
         >
           Log in
         </button>
-        <p>
-          <span>
-            <IoClose className="text-red-600 text-[16px] shrink-0" />
-          </span>
-          Incorrect email or password.
-        </p>
+
         <div className="flex w-full justify-center gap-3">
           <p>Don't have an account?</p>
           <Link
