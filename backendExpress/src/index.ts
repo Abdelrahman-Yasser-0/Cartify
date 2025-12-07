@@ -3,6 +3,7 @@ import { connect } from "mongoose";
 import userRouter from "./routes/user.ts";
 import productRouter from "./routes/product.ts";
 import cartRouter from "./routes/cart.ts";
+import { requireAuth } from "./middlewares/authentcation.ts";
 // import userRouter from "./routes/users.ts";
 
 connect("mongodb://127.0.0.1:27017/s9")
@@ -11,10 +12,11 @@ connect("mongodb://127.0.0.1:27017/s9")
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded());
 
 app.use("/user", userRouter);
 app.use("/product", productRouter);
-app.use("/cart", cartRouter);
+app.use("/cart", requireAuth, cartRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
