@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { users } from "../usersData";
+import { METHODS } from "http";
 
 /**
  * --------------------------------------------------------------------------
@@ -104,22 +105,36 @@ const Auth_Login = () => {
       passLenGt8(password)
     );
   };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     //submition handelr
     e.preventDefault();
     if (validateEmail(email) && vaildatePassword(password)) {
       //send data using api
-
-      const founduser = users.find(
-        (user) => user.email == email && user.password == password
-      );
-      if (founduser) {
-        const { password, ...userWithoutpassword } = founduser;
-        localStorage.setItem("user", JSON.stringify(userWithoutpassword));
-        console.log("yes valied");
+      // const founduser = users.find(
+      //   (user) => user.email == email && user.password == password
+      // );
+      // if (founduser) {
+      //   const { password, ...userWithoutpassword } = founduser;
+      //   localStorage.setItem("user", JSON.stringify(userWithoutpassword));
+      //   console.log("yes valied");
+      //   navigate("/");
+      // } else {
+      //   setLoginError(true);
+      // }
+      const response = await fetch("http://127.0.0.1:3000/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email, password: password }),
+      });
+      const data = await response.json();
+      if (response.status == 200) {
+        //sucuss
+        console.log("Login Successful", data);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/");
-      } else {
-        setLoginError(true);
       }
     } else {
       console.log("no not valied");
