@@ -4,6 +4,7 @@ import { userValidation } from "../validation/userValidation.ts";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { requireAuth } from "../middlewares/authentcation.ts";
 const userRouter = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
@@ -13,6 +14,29 @@ const JWT_EXPIRES = "1d";
 userRouter.get("/", async (req, res) => {
   const users = await User.find();
   res.send(users);
+});
+
+type UserTokenPayload = {
+  userId: string;
+  role: string;
+};
+userRouter.get("/me", requireAuth, async (req, res) => {
+  try {
+    const userData = req.user as UserTokenPayload;
+
+    // Now TypeScript knows 'userData' has a 'userId' property
+    const userId = userData.userId;
+
+    const user = await User.findById(userId).select("-passwordHash");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 userRouter.get("/:id", async (req, res) => {

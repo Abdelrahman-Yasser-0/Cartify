@@ -15,6 +15,7 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import Auth_signup_confirm from "./Auth_signup_confirm";
 import { user } from "../types";
 import { users } from "../usersData";
+import Auth_signup_found from "./Auth_signup_found";
 
 const Auth_Signup = () => {
   const [email, setEmail] = useState<string>("");
@@ -117,7 +118,7 @@ const Auth_Signup = () => {
       passLenGt8(password)
     );
   };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     //submition handelr
     e.preventDefault();
     if (
@@ -131,21 +132,67 @@ const Auth_Signup = () => {
       /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&
       "btn-disabled"
     ) {
-      //send data using api
-      setStepper((prev) => (prev += 1));
-      const userData: user = {
-        fullname: fullName,
+      const requestBody = {
+        name: fullName,
         email: email,
+        phone: phoneNumber,
         password: password,
-        country: country,
-        city: city,
-        streetAddress: streetAddress,
-        apartment: apartment,
-        zip: zip,
-        phoneNumber: phoneNumber,
-        id: users.length + 1,
+        role: "user",
+        shippingAddress: {
+          country: country,
+          city: city,
+          streetAddress: streetAddress,
+          apartment: apartment,
+          zip: zip,
+        },
+        additionalInformation: {
+          company: "",
+          notes: "",
+        },
+        communicationPrefrences: {
+          email: true,
+          sms: false,
+        },
       };
-      users.push(userData);
+      //send data using api
+      try {
+        const response = await fetch("http://127.0.0.1:3000/user/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+        const data = await response.json();
+
+        if (response.status == 200) {
+          //sucuss
+          console.log("Signup is Correct", data);
+          setStepper((prev) => (prev += 1));
+        } else if (response.status == 400) {
+          //user was found before
+          console.log("yes the user is created before");
+          console.log(data.message);
+          setStepper((prev) => (prev += 1));
+          <Auth_signup_found stepper={stepper} />;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      // const userData: user = {
+      //   fullname: fullName,
+      //   email: email,
+      //   password: password,
+      //   country: country,
+      //   city: city,
+      //   streetAddress: streetAddress,
+      //   apartment: apartment,
+      //   zip: zip,
+      //   phoneNumber: phoneNumber,
+      //   id: users.length + 1,
+      // };
+      // users.push(userData);
       console.log("yes valied");
     } else {
       console.log("no not valied");

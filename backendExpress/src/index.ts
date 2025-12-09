@@ -7,6 +7,7 @@ import { requireAuth } from "./middlewares/authentcation.ts";
 import wishingListRouter from "./routes/wishingList.ts";
 import adminRouter from "./routes/admin.ts";
 import { requireRole } from "./middlewares/authorization.ts";
+import cors from "cors";
 
 connect("mongodb://127.0.0.1:27017/s9")
   .then(() => console.log("Connected to MongoDB"))
@@ -15,6 +16,8 @@ connect("mongodb://127.0.0.1:27017/s9")
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
+
+app.use(cors());
 
 app.use("/user", userRouter);
 app.use("/product", productRouter);
