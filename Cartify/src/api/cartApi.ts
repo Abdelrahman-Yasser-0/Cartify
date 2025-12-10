@@ -12,10 +12,9 @@ const authHeaders = (token: string) => ({
 });
 
 export const fetchUserCart = async (
-  userId: string,
   token: string
 ): Promise<CartEntry[]> => {
-  const res = await fetch(`${API_BASE_URL}/cart/userId/${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/cart`, {
     headers: authHeaders(token),
   });
   if (!res.ok) {
@@ -27,7 +26,6 @@ export const fetchUserCart = async (
 };
 
 export const editProductQuantity = async (
-  userId: string,
   productId: string,
   delta: number,
   token: string
@@ -35,7 +33,7 @@ export const editProductQuantity = async (
   const res = await fetch(`${API_BASE_URL}/cart/editProductQuantity`, {
     method: "PUT",
     headers: authHeaders(token),
-    body: JSON.stringify({ userId, productId, quantity: delta }),
+    body: JSON.stringify({ productId, quantity: delta }),
   });
   if (!res.ok) {
     const message = (await res.json().catch(() => ({}))).message;
@@ -46,10 +44,9 @@ export const editProductQuantity = async (
 };
 
 export const deleteFullCart = async (
-  userId: string,
   token: string
 ): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/cart/delete/userId/${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/cart/delete`, {
     method: "DELETE",
     headers: authHeaders(token),
   });
@@ -60,10 +57,9 @@ export const deleteFullCart = async (
 };
 
 export const buyCart = async (
-  userId: string,
   token: string
 ): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/cart/buy/userId/${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/cart/buy`, {
     method: "PUT",
     headers: authHeaders(token),
   });

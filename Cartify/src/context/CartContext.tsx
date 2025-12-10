@@ -55,7 +55,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   });
   const [loading, setLoading] = useState(false);
-  const previousUserIdRef = useRef<string | null>(null);
+  
+  // Initialize with current userId to prevent treating existing cart as anonymous on page refresh
+  const getInitialUserId = () => {
+    if (typeof window === "undefined") return null;
+    try {
+      const userRaw = localStorage.getItem(userKey);
+      const user = userRaw ? JSON.parse(userRaw) : null;
+      return user?._id || user?.id || null;
+    } catch {
+      return null;
+    }
+  };
+  const previousUserIdRef = useRef<string | null>(getInitialUserId());
   const lastAuthSnapshot = useRef<{ userId: string | null; token: string | null }>({
     userId: null,
     token: null,
@@ -88,7 +100,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (!userId || !token) return;
     setLoading(true);
     try {
-      const entries = await fetchUserCart(userId, token);
+      const entries = await fetchUserCart(token);
       const hydrated = await enrichCartEntries(entries);
       setItems(hydrated);
       localStorage.setItem(storageKey, JSON.stringify(hydrated));
@@ -100,7 +112,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mergeAnonymousCartIntoUser = async (
-    userId: string,
     token: string,
     anonItems: CartItem[]
   ) => {
@@ -108,7 +119,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     try {
       await Promise.all(
         anonItems.map((item) =>
-          editProductQuantity(userId, item.productId, item.quantity, token)
+          editProductQuantity(item.productId, item.quantity, token)
         )
       );
     } catch (error) {
@@ -142,7 +153,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       } catch {
         anonItems = [];
       }
-      await mergeAnonymousCartIntoUser(userId, token, anonItems);
+      await mergeAnonymousCartIntoUser(token, anonItems);
       await loadRemoteCart();
       previousUserIdRef.current = userId;
       return;
@@ -157,7 +168,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const { userId, token } = getAuth();
     if (userId && token) {
       try {
-        await editProductQuantity(userId, productId, quantity, token);
+        await editProductQuantity(productId, quantity, token);
         await loadRemoteCart();
       } catch (error) {
         console.error("Failed to add item", error);
@@ -185,7 +196,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const currentQty = current?.quantity ?? 0;
       if (currentQty > 0) {
         try {
-          await editProductQuantity(userId, productId, -currentQty, token);
+          await editProductQuantity(productId, -currentQty, token);
           await loadRemoteCart();
         } catch (error) {
           console.error("Failed to remove item", error);
@@ -207,7 +218,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const { userId, token } = getAuth();
     if (userId && token) {
       try {
-        await editProductQuantity(userId, productId, delta, token);
+        await editProductQuantity(productId, delta, token);
         await loadRemoteCart();
       } catch (error) {
         console.error("Failed to update quantity", error);
@@ -227,7 +238,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const { userId, token } = getAuth();
     if (userId && token) {
       try {
-        await deleteFullCart(userId, token);
+        await deleteFullCart(token);
       } catch (error) {
         console.error("Failed to clear cart", error);
       }
@@ -240,7 +251,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const { userId, token } = getAuth();
     if (userId && token) {
       try {
-        await buyCart(userId, token);
+        await buyCart(token);
         await loadRemoteCart();
       } catch (error) {
         console.error("Failed to buy cart", error);
