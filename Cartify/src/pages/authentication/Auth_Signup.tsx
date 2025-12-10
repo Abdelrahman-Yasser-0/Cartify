@@ -39,6 +39,7 @@ const Auth_Signup = () => {
   const [streetAddressTouched, setstreetAddressTouched] =
     useState<boolean>(false);
   const [stepper, setStepper] = useState<number>(1);
+  const [validSignup, setValidSignup] = useState<boolean>(false);
 
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;
@@ -146,8 +147,8 @@ const Auth_Signup = () => {
           zip: zip,
         },
         additionalInformation: {
-          company: "",
-          notes: "",
+          company: "Depi",
+          notes: "Still a trani",
         },
         communicationPrefrences: {
           email: true,
@@ -165,16 +166,17 @@ const Auth_Signup = () => {
         });
         const data = await response.json();
 
-        if (response.status == 200) {
+        if (response.status == 201) {
           //sucuss
           console.log("Signup is Correct", data);
+          setValidSignup(true);
           setStepper((prev) => (prev += 1));
         } else if (response.status == 400) {
           //user was found before
-          console.log("yes the user is created before");
+          console.log("user is created before");
           console.log(data.message);
+          setValidSignup(false);
           setStepper((prev) => (prev += 1));
-          <Auth_signup_found stepper={stepper} />;
         }
       } catch (error) {
         console.log(error);
@@ -193,15 +195,14 @@ const Auth_Signup = () => {
       //   id: users.length + 1,
       // };
       // users.push(userData);
-      console.log("yes valied");
     } else {
       console.log("no not valied");
     }
   };
   // console.log("Email state :" + !validateEmail(email) && emailTouched);
   // console.log("email toched :" + emailTouched);
-  console.log("email valid :" + validateEmail(email));
-  console.log("space :" + !containWhiteSpace(email));
+  // console.log("email valid :" + validateEmail(email));
+  // console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="flex w-full min-h-screen justify-center items-center gap-24 pt-10">
@@ -624,7 +625,11 @@ const Auth_Signup = () => {
           </button>
         </div>
       </form>
-      <Auth_signup_confirm stepper={stepper} />
+      {validSignup ? (
+        <Auth_signup_confirm stepper={stepper} />
+      ) : (
+        <Auth_signup_found stepper={stepper} />
+      )}
     </div>
   );
 };
