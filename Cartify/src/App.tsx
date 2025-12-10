@@ -39,6 +39,7 @@ import Admin_Customer_Detail from "./pages/admin Account Hub/Admin_Customer_Deta
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/home/Checkout";
 import OrderPlaced from "./pages/home/OrderPlaced";
+import Favorites from "./pages/home/Favorites";
 
 const App = () => {
   return (
@@ -51,6 +52,7 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order_placed" element={<OrderPlaced />} />
+        <Route path="/favorites" element={<Favorites />} />
         //-----------------------------------------------------Admin-----------------------------------------------------//
         <Route path="/admin/analytics" element={<Admin_Analytics />} />
         <Route path="/admin/categories" element={<Admin_Categories />} />

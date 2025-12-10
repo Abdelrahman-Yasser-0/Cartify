@@ -33,18 +33,11 @@ const DiscoverBanner = () => {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               to="/product_listing"
-              className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-5 py-1 rounded-md shadow"
+              className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-5 py-3 rounded-md shadow "
             >
               Shop Now
               <span aria-hidden>→</span>
             </Link>
-
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 font-medium px-4 py-3 rounded-md"
-            >
-              View Deals
-            </a>
           </div>
         </div>
       </div>
