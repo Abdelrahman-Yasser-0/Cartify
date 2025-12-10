@@ -4,21 +4,23 @@ import express from "express";
 import Product from "../models/Product.ts";
 import { productValidation } from "../validation/productValidation.ts";
 // import { userValidation } from "../validation/userValidation.ts";
+import { requireRole } from "../middlewares/authorization.ts";
 const productRouter = express.Router();
 
 //create product
-productRouter.post("/", async (req, res) => {
-  try {
-    await productValidation.validateAsync(req.body);
+//only admins
+// productRouter.post("/", requireRole("admin"), async (req, res) => {
+//   try {
+//     await productValidation.validateAsync(req.body);
 
-    const createdProduct = await Product.create(req.body);
-    res.status(201).send({ data: { createdProduct } });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An error occurred";
-    res.status(400).send({ message: errorMessage });
-  }
-});
+//     const createdProduct = await Product.create(req.body);
+//     res.status(201).send({ data: { createdProduct } });
+//   } catch (error) {
+//     const errorMessage =
+//       error instanceof Error ? error.message : "An error occurred";
+//     res.status(400).send({ message: errorMessage });
+//   }
+// });
 
 //get all products
 productRouter.get("/", async (req, res) => {
