@@ -7,9 +7,20 @@ const productSchema = new mongoose.Schema({
   quantity: { type: Number, default: 0, required: true },
   soldQuantity: { type: Number, default: 0 },
   rate: { type: String, default: 0 },
-  discountPrice: { type: Number },
+  discountPrice: {
+    type: Number,
+    default: function () {
+      return this.price * (1 - this.price);
+    },
+  },
   discount: { type: Number, default: 0 },
-  inStock: { type: Boolean, required: true },
+  inStock: {
+    type: Boolean,
+    default: function () {
+      return this.quantity > 0;
+    },
+    required: true,
+  },
   hasDiscount: { type: Boolean, default: false },
   imgurl: { type: String },
   sku: { type: String },
