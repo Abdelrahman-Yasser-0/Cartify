@@ -153,8 +153,8 @@ cartRouter.put("/buy", async (req, res) => {
         user.purchased.push({
           productId: productId,
           quantity: qty,
-          status: "on deliver",
-          date: Date.now(),
+          status: "It is being delivered and you will be contacted....",
+          date: new Date(),
         });
       }
 
