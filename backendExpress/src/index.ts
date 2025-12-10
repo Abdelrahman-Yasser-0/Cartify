@@ -20,7 +20,7 @@ app.use("/user", userRouter);
 app.use("/product", productRouter);
 app.use("/cart", requireAuth, cartRouter);
 app.use("/wishingList", requireAuth, wishingListRouter);
-app.use("/admin", requireAuth, requireRole("role"), adminRouter);
+app.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
