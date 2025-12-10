@@ -1,10 +1,13 @@
-import mongoose from "mongoose";
-import { Router } from "express";
+// import mongoose from "mongoose";
+// import { Router } from "express";
 import express from "express";
 import Product from "../models/Product.ts";
 import { productValidation } from "../validation/productValidation.ts";
 // import { userValidation } from "../validation/userValidation.ts";
-import { requireRole } from "../middlewares/authorization.ts";
+// import { requireRole } from "../middlewares/authorization.ts";
+// import { email } from "zod/v4";
+import User from "../models/User.ts";
+import createOfferValidation from "../validation/creatOfferVaidation.ts";
 const adminRouter = express.Router();
 
 //create product
@@ -37,4 +40,15 @@ adminRouter.delete("/product", async (req, res) => {
     res.status(400).send({ message: errorMessage });
   }
 });
+
+//getUserByEmail
+adminRouter.get("/userEmail/:userEmail", async (req, res) => {
+  const { userEmail } = req.params;
+  const user = await User.find({ email: userEmail });
+  if (!user) {
+    res.status(404).send({ message: "User not found" });
+  }
+  res.send(user);
+});
+
 export default adminRouter;
