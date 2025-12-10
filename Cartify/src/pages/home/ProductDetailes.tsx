@@ -7,6 +7,7 @@ import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineStarRate } from "react-icons/md";
 import { FiTruck, FiCheckCircle, FiRefreshCw } from "react-icons/fi";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { fetchProductById } from "../../api/productApi";
 import { products } from "../types";
 
@@ -16,6 +17,7 @@ const ProductDetailes = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addItem } = useCart();
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
   const [selectedColor, setSelectedColor] = useState<string>("");
@@ -180,6 +182,16 @@ const ProductDetailes = () => {
     }
   };
 
+  const handleToggleFavorite = () => {
+    if (!product) return;
+    const isFavorite = isInWishlist(product.id);
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -255,8 +267,14 @@ const ProductDetailes = () => {
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-semibold">{product.title}</h1>
                 <div className="flex gap-3">
-                  <button className="p-2 hover:bg-gray-100 rounded-full transition">
-                    <FiHeart className="text-xl" />
+                  <button 
+                    onClick={handleToggleFavorite}
+                    className="p-2 hover:bg-gray-100 rounded-full transition"
+                    title={isInWishlist(product.id) ? "Remove from favorites" : "Add to favorites"}
+                  >
+                    <FiHeart 
+                      className={`text-xl ${isInWishlist(product.id) ? 'fill-teal-600 text-teal-600' : ''}`}
+                    />
                   </button>
                   <button className="p-2 hover:bg-gray-100 rounded-full transition">
                     <FiShare2 className="text-xl" />

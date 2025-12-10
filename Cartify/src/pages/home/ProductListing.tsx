@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { FiGrid, FiList, FiSliders } from "react-icons/fi";
+import { FiGrid, FiList, FiSliders, FiHeart } from "react-icons/fi";
 import { MdOutlineStarRate } from "react-icons/md";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { fetchProducts } from "../../api/productApi";
 import { products } from "../types";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 type ViewMode = "grid" | "list";
 
@@ -28,6 +29,16 @@ const ProductCard = ({ product, viewMode, onAddToCart }: ProductCardProps) => {
     shortDescription,
   } = product;
   const parsedRating = parseFloat(rate);
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
+  const isFavorite = isInWishlist(product.id);
+
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
 
   return (
     <div
@@ -43,16 +54,27 @@ const ProductCard = ({ product, viewMode, onAddToCart }: ProductCardProps) => {
         } overflow-hidden`}
       >
         {discount && (
-          <span className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+          <span className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
             -{discount}%
           </span>
         )}
-        <img
-          src={imgurl}
-          alt={title}
-          className="object-cover w-full h-full transition duration-200 hover:scale-105"
-          loading="lazy"
-        />
+        <button
+          onClick={handleToggleFavorite}
+          className="absolute top-3 right-3 z-10 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
+          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          <FiHeart 
+            className={`text-lg ${isFavorite ? 'fill-teal-600 text-teal-600' : 'text-gray-600'}`}
+          />
+        </button>
+        <Link to={`/product_detailes/${product.id || "1"}`}>
+          <img
+            src={imgurl}
+            alt={title}
+            className="object-cover w-full h-full transition duration-200 hover:scale-105"
+            loading="lazy"
+          />
+        </Link>
       </div>
 
       <div
@@ -70,7 +92,9 @@ const ProductCard = ({ product, viewMode, onAddToCart }: ProductCardProps) => {
             </span>
           </div>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <Link to={`/product_detailes/${product.id || "1"}`}>
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-teal-600 transition">{title}</h3>
+        </Link>
         <p className="text-sm text-gray-500">
           {shortDescription || "Discover premium tech tailored to your needs."}
         </p>

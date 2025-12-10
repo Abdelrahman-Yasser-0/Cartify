@@ -16,18 +16,15 @@ userRouter.get("/", async (req, res) => {
   res.send(users);
 });
 
-type UserTokenPayload = {
-  userId: string;
-  role: string;
-};
 userRouter.get("/me", requireAuth, async (req, res) => {
   try {
-    const userData = req.user as UserTokenPayload;
+    const userData = req.user;
 
-    // Now TypeScript knows 'userData' has a 'userId' property
-    const userId = userData.userId;
+    if (!userData || !userData.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const user = await User.findById(userId).select("-passwordHash");
+    const user = await User.findById(userData.id).select("-passwordHash");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
