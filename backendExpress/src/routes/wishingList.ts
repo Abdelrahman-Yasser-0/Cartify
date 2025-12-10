@@ -55,4 +55,54 @@ wishingListRouter.put("/add/product", async (req, res) => {
   }
 });
 
+// delete product to the user wishing list
+wishingListRouter.put("/remove/product", async (req, res) => {
+  try {
+    const userPayload = req.user;
+    if (!userPayload) {
+      return res.status(500).send({ message: " user not found" });
+    }
+    const userIdFromPayload = userPayload.id;
+
+    console.log("started adding to cart");
+    // await addToCartValidation.validateAsync(req.body);
+
+    const product = await Product.findById(req.body.productId);
+    const user = await User.findById(userIdFromPayload);
+
+    if (!product || !user) {
+      return res
+        .status(404)
+        .send({ message: "product or user is not existing" });
+    }
+    console.log("elements existing");
+
+    //
+    const existingProduct = user.wishingList.find((element) => {
+      return element.productId == req.body.productId;
+    });
+
+    if (!existingProduct) {
+      console.log(existingProduct);
+      res.status(400).send({ message: "product already not exists" });
+    } else {
+      //   user.wishingList= user.wishingList.filter(item => item.productId !== req.body.productId);
+
+      const newUser = await User.findByIdAndUpdate(
+        userIdFromPayload,
+        { $pull: { wishingList: { productId: req.body.productId } } },
+        { new: true }
+      );
+      await newUser?.save();
+      console.log("done");
+      res.status(201).send({ wishingList: newUser?.wishingList });
+    }
+    //
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An error occurred";
+    res.status(400).send({ message: errorMessage });
+  }
+});
+
 export default wishingListRouter;
