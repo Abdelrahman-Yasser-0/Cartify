@@ -81,15 +81,14 @@ cartRouter.get("/", async (req, res) => {
 
   return res.status(200).send({ userCart: user?.cart });
 });
-export default cartRouter;
 
 //delete the full cart
 cartRouter.delete("/delete", async (req, res) => {
-
+  
   const userPayload = req.user;
-
+  
   if(!userPayload){
-          return res.status(500).send({ message:" user not found" });
+    return res.status(500).send({ message:" user not found" });
   }
   const userIdFromPayload = userPayload.id;
   
@@ -109,9 +108,9 @@ cartRouter.delete("/delete", async (req, res) => {
 //buy the full cart
 cartRouter.put("/buy", async (req, res) => {
   const userPayload = req.user;
-
+  
   if(!userPayload){
-          return res.status(500).send({ message:" user not found" });
+    return res.status(500).send({ message:" user not found" });
   }
   const userIdFromPayload = userPayload.id;
   const user = await User.findById(userIdFromPayload);
@@ -124,22 +123,22 @@ cartRouter.put("/buy", async (req, res) => {
       for (const item of user.cart) {
         const productId = item.productId;
         const qty = Number(item.quantity);
-
+        
         if (!Number.isFinite(qty) || qty <= 0) {
           continue;
         }
-
+        
         const product = await Product.findById(productId);
         if (!product) {
           continue;
         }
-
+        
         const currentQty =
-          typeof product.quantity === "number" ? product.quantity : 0;
+        typeof product.quantity === "number" ? product.quantity : 0;
         const newQty = currentQty - qty;
         product.quantity = Number.isFinite(newQty) ? newQty : 0;
         await product.save();
-
+        
         user.purchased.push({
           productId: productId,
           quantity: qty,
@@ -147,17 +146,19 @@ cartRouter.put("/buy", async (req, res) => {
           date: Date.now(),
         });
       }
-
+      
       // clear cart and save
       user.cart.splice(0);
       await user.save();
-
+      
       console.log(user);
       return res.send({ userCart: user.cart, userPurchased: user.purchased });
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "An error occurred";
+      error instanceof Error ? error.message : "An error occurred";
       return res.status(500).send({ message: errorMessage });
     }
   }
 });
+
+export default cartRouter;
