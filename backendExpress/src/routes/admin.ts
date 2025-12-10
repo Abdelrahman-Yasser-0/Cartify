@@ -143,4 +143,49 @@ adminRouter.get(
   }
 );
 
+//make offer
+
+adminRouter.put(
+  "/product/offer",
+
+  async (req, res) => {
+    try {
+      await createOfferValidation.validateAsync(req.body);
+      const { productId, discountType, value } = req.body;
+
+      const product = await Product.findById(productId);
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
+
+      let discountPrice = product.price;
+
+      if (discountType === "percentage") {
+        discountPrice = product.price - (product.price * value) / 100;
+      } else if (discountType === "fixed") {
+        discountPrice = product.price - value;
+      } else {
+        return res.status(400).json({ message: "Invalid discount type" });
+      }
+
+      if (discountPrice < 0) discountPrice = 0;
+
+      product.discount = discountType === "percentage" ? value : value / 100;
+      product.discountPrice = discountPrice;
+      product.hasDiscount = true;
+
+      await product.save();
+
+      res.json({
+        success: true,
+        message: "Offer updated successfully",
+        product,
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An error occurred";
+      return res.status(500).send({ message: errorMessage });
+    }
+  }
+);
+
 export default adminRouter;
