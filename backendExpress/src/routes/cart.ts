@@ -43,11 +43,19 @@ cartRouter.put("/editProductQuantity", async (req, res) => {
     if (existingProduct) {
       console.log(existingProduct);
       existingProduct.quantity += req.body.quantity;
+      
+      // Remove item from cart if quantity becomes 0 or negative
+      if (existingProduct.quantity <= 0) {
+        user.cart = user.cart.filter((item) => item.productId != req.body.productId);
+      }
     } else {
-      user?.cart.push({
-        productId: req.body.productId,
-        quantity: req.body.quantity,
-      });
+      // Only add new items if quantity is positive
+      if (req.body.quantity > 0) {
+        user?.cart.push({
+          productId: req.body.productId,
+          quantity: req.body.quantity,
+        });
+      }
     }
     await user?.save();
     console.log("done");

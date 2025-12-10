@@ -29,6 +29,7 @@ const Auth_Login = () => {
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
+  const [loginError, setLoginError] = useState<boolean>(false);
   const navigate = useNavigate();
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;

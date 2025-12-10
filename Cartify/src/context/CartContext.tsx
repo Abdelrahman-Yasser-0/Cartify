@@ -101,7 +101,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const entries = await fetchUserCart(token);
-      const hydrated = await enrichCartEntries(entries);
+      // Filter out items with zero or negative quantity
+      const validEntries = entries.filter((entry) => entry.quantity > 0);
+      const hydrated = await enrichCartEntries(validEntries);
       setItems(hydrated);
       localStorage.setItem(storageKey, JSON.stringify(hydrated));
     } catch (error) {
