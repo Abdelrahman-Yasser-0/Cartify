@@ -1,6 +1,8 @@
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoMdReturnLeft } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { MdOutlineErrorOutline } from "react-icons/md";
+
 const Auth_signup_found = ({ stepper }: { stepper: number }) => {
   return (
     <div
@@ -10,12 +12,12 @@ const Auth_signup_found = ({ stepper }: { stepper: number }) => {
     >
       {/*--------------------------------Stepper-------------------------------- */}
       <ul className="steps steps-horizontal">
-        <li className="step step-accent">Account</li>
-        <li className={`step ${stepper >= 2 && "step-accent"}`}>
+        <li className="step step-error">Account</li>
+        <li className={`step ${stepper >= 2 && "step-error"}`}>
           Address Details
         </li>
         <li
-          data-content="x"
+          data-content="✕"
           className={`step  ${stepper >= 3 && "step-error"}`}
         >
           Done
@@ -23,7 +25,7 @@ const Auth_signup_found = ({ stepper }: { stepper: number }) => {
       </ul>
       {/*--------------------------------Congrats Message-------------------------------- */}
       <div className="w-full h-full flex flex-col items-center pt-4 text-center text-xl">
-        <FaCircleCheck className="text-accent text-5xl shrink-0 " />
+        <MdOutlineErrorOutline className="text-error text-5xl shrink-0 " />
 
         <p>
           Opps!This Account <span className="text-error">was created</span>{" "}
