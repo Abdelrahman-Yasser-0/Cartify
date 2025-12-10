@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { users } from "../usersData";
-
 /**
  * --------------------------------------------------------------------------
  * What happens when a usestate gets changed ???
@@ -28,6 +27,7 @@ const Auth_Login = () => {
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState<boolean>(false);
   const containWhiteSpace = (email: string): boolean => {
@@ -413,6 +413,7 @@ const Auth_Login = () => {
         >
           Log in
         </button>
+
         <div className="flex w-full justify-center gap-3">
           <p>Don't have an account?</p>
           <Link
