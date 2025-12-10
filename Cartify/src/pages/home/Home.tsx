@@ -1,14 +1,47 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import DiscoverBanner from "../../components/DiscoverBanner/DiscoverBanner";
 import Header from "../../components/Header";
 import Card from "./../../components/Card";
 import Footer from "./../../components/Footer";
-import { productsData } from "../productsData";
+import { fetchProducts } from "../../api/productApi";
+import { products } from "../types";
 import ShopByCategory from "./ShopByCategory";
 import Spacer from "./Spacer";
 
 const Home = () => {
-  const products = productsData;
+  const [productsList, setProductsList] = useState<products[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchProducts()
+      .then((data) => setProductsList(data))
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : "Failed to load products.";
+        setError(message);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const featured = useMemo(() => {
+    const flagged = productsList.filter((product) => product.isFeatured);
+    if (flagged.length) return flagged;
+    return productsList.slice(0, 4);
+  }, [productsList]);
+
+  const bestSellers = useMemo(() => {
+    const flagged = productsList.filter((product) => product.isBestSeller);
+    if (flagged.length) return flagged;
+    return productsList.slice(0, 4);
+  }, [productsList]);
+
+  const newArrivals = useMemo(() => {
+    const flagged = productsList.filter((product) => product.isNew);
+    if (flagged.length) return flagged;
+    return productsList.slice(0, 4);
+  }, [productsList]);
 
   return (
     <div>
@@ -29,13 +62,21 @@ const Home = () => {
                 View All →
               </Link>
             </div>
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
-              {products
-                .filter((product) => product.isFeatured == true)
-                .map((product) => (
-                  <Card key={product.title} product={product} />
+            {isLoading ? (
+              <div className="flex justify-center py-10">
+                <span className="loading loading-spinner loading-lg text-teal-600"></span>
+              </div>
+            ) : error ? (
+              <div className="alert alert-error bg-rose-50 text-rose-700 border border-rose-200">
+                <span>{error}</span>
+              </div>
+            ) : (
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
+                {featured.map((product) => (
+                  <Card key={product.id || product.title} product={product} />
                 ))}
-            </div>
+              </div>
+            )}
           </div>
           <Spacer />
           {/*-------------------------------------SEC----------------------------------------------------- */}
@@ -51,13 +92,21 @@ const Home = () => {
                 View All →
               </Link>
             </div>
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
-              {products
-                .filter((product) => product.isBestSeller == true)
-                .map((product) => (
-                  <Card key={product.title} product={product} />
+            {isLoading ? (
+              <div className="flex justify-center py-10">
+                <span className="loading loading-spinner loading-lg text-teal-600"></span>
+              </div>
+            ) : error ? (
+              <div className="alert alert-error bg-rose-50 text-rose-700 border border-rose-200">
+                <span>{error}</span>
+              </div>
+            ) : (
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
+                {bestSellers.map((product) => (
+                  <Card key={product.id || product.title} product={product} />
                 ))}
-            </div>
+              </div>
+            )}
           </div>
           {/*-------------------------------------3rd----------------------------------------------------- */}
           <div className="flex-col gap-8 flex ">
@@ -72,13 +121,21 @@ const Home = () => {
                 View All →
               </Link>
             </div>
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
-              {products
-                .filter((product) => product.isNew == true)
-                .map((product) => (
-                  <Card key={product.title} product={product} />
+            {isLoading ? (
+              <div className="flex justify-center py-10">
+                <span className="loading loading-spinner loading-lg text-teal-600"></span>
+              </div>
+            ) : error ? (
+              <div className="alert alert-error bg-rose-50 text-rose-700 border border-rose-200">
+                <span>{error}</span>
+              </div>
+            ) : (
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 h-">
+                {newArrivals.map((product) => (
+                  <Card key={product.id || product.title} product={product} />
                 ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

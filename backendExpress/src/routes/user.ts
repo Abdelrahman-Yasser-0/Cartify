@@ -19,13 +19,16 @@ type user = {
   userId: string;
   role: string;
 };
+
 userRouter.get("/me", requireAuth, async (req, res) => {
   try {
-    const userData = req.user as user;
+    const userData = req.user;
 
-    const userId = userData.userId;
+    if (!userData || !userData.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const user = await User.findById(userId).select("-passwordHash");
+    const user = await User.findById(userData.id).select("-passwordHash");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -36,15 +39,19 @@ userRouter.get("/me", requireAuth, async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 // Update User Profile
 userRouter.put("/me", requireAuth, async (req, res) => {
   try {
     // get ID from the token
-    const userData = req.user as user;
-    const userId = userData.userId;
+    const userData = req.user;
+
+    if (!userData || !userData.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     // find the user
-    const user = await User.findById(userId);
+    const user = await User.findById(userData.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -153,9 +160,13 @@ userRouter.post("/login", async (req, res) => {
         return res.status(401).json({ message: "Invalid credentials" });
     }
     // Generate JWT
-    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES,
-    });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role, email: user.email },
+      JWT_SECRET,
+      {
+        expiresIn: JWT_EXPIRES,
+      }
+    );
 
     res.status(200).json({
       message: "Login successful",

@@ -6,6 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { users } from "../usersData";
+
+import { METHODS } from "http";
+
 /**
  * --------------------------------------------------------------------------
  * What happens when a usestate gets changed ???
@@ -29,7 +32,9 @@ const Auth_Login = () => {
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
 
   const navigate = useNavigate();
+
   const [loginError, setLoginError] = useState<boolean>(false);
+
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;
     return spaceRegex.test(email);
@@ -409,8 +414,13 @@ const Auth_Login = () => {
           Incorrect email or password.
         </p>
         <button
-          className={`text-white btn bg-teal-600 w-full btn-sm `}
+          className={`btn bg-teal-600 w-full btn-sm text-white ${
+            validateEmail(email) && vaildatePassword(password)
+              ? ""
+              : "btn-disabled"
+          }`}
           type="submit"
+          onClick={() => setLoginError(true)}
         >
           Log in
         </button>
