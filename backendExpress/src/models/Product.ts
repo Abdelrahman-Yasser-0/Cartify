@@ -9,14 +9,14 @@ const productSchema = new mongoose.Schema({
   rate: { type: String, default: 0 },
   discountPrice: {
     type: Number,
-    default: function () {
+    set: function () {
       return this.price * (1 - this.price);
     },
   },
   discount: { type: Number, default: 0 },
   inStock: {
     type: Boolean,
-    default: function () {
+    set: function () {
       return this.quantity > 0;
     },
     required: true,
