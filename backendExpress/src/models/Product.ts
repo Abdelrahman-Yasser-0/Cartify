@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
   discountPrice: {
     type: Number,
     set: function () {
-      return this.price * (1 - this.price);
+      return this.price * (1 - this.discount / 100);
     },
   },
   discount: { type: Number, default: 0 },
@@ -19,7 +19,6 @@ const productSchema = new mongoose.Schema({
     set: function () {
       return this.quantity > 0;
     },
-    required: true,
   },
   hasDiscount: { type: Boolean, default: false },
   imgurl: { type: String },
