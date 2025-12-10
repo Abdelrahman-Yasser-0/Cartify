@@ -143,7 +143,7 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <a className="hover:text-teal-600 rounded">Deals</a>
+                <Link to="/product_listing?sale=true" className="hover:text-teal-600 rounded">Deals</Link>
               </li>
             </ul>
           </div>

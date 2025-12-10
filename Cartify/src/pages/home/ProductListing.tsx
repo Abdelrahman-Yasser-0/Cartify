@@ -163,6 +163,9 @@ const ProductListing = () => {
   const [sortOption, setSortOption] = useState(
     searchParams.get("sort") || "popular"
   );
+  const [saleOnly, setSaleOnly] = useState(
+    searchParams.get("sale") === "true"
+  );
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const isLoading = isFetching;
 
@@ -221,6 +224,7 @@ const ProductListing = () => {
       ? parsedUrlPrice
       : priceBounds.max || priceFilter;
     const urlSort = searchParams.get("sort") || "popular";
+    const urlSale = searchParams.get("sale") === "true";
 
     if (!arraysEqual(urlCategories, selectedCategories)) {
       setSelectedCategories(urlCategories);
@@ -240,7 +244,10 @@ const ProductListing = () => {
     if (urlSort !== sortOption) {
       setSortOption(urlSort);
     }
-  }, [searchParams, priceBounds.max, priceFilter, sortOption]);
+    if (urlSale !== saleOnly) {
+      setSaleOnly(urlSale);
+    }
+  }, [searchParams, priceBounds.max]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -256,11 +263,14 @@ const ProductListing = () => {
     if (ratingFilter) {
       params.set("rating", String(ratingFilter));
     }
-    if (priceFilter !== priceBounds.max) {
+    if (priceFilter !== priceBounds.max && priceBounds.max > 0) {
       params.set("maxPrice", String(priceFilter));
     }
     if (sortOption !== "popular") {
       params.set("sort", sortOption);
+    }
+    if (saleOnly) {
+      params.set("sale", "true");
     }
     setSearchParams(params, { replace: true });
   }, [
@@ -270,6 +280,7 @@ const ProductListing = () => {
     ratingFilter,
     priceFilter,
     sortOption,
+    saleOnly,
     priceBounds.max,
     setSearchParams,
   ]);
@@ -289,12 +300,16 @@ const ProductListing = () => {
       const matchesRating = ratingFilter
         ? parseFloat(product.rate) >= ratingFilter
         : true;
+      const matchesSale = saleOnly
+        ? (typeof product.discount === 'number' && product.discount > 0)
+        : true;
       return (
         matchesCategory &&
         matchesBrand &&
         matchesSearch &&
         matchesPrice &&
-        matchesRating
+        matchesRating &&
+        matchesSale
       );
     });
   }, [
@@ -304,6 +319,7 @@ const ProductListing = () => {
     searchTerm,
     priceFilter,
     ratingFilter,
+    saleOnly,
   ]);
 
   const sortedProducts = useMemo(() => {
@@ -358,6 +374,12 @@ const ProductListing = () => {
         onRemove: () => setSearchTerm(""),
       });
     }
+    if (saleOnly) {
+      chips.push({
+        label: "Sale Items Only",
+        onRemove: () => setSaleOnly(false),
+      });
+    }
     return chips;
   }, [
     selectedCategories,
@@ -366,6 +388,7 @@ const ProductListing = () => {
     priceFilter,
     priceBounds.max,
     searchTerm,
+    saleOnly,
   ]);
 
   const clearAllFilters = () => {
@@ -375,6 +398,7 @@ const ProductListing = () => {
     setPriceFilter(priceBounds.max || 0);
     setSearchTerm("");
     setSortOption("popular");
+    setSaleOnly(false);
   };
 
   const Filters = (
@@ -387,6 +411,21 @@ const ProductListing = () => {
         >
           Clear All
         </button>
+      </div>
+
+      <div className="space-y-4">
+        <h4 className="font-medium text-gray-700">Special Filters</h4>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm checkbox-success"
+              checked={saleOnly}
+              onChange={(event) => setSaleOnly(event.target.checked)}
+            />
+            Sale Items Only
+          </label>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -511,7 +550,7 @@ const ProductListing = () => {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="text-3xl font-semibold text-gray-900">
-                  All Products
+                  {saleOnly ? "Sale Items" : "All Products"}
                 </h1>
                 <p className="text-gray-500 text-sm">
                   Showing {sortedProducts.length} of {allProducts.length} items
@@ -645,10 +684,13 @@ const ProductListing = () => {
               ) : (
                 <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
                   <p className="text-xl font-semibold text-gray-800">
-                    No products match these filters
+                    {saleOnly ? "No sale items available" : "No products match these filters"}
                   </p>
                   <p className="text-gray-500 text-sm mt-2">
-                    Try adjusting the filters or clear them to see all products.
+                    {saleOnly 
+                      ? "Check back later for amazing deals!"
+                      : "Try adjusting the filters or clear them to see all products."
+                    }
                   </p>
                   <button
                     className="btn btn-primary bg-teal-600 border-none mt-6 text-white"
