@@ -9,6 +9,7 @@ const userRouter = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 const JWT_EXPIRES = "1d";
 
+
 userRouter.get("/", async (req, res) => {
   const users = await User.find();
   res.send(users);
@@ -69,7 +70,7 @@ userRouter.post("/login", async (req, res) => {
         return res.status(401).json({ message: "Invalid credentials" });
     }
     // Generate JWT
-    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, role: user.role, email: user.email }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES,
     });
 
