@@ -79,7 +79,7 @@ productRouter.put("/productId/:productId", requireAuth, async (req, res) => {
         purchased: {
           productId,
           quantity: 1,
-          status: "It is being delivered and you will be contacted.",
+          status: "It is being delivered and you will be contacted....",
           date: new Date(),
         },
       },
