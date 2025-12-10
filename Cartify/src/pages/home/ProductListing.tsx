@@ -4,17 +4,19 @@ import { FiGrid, FiList, FiSliders } from "react-icons/fi";
 import { MdOutlineStarRate } from "react-icons/md";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { productsData } from "../productsData";
+import { fetchProducts } from "../../api/productApi";
 import { products } from "../types";
+import { useCart } from "../../context/CartContext";
 
 type ViewMode = "grid" | "list";
 
 type ProductCardProps = {
   product: products;
   viewMode: ViewMode;
+  onAddToCart: (product: products) => void;
 };
 
-const ProductCard = ({ product, viewMode }: ProductCardProps) => {
+const ProductCard = ({ product, viewMode, onAddToCart }: ProductCardProps) => {
   const {
     title,
     brand,
@@ -83,7 +85,11 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
           )}
         </div>
         <div className="flex gap-3 pt-2 flex-wrap">
-          <button className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white">
+          <button
+            className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white"
+            disabled={!product.inStock}
+            onClick={() => onAddToCart(product)}
+          >
             Add to Cart
           </button>
           <Link
@@ -100,7 +106,11 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
 
 const ProductListing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [allProducts] = useState<products[]>(productsData);
+  const { addItem } = useCart();
+  const [allProducts, setAllProducts] = useState<products[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [priceBounds, setPriceBounds] = useState({ min: 0, max: 0 });
 
   const categories = useMemo(
     () =>
@@ -113,18 +123,6 @@ const ProductListing = () => {
     () => Array.from(new Set(allProducts.map((product) => product.brand))),
     [allProducts]
   );
-  const priceBounds = useMemo(() => {
-    const prices = allProducts.map((product) => product.price);
-    if (!prices.length) {
-      return { min: 0, max: 0 };
-    }
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    return {
-      min: Number.isFinite(minPrice) ? Math.floor(minPrice) : 0,
-      max: Number.isFinite(maxPrice) ? Math.ceil(maxPrice) : 0,
-    };
-  }, [allProducts]);
 
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") ?? "");
@@ -134,12 +132,7 @@ const ProductListing = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.get("brands") ? searchParams.get("brands")!.split(",") : []
   );
-  const [priceFilter, setPriceFilter] = useState<number>(() => {
-    const param = searchParams.get("maxPrice");
-    if (param === null) return priceBounds.max;
-    const parsed = Number(param);
-    return !isNaN(parsed) ? parsed : priceBounds.max;
-  });
+  const [priceFilter, setPriceFilter] = useState<number>(0);
   const [ratingFilter, setRatingFilter] = useState(
     Number(searchParams.get("rating")) || 0
   );
@@ -147,10 +140,41 @@ const ProductListing = () => {
     searchParams.get("sort") || "popular"
   );
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = isFetching;
 
   const arraysEqual = (a: string[], b: string[]) =>
     a.length === b.length && a.every((value, index) => value === b[index]);
+
+  useEffect(() => {
+    setIsFetching(true);
+    fetchProducts()
+      .then((data) => {
+        setAllProducts(data);
+        const prices = data.map((product) => product.price);
+        if (prices.length) {
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+          setPriceBounds({
+            min: Number.isFinite(minPrice) ? Math.floor(minPrice) : 0,
+            max: Number.isFinite(maxPrice) ? Math.ceil(maxPrice) : 0,
+          });
+          const param = searchParams.get("maxPrice");
+          const parsed = param ? Number(param) : NaN;
+          const initialPrice = !isNaN(parsed)
+            ? parsed
+            : Number.isFinite(maxPrice)
+            ? Math.ceil(maxPrice)
+            : 0;
+          setPriceFilter(initialPrice);
+        }
+      })
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : "Failed to load products.";
+        setError(message);
+      })
+      .finally(() => setIsFetching(false));
+  }, []);
 
   useEffect(() => {
     const urlCategories = searchParams.get("category")
@@ -169,7 +193,9 @@ const ProductListing = () => {
     const urlRating = Number(searchParams.get("rating")) || 0;
     const maxPriceParam = searchParams.get("maxPrice");
     const parsedUrlPrice = maxPriceParam !== null ? Number(maxPriceParam) : NaN;
-    const urlPrice = !isNaN(parsedUrlPrice) ? parsedUrlPrice : priceBounds.max;
+    const urlPrice = !isNaN(parsedUrlPrice)
+      ? parsedUrlPrice
+      : priceBounds.max || priceFilter;
     const urlSort = searchParams.get("sort") || "popular";
 
     if (!arraysEqual(urlCategories, selectedCategories)) {
@@ -184,13 +210,13 @@ const ProductListing = () => {
     if (urlRating !== ratingFilter) {
       setRatingFilter(urlRating);
     }
-    if (urlPrice !== priceFilter) {
+    if (urlPrice !== priceFilter && priceBounds.max) {
       setPriceFilter(urlPrice);
     }
     if (urlSort !== sortOption) {
       setSortOption(urlSort);
     }
-  }, [searchParams, priceBounds.max]);
+  }, [searchParams, priceBounds.max, priceFilter, sortOption]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -222,19 +248,6 @@ const ProductListing = () => {
     sortOption,
     priceBounds.max,
     setSearchParams,
-  ]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timeout = setTimeout(() => setIsLoading(false), 200);
-    return () => clearTimeout(timeout);
-  }, [
-    selectedCategories,
-    selectedBrands,
-    searchTerm,
-    ratingFilter,
-    priceFilter,
-    sortOption,
   ]);
 
   const filteredProducts = useMemo(() => {
@@ -335,7 +348,7 @@ const ProductListing = () => {
     setSelectedCategories([]);
     setSelectedBrands([]);
     setRatingFilter(0);
-    setPriceFilter(priceBounds.max);
+    setPriceFilter(priceBounds.max || 0);
     setSearchTerm("");
     setSortOption("popular");
   };
@@ -501,6 +514,12 @@ const ProductListing = () => {
             </div>
           </div>
 
+          {error && (
+            <div className="alert alert-error bg-rose-50 text-rose-700 border border-rose-200">
+              <span>{error}</span>
+            </div>
+          )}
+
           {activeFilters.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {activeFilters.map((chip) => (
@@ -595,6 +614,7 @@ const ProductListing = () => {
                       key={product.id || product.title}
                       product={product}
                       viewMode={viewMode}
+                      onAddToCart={(p) => addItem(p, 1)}
                     />
                   ))}
                 </div>
