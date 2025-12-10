@@ -5,6 +5,8 @@ import Product from "../models/Product.ts";
 import { productValidation } from "../validation/productValidation.ts";
 // import { userValidation } from "../validation/userValidation.ts";
 import { requireRole } from "../middlewares/authorization.ts";
+import User from "../models/User.ts";
+import { requireAuth } from "../middlewares/authentcation.ts";
 const productRouter = express.Router();
 
 //create product
@@ -36,6 +38,56 @@ productRouter.get("/:id", async (req, res) => {
     res.status(404).send({ message: "User not found" });
   }
   res.send(product);
+});
+
+//buy product
+productRouter.put("/productId/:productId", requireAuth, async (req, res) => {
+  const { productId } = req.params;
+  const product = await Product.findById(productId);
+
+  if (!product || product?.quantity <= 0) {
+    return res
+      .status(500)
+      .send({ message: " product out of stock or not found" });
+  }
+  const userPayload = req.user;
+
+  if (!userPayload) {
+    return res.status(500).send({ message: " user not found" });
+  }
+  const userIdFromPayload = userPayload.id;
+  const user = await User.findById(userIdFromPayload);
+  if (!user) {
+    res.status(404).send({ message: "user not found" });
+  }
+
+  const newProduct = await Product.findByIdAndUpdate(
+    productId,
+    {
+      $inc: {
+        quantity: -1,
+        soldQuantity: 1,
+      },
+    },
+    { new: true }
+  );
+
+  const newUser = await User.findByIdAndUpdate(
+    userIdFromPayload,
+    {
+      $push: {
+        purchased: {
+          productId,
+          quantity: 1,
+          status: "delivering ....",
+          date: new Date(),
+        },
+      },
+    },
+    { new: true }
+  );
+
+  res.send({ purchased: newUser?.purchased });
 });
 
 export default productRouter;
