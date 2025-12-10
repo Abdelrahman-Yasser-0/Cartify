@@ -127,7 +127,8 @@ const Auth_Login = () => {
           localStorage.setItem("user", JSON.stringify(data.user));
           navigate("/");
         } else if (response.status == 404) {
-          console.log("yes the user is not created");
+          console.log("the user is not created");
+          setLoginError(true);
         } else if (response.status == 401) {
           setLoginError(true);
         }

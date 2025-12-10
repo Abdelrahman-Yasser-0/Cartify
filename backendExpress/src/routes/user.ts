@@ -15,15 +15,14 @@ userRouter.get("/", async (req, res) => {
   res.send(users);
 });
 
-type UserTokenPayload = {
+type user = {
   userId: string;
   role: string;
 };
 userRouter.get("/me", requireAuth, async (req, res) => {
   try {
-    const userData = req.user as UserTokenPayload;
+    const userData = req.user as user;
 
-    // Now TypeScript knows 'userData' has a 'userId' property
     const userId = userData.userId;
 
     const user = await User.findById(userId).select("-passwordHash");
@@ -35,6 +34,67 @@ userRouter.get("/me", requireAuth, async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
+  }
+});
+// Update User Profile
+userRouter.put("/me", requireAuth, async (req, res) => {
+  try {
+    // get ID from the token
+    const userData = req.user as user;
+    const userId = userData.userId;
+
+    // find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // destructure the potential updates from body
+    const { name, email, password, phone, shippingAddress } = req.body;
+
+    // If they are changing email, make sure no one else has it
+    if (email && email != user.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({ message: "Email is already in use" });
+      }
+      user.email = email;
+    }
+
+    // only hash if a new password is actually provided bnot an empity string
+    if (password && password.trim() != "") {
+      const passwordHash = await bcrypt.hash(password, 10);
+      user.passwordHash = passwordHash;
+    }
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+
+    if (shippingAddress) {
+      user.shippingAddress = {
+        ...user.shippingAddress, // keep the old values
+        ...shippingAddress, // overwrite with the new values
+      };
+    }
+
+    // save changes
+    const updatedUser = await user.save();
+
+    //remove pass
+    const userObject =
+      updatedUser instanceof Object
+        ? JSON.parse(JSON.stringify(updatedUser))
+        : updatedUser;
+    delete userObject.passwordHash;
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: userObject,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An error occurred";
+    res.status(500).json({ message: errorMessage });
   }
 });
 
