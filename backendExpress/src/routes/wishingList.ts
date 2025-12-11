@@ -9,6 +9,27 @@ import Joi from "joi";
 import { addToCartValidation } from "../validation/addToCartValidation.ts";
 const wishingListRouter = express.Router();
 
+//get user wishing list
+wishingListRouter.get("/", async (req, res) => {
+  const userPayload = req.user;
+
+  if (!userPayload) {
+    return res.status(500).send({ message: " user not found" });
+  }
+  const userIdFromPayload = userPayload.id;
+
+  const user = await User.findById(userIdFromPayload).populate(
+    "wishingList.productId"
+  );
+  if (!user) {
+    return res.status(400).send({ message: "user not found" });
+  } else if (user.wishingList.length == 0) {
+    return res.status(400).send({ message: "wishingList is empty" });
+  }
+
+  return res.status(200).send({ userWishingList: user?.wishingList });
+});
+
 // add product to the user wishing list
 wishingListRouter.put("/add/product", async (req, res) => {
   try {
