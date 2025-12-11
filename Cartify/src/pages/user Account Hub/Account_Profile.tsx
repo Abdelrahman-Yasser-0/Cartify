@@ -6,6 +6,7 @@ import { IoClose } from "react-icons/io5";
 import Account_Addresses from "./Account_Addresses";
 import { useNavigate } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
+import { json } from "stream/consumers";
 
 const Account_Profile = () => {
   const navigate = useNavigate();
@@ -245,8 +246,9 @@ const Account_Profile = () => {
 
         const data = await response.json();
 
-        if (response.ok) {
+        if (response.status == 200) {
           const cuurentuser = data;
+          console.log(cuurentuser);
 
           setfullName(cuurentuser.name || "");
           setEmail(cuurentuser.email || "");
@@ -259,6 +261,7 @@ const Account_Profile = () => {
             setApartment(cuurentuser.shippingAddress.apartment || "");
             setZip(cuurentuser.shippingAddress.zip || "");
           }
+          localStorage.setItem("currentuser", JSON.stringify(cuurentuser));
         } else {
           console.log("Failed to fetch user");
           navigate("/auth/login");
