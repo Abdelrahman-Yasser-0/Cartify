@@ -2,7 +2,7 @@ import { products as ProductType } from "../pages/types";
 import { fetchProductById } from "./productApi";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000";
+(import.meta.env as { VITE_API_BASE_URL?: string }).VITE_API_BASE_URL || "http://127.0.0.1:3000";
 
 type CartEntry = { productId: string; quantity: number };
 
@@ -15,7 +15,7 @@ export const fetchUserCart = async (
   userId: string,
   token: string
 ): Promise<CartEntry[]> => {
-  const res = await fetch(`${API_BASE_URL}/cart/userId/${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/cart`, {
     headers: authHeaders(token),
   });
   if (!res.ok) {
@@ -35,7 +35,7 @@ export const editProductQuantity = async (
   const res = await fetch(`${API_BASE_URL}/cart/editProductQuantity`, {
     method: "PUT",
     headers: authHeaders(token),
-    body: JSON.stringify({ userId, productId, quantity: delta }),
+    body: JSON.stringify({ productId, quantity: delta }),
   });
   if (!res.ok) {
     const message = (await res.json().catch(() => ({}))).message;
@@ -49,7 +49,7 @@ export const deleteFullCart = async (
   userId: string,
   token: string
 ): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/cart/delete/userId/${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/cart/delete`, {
     method: "DELETE",
     headers: authHeaders(token),
   });
@@ -63,7 +63,7 @@ export const buyCart = async (
   userId: string,
   token: string
 ): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/cart/buy/userId/${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/cart/buy`, {
     method: "PUT",
     headers: authHeaders(token),
   });

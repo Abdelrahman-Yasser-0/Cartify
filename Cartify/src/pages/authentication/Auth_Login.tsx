@@ -59,10 +59,7 @@ const Auth_Login = () => {
 
     // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return (
-      !containWhiteSpace(email) &&
-      containAtSymbol(email) &&
-      validDomain(email) &&
-      validExtinsion(email)
+      true
     );
   };
 
@@ -97,11 +94,7 @@ const Auth_Login = () => {
     //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     password = password.trim();
     return (
-      containLowerCase(password) &&
-      containUpperCase(password) &&
-      containNumber(password) &&
-      // containSpecialChar(password) &&
-      passLenGt8(password)
+      true
     );
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

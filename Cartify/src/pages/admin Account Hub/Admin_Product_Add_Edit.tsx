@@ -4,7 +4,8 @@ import Sidebar from "../../components/Admin/Sidebar";
 import Header from "./../../components/Header";
 import { FiArrowLeft, FiX, FiPlus } from "react-icons/fi";
 import { products } from "../types";
-import { productsData } from "../productsData";
+import { createProduct } from "../../api/adminApi";
+import { fetchProducts, fetchProductById } from "../../api/productApi";
 
 type TabType = "basic" | "media" | "pricing" | "inventory" | "colors";
 
@@ -35,24 +36,53 @@ const Admin_Product_Add_Edit = () => {
   const [specifications, setSpecifications] = useState<
     { key: string; value: string }[]
   >([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // Fetch categories from backend
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const productsList = await fetchProducts();
+        const uniqueCategories = Array.from(
+          new Set(productsList.map((p) => p.category).filter(Boolean))
+        ).sort();
+        setCategories(uniqueCategories);
+      } catch (err) {
+        console.error("Error loading categories:", err);
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    loadCategories();
+  }, []);
 
   useEffect(() => {
     if (isEditMode && id) {
-      const product = productsData.find((p) => p.id === id);
-      if (product) {
-        setFormData(product);
-        setImages(product.imgurl ? [product.imgurl] : []);
-        if (product.specifications) {
-          setSpecifications(
-            Object.entries(product.specifications).map(([key, value]) => ({
-              key,
-              value,
-            }))
-          );
+      const loadProduct = async () => {
+        try {
+          const product = await fetchProductById(id);
+          setFormData(product);
+          setImages(product.imgurl ? [product.imgurl] : []);
+          if (product.specifications) {
+            setSpecifications(
+              Object.entries(product.specifications).map(([key, value]) => ({
+                key,
+                value: String(value),
+              }))
+            );
+          }
+        } catch (err) {
+          console.error("Error loading product:", err);
+          alert("Failed to load product. Redirecting...");
+          navigate("/admin/products");
         }
-      }
+      };
+      loadProduct();
     }
-  }, [id, isEditMode]);
+  }, [id, isEditMode, navigate]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -120,36 +150,60 @@ const Admin_Product_Add_Edit = () => {
     }));
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     // Validation
-    if (!formData.title || !formData.price || !formData.category) {
+    if (!formData.title || !formData.price || !formData.brand) {
       alert(
-        "Please fill in all required fields (Product Name, Price, Category)"
+        "Please fill in all required fields (Product Name, Brand, Price)"
       );
       return;
     }
 
-    const productToSave: products = {
-      ...formData,
-      id: isEditMode ? id : Date.now().toString(),
-      imgurl: images[0] || "",
-      specifications: specifications.reduce((acc, spec) => {
-        if (spec.key && spec.value) {
-          acc[spec.key] = spec.value;
-        }
-        return acc;
-      }, {} as { [key: string]: string }),
-    } as products;
+    if (!formData.stock && formData.stock !== 0) {
+      alert("Please enter stock quantity");
+      return;
+    }
 
-    console.log("Publishing product:", productToSave);
-    // In a real app, this would save to backend
-    alert("Product published successfully!");
-    navigate("/admin/products");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to create products");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Convert specifications object to array of strings
+      const specsArray = specifications
+        .filter((spec) => spec.key && spec.value)
+        .map((spec) => `${spec.key}: ${spec.value}`);
+
+      // Prepare product data for backend
+      const productData = {
+        title: formData.title!,
+        brand: formData.brand!,
+        price: formData.price!,
+        quantity: formData.stock || 0,
+        rate: formData.rate || "0",
+        discount: formData.discount || 0,
+        imgurl: images[0] || "",
+        sku: formData.sku || "",
+        category: formData.category || "not categorised",
+        colors: formData.colors || [],
+        description: formData.description || "",
+        specifications: specsArray,
+        shortDescription: formData.shortDescription || "",
+      };
+
+      await createProduct(productData, token);
+      alert("Product created successfully!");
+      navigate("/admin/products");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to create product");
+      console.error("Error creating product:", err);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const categories = Array.from(
-    new Set(productsData.map((p) => p.category).filter(Boolean))
-  );
 
   return (
     <div>
@@ -181,9 +235,17 @@ const Admin_Product_Add_Edit = () => {
           <div className="flex justify-end gap-3">
             <button
               onClick={handlePublish}
+              disabled={loading}
               className="btn bg-teal-600 text-white hover:bg-teal-700"
             >
-              Publish Product
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  Creating...
+                </>
+              ) : (
+                "Publish Product"
+              )}
             </button>
           </div>
 
@@ -285,6 +347,7 @@ const Admin_Product_Add_Edit = () => {
                         className="select select-bordered w-full"
                         value={formData.category || ""}
                         onChange={handleInputChange}
+                        disabled={loadingCategories}
                       >
                         <option value="">Select category</option>
                         {categories.map((cat) => (

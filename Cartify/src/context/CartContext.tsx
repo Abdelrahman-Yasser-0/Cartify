@@ -241,12 +241,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (userId && token) {
       try {
         await buyCart(userId, token);
-        await loadRemoteCart();
+        // Don't clear cart - backend handles the purchase
       } catch (error) {
         console.error("Failed to buy cart", error);
+        throw error; // Re-throw so CheckoutForms can handle it
       }
     } else {
-      setItems([]);
+      throw new Error("User not authenticated");
     }
   };
 
