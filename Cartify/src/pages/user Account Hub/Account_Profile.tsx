@@ -32,6 +32,7 @@ const Account_Profile = () => {
   const [phnoeNumberTouched, setPhoneNumberTouched] = useState<boolean>(false);
   const [streetAddressTouched, setstreetAddressTouched] =
     useState<boolean>(false);
+  const [validemail, setValidEmail] = useState<boolean>(true);
 
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;
@@ -48,7 +49,7 @@ const Account_Profile = () => {
   //   return usernameRegex.test(email);
   // };
   const validDomain = (email: string): boolean => {
-    const domainRegex = /@(gmail|yahoo|outlook|hotmail)\.com$/i;
+    const domainRegex = /@(gmail|yahoo|outlook|hotmail|example)\.com$/i;
     return domainRegex.test(email);
   };
   const validExtinsion = (email: string): boolean => {
@@ -191,7 +192,6 @@ const Account_Profile = () => {
       };
 
       try {
-        // 3. The Fetch Call
         const response = await fetch("http://127.0.0.1:3000/user/me", {
           method: "PUT",
           headers: {
@@ -203,14 +203,16 @@ const Account_Profile = () => {
 
         const data = await response.json();
 
-        if (response.ok) {
-          // Status 200-299
+        if (response.status == 200) {
           console.log("Update Successful", data);
 
-          // Update the local storage so the UI updates immediately
           localStorage.setItem("user", JSON.stringify(data.user));
 
-          setIsEditing(false); // Close edit mode
+          setIsEditing(false);
+        } else if (response.status == 400) {
+          setValidEmail(false);
+          console.log("it is already used");
+          console.log(validemail);
         } else {
           console.log("Update failed:", data.message);
         }
@@ -380,7 +382,7 @@ const Account_Profile = () => {
               </div>
               <label
                 className={`input input-bordered flex items-center gap-2 ${
-                  !validateEmail(email) && emailTouched
+                  (!validateEmail(email) || !validemail) && emailTouched
                     ? "input input-error"
                     : "input"
                 }`}
@@ -402,6 +404,7 @@ const Account_Profile = () => {
                   placeholder="Enter Your Email"
                   onChange={(e) => {
                     setEmail(e.target.value);
+                    setValidEmail(true);
                   }}
                   onBlur={() => {
                     setEmailTouched(true);
@@ -412,7 +415,9 @@ const Account_Profile = () => {
               </label>
               <div
                 className={`w-full ${
-                  !validateEmail(email) && emailTouched ? "" : "hidden"
+                  (!validateEmail(email) || !validemail) && emailTouched
+                    ? ""
+                    : "hidden"
                 }  bg-gray-100 rounded-lg mt-3 p-3 `}
               >
                 <ul className={`flex flex-col gap-2`}>
@@ -427,6 +432,16 @@ const Account_Profile = () => {
                     <p className="text-xs">
                       Email address cannot contain spaces
                     </p>
+                  </li>
+                  <li
+                    className={`flex gap-2  items-center ${
+                      validemail && "hidden"
+                    }`}
+                  >
+                    {!validemail && (
+                      <IoClose className="text-red-600 text-[16px] shrink-0" />
+                    )}
+                    <p className="text-xs">Email is already in use</p>
                   </li>
                   <li
                     className={`flex gap-2  items-center ${
