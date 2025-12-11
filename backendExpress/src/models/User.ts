@@ -53,7 +53,7 @@ const UserSchema = new mongoose.Schema({
         },
         quantity: { type: Number, required: true },
         status: String,
-        date: Number,
+        date: { type: Date, default: new Date() },
       },
     ],
     default: [],

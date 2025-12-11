@@ -7,10 +7,20 @@ import { requireAuth } from "./middlewares/authentcation.ts";
 import wishingListRouter from "./routes/wishingList.ts";
 import adminRouter from "./routes/admin.ts";
 import { requireRole } from "./middlewares/authorization.ts";
+
 import cors from "cors";
 
-connect("mongodb://127.0.0.1:27017/s9")
-  .then(() => console.log("Connected to MongoDB"))
+import seedProducts from "./seeders/productsSeeder.ts";
+import seedUsers from "./seeders/userAndAdminSeeder.ts";
+
+connect("mongodb://127.0.0.1:27017/cartifyDepiDB")
+  .then(async () => {
+    console.log("MongoDB connected");
+
+    // Run seeder
+    await seedProducts();
+    await seedUsers();
+  })
   .catch((err) => console.error("Could not connect to MongoDB", err));
 
 const app = express();
@@ -28,4 +38,4 @@ app.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-app.listen(3000);
+app.listen(3000, () => console.log(`Server running on port 3000`));
