@@ -36,7 +36,5 @@ export const productValidation = Joi.object({
     )
     .optional(),
 
-  inStock: Joi.boolean().required(),
-
   shortDescription: Joi.string().optional(),
 });
