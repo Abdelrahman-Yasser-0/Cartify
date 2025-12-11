@@ -40,6 +40,7 @@ import NotFound from "./pages/NotFound";
 import Checkout from "./pages/home/Checkout";
 import OrderPlaced from "./pages/home/OrderPlaced";
 import Favorites from "./pages/home/Favorites";
+import Auth_Signup_Admin from "./pages/authentication/Auth_Signup_Admin";
 
 const App = () => {
   return (
@@ -95,6 +96,7 @@ const App = () => {
         //-----------------------------------------------------Auth-----------------------------------------------------//
         <Route path="/auth/login" element={<Auth_Login />} />
         <Route path="/auth/signup" element={<Auth_Signup />} />
+        <Route path="/auth/signup/admin" element={<Auth_Signup_Admin />} />
         //-----------------------------------------------------Support_Legal--------------------------------------------------//
         <Route path="/accessibility" element={<Accessibility />} />
         <Route path="/contact-us" element={<ContactUs />} />

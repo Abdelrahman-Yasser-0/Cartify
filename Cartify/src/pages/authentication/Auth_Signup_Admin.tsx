@@ -24,6 +24,7 @@ const Auth_Signup_Admin = () => {
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
   const [fullNameTouched, setfullNameTouched] = useState<boolean>(false);
+  const [validSignup, setValidSignup] = useState<boolean>(false);
 
   const [stepper, setStepper] = useState<number>(1);
 
@@ -114,7 +115,7 @@ const Auth_Signup_Admin = () => {
         email: email,
         phone: "",
         password: password,
-        role: "Admin",
+        role: "admin",
         shippingAddress: {
           country: "",
           city: "",
@@ -123,8 +124,8 @@ const Auth_Signup_Admin = () => {
           zip: "",
         },
         additionalInformation: {
-          company: "",
-          notes: "",
+          company: "Depi",
+          notes: "Still a trani",
         },
         communicationPrefrences: {
           email: true,
@@ -132,36 +133,45 @@ const Auth_Signup_Admin = () => {
         },
       };
       //send data using api
-      const response = await fetch("http://127.0.0.1:3000/user/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-      //catch the api response
-      const data = await response.json();
-      if (response.status == 200) {
-        console.log("Signup Successful", data);
-        setStepper(3);
-      } else {
-        console.log(data.message);
+      try {
+        const response = await fetch("http://127.0.0.1:3000/user/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+        const data = await response.json();
+
+        if (response.status == 201) {
+          //sucuss
+          console.log("Signup is Correct", data);
+          setValidSignup(true);
+          setStepper((prev) => (prev += 1));
+        } else if (response.status == 400) {
+          //user was found before
+          console.log("user is created before");
+          console.log(data.message);
+          setValidSignup(false);
+          setStepper((prev) => (prev += 1));
+        }
+      } catch (error) {
+        console.log(error);
       }
 
-      //   const userData: user = {
-      //     fullname: fullName,
-      //     email: email,
-      //     password: password,
-      //     country: country,
-      //     city: city,
-      //     streetAddress: streetAddress,
-      //     apartment: apartment,
-      //     zip: zip,
-      //     phoneNumber: phoneNumber,
-      //     id: users.length + 1,
-      //   };
-      //   users.push(userData);
-      console.log("yes valied");
+      // const userData: user = {
+      //   fullname: fullName,
+      //   email: email,
+      //   password: password,
+      //   country: country,
+      //   city: city,
+      //   streetAddress: streetAddress,
+      //   apartment: apartment,
+      //   zip: zip,
+      //   phoneNumber: phoneNumber,
+      //   id: users.length + 1,
+      // };
+      // users.push(userData);
     } else {
       console.log("no not valied");
     }

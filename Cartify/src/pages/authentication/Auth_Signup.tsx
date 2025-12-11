@@ -585,7 +585,7 @@ const Auth_Signup = () => {
         >
           <p>Already have an account?</p>
           <Link
-            to=""
+            to="/auth/login"
             className={`link link-primary !no-underline !text-cyan-600 
              `}
           >
