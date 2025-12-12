@@ -160,6 +160,7 @@ const Account_Profile = () => {
     localStorage.removeItem("user");
     navigate("/auth/login");
   };
+  console.log(saving);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -662,7 +663,11 @@ const Account_Profile = () => {
                 <button
                   className="btn bg-teal-600 btn-sm text-white"
                   type="button"
-                  onClick={() => setIsEditing(true)}
+                  onClick={(e) => {
+                    setIsEditing(true);
+                    e.preventDefault(); // Prevents default form actions
+                    e.stopPropagation(); // Stops the click from bubbling up
+                  }}
                 >
                   Edit Profile
                 </button>
@@ -680,15 +685,6 @@ const Account_Profile = () => {
                   ) : (
                     "Save Edit"
                   )}
-                </button>
-              )}
-              {isEditing && !saving && (
-                <button
-                  className="btn btn-ghost btn-sm"
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                >
-                  Cancel
                 </button>
               )}
             </div>
