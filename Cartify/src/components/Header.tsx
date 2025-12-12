@@ -40,7 +40,7 @@ const Header = () => {
     navigate(destination);
   };
 
-  const currentuser = localStorage.getItem("user");
+  const currentuser: any = localStorage.getItem("user");
 
   return location.pathname.startsWith("/admin") ? (
     <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
@@ -143,7 +143,12 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/product_listing?sale=true" className="hover:text-teal-600 rounded">Deals</Link>
+                <Link
+                  to="/product_listing?sale=true"
+                  className="hover:text-teal-600 rounded"
+                >
+                  Deals
+                </Link>
               </li>
             </ul>
           </div>
@@ -189,7 +194,13 @@ const Header = () => {
             )}
           </Link>
           <Link
-            to={`${currentuser ? "/account/overview" : "/auth/login"}`}
+            to={`${
+              currentuser
+                ? currentuser.role == "admin"
+                  ? "/account/overview"
+                  : "/admin/overview"
+                : "/auth/login"
+            }`}
             className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
           >
             <FiUser />
