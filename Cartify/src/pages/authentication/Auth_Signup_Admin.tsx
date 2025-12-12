@@ -133,30 +133,17 @@ const Auth_Signup_Admin = () => {
         },
       };
       //send data using api
-<<<<<<< HEAD
-      const response = await fetch("https://cartifybackend.vercel.app/user/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-      //catch the api response
-      const data = await response.json();
-      if (response.status == 200) {
-        console.log("Signup Successful", data);
-        setStepper(3);
-      } else {
-        console.log(data.message);
-=======
       try {
-        const response = await fetch("https://cartifybackend.vercel.app/user/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
+        const response = await fetch(
+          "https://cartifybackend.vercel.app/user/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
         const data = await response.json();
 
         if (response.status == 201) {
@@ -173,7 +160,6 @@ const Auth_Signup_Admin = () => {
         }
       } catch (error) {
         console.log(error);
->>>>>>> abdelrahman
       }
 
       // const userData: user = {
