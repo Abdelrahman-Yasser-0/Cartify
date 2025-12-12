@@ -1,10 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Admin/Sidebar";
 import Header from "./../../components/Header";
 import { FaBoxOpen } from "react-icons/fa6";
 import { TbAlertTriangle } from "react-icons/tb";
+import { CiLogout } from "react-icons/ci";
 
 const Admin_Overview = () => {
+  const navigate = useNavigate();
+  const logout = (): void => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("currentuser");
+    localStorage.removeItem("user");
+    navigate("/auth/login");
+  };
   return (
     <div>
       <Header />
@@ -30,6 +38,13 @@ const Admin_Overview = () => {
               <TbAlertTriangle size={25} /> Review Low Stock Items
             </Link>
           </div>
+          <button
+            className="btn btn-error text-white btn-sm"
+            type="button"
+            onClick={() => logout()}
+          >
+            <CiLogout className="shrink-0" /> Log Out
+          </button>
         </div>
       </div>
     </div>

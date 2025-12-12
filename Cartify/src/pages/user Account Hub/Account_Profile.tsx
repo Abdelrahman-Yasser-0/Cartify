@@ -158,6 +158,7 @@ const Account_Profile = () => {
   const logout = (): void => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("currentuser");
     navigate("/auth/login");
   };
   console.log(saving);
