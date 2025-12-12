@@ -2,41 +2,64 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { productsData } from "../productsData";
 import { FiHeart, FiShare2 } from "react-icons/fi";
 import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineStarRate } from "react-icons/md";
 import { FiTruck, FiCheckCircle, FiRefreshCw } from "react-icons/fi";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
+import { fetchProductById } from "../../api/productApi";
+import { products } from "../types";
 
 const ProductDetailes = () => {
   const { id } = useParams<{ id: string }>();
-  const product = productsData.find((p) => p.id === id) || productsData[0];
+  const [product, setProduct] = useState<products | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addItem } = useCart();
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
-  const [selectedColor, setSelectedColor] = useState<string>(
-    product.colors?.[0] || ""
-  );
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<
     "description" | "specifications" | "reviews"
   >("description");
+
+  useEffect(() => {
+    if (!id) {
+      setError("Missing product id.");
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    fetchProductById(id)
+      .then((data) => {
+        setProduct(data);
+        setSelectedColor(data.colors?.[0] || "");
+      })
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : "Failed to load product.";
+        setError(message);
+      })
+      .finally(() => setIsLoading(false));
+  }, [id]);
 
   // Scroll to top when component mounts or product ID changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  const rating = parseFloat(product.rate.split(" ")[0]);
+  const rating = parseFloat(product?.rate?.split(" ")[0] || "0");
   // Extract review count from rate string (format: "4.8 (1247)" or just "4.8")
-  const reviewCountMatch = product.rate.match(/\((\d+)\)/);
+  const reviewCountMatch = product?.rate?.match(/\((\d+)\)/);
   const reviewCount = reviewCountMatch ? reviewCountMatch[1] : "0";
   const reviewCountNum = parseInt(reviewCount, 10);
 
   // Generate sample reviews if review count is high but reviews array is empty
   const reviewsToDisplay = useMemo(() => {
-    if (product.reviews && product.reviews.length > 0) {
+    if (product?.reviews && product.reviews.length > 0) {
       return product.reviews;
     }
 
@@ -96,14 +119,14 @@ const ProductDetailes = () => {
       ],
     };
 
-    const reviews = categoryReviews[product.category] || [
+    const reviews = categoryReviews[product?.category || ""] || [
       "Excellent product! Exceeded my expectations. Great quality and fast shipping.",
       "Very satisfied with this purchase. Works perfectly and looks great too!",
       "Highly recommend! Great value for money and the quality is top-notch.",
     ];
 
     // Use product ID as seed for consistent reviews per product
-    const seed = parseInt(product.id, 10);
+    const seed = parseInt(product?.id || "0", 10);
     for (let i = 0; i < 3; i++) {
       const nameIndex = (seed + i) % names.length;
       const monthIndex = (seed + i * 2) % months.length;
@@ -119,7 +142,7 @@ const ProductDetailes = () => {
     }
 
     return sampleReviews;
-  }, [product.id, product.category, product.reviews, reviewCountNum, rating]);
+  }, [product?.id, product?.category, product?.reviews, reviewCountNum, rating]);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -153,11 +176,52 @@ const ProductDetailes = () => {
   };
 
   const handleBuyNow = () => {
-    if (product.inStock) {
+    if (product && product.inStock) {
       addItem(product, quantity);
       navigate("/checkout");
     }
   };
+
+  const handleToggleFavorite = () => {
+    if (!product) return;
+    const isFavorite = isInWishlist(product.id);
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <span className="loading loading-spinner loading-lg text-teal-600"></span>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <p className="text-xl font-semibold text-gray-800">
+              {error || "Product not found."}
+            </p>
+            <Link to="/product_listing" className="btn btn-primary bg-teal-600 text-white border-none">
+              Back to Products
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -203,8 +267,14 @@ const ProductDetailes = () => {
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-semibold">{product.title}</h1>
                 <div className="flex gap-3">
-                  <button className="p-2 hover:bg-gray-100 rounded-full transition">
-                    <FiHeart className="text-xl" />
+                  <button 
+                    onClick={handleToggleFavorite}
+                    className="p-2 hover:bg-gray-100 rounded-full transition"
+                    title={isInWishlist(product.id) ? "Remove from favorites" : "Add to favorites"}
+                  >
+                    <FiHeart 
+                      className={`text-xl ${isInWishlist(product.id) ? 'fill-teal-600 text-teal-600' : ''}`}
+                    />
                   </button>
                   <button className="p-2 hover:bg-gray-100 rounded-full transition">
                     <FiShare2 className="text-xl" />

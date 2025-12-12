@@ -15,7 +15,7 @@ userRouter.get("/", async (req, res) => {
   res.send(users);
 });
 
-///
+
 userRouter.get("/me", requireAuth, async (req, res) => {
   try {
     const userPayload = req.user;
@@ -29,6 +29,7 @@ userRouter.get("/me", requireAuth, async (req, res) => {
     }
 
     const user = await User.findById(userIdFromPayload).select("-passwordHash");
+
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

@@ -61,6 +61,8 @@ app.use(express.urlencoded());
 app.use(cors(corsOptions));
 ///
 
+app.use(cors());
+
 app.use("/user", userRouter);
 app.use("/product", productRouter);
 app.use("/cart", requireAuth, cartRouter);
