@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import { connect } from "mongoose";
 import userRouter from "./routes/user.ts";
@@ -9,10 +11,42 @@ import adminRouter from "./routes/admin.ts";
 import { requireRole } from "./middlewares/authorization.ts";
 import seedProducts from "./seeders/productsSeeder.ts";
 import seedUsers from "./seeders/userAndAdminSeeder.ts";
+import purchasedRouter from "./routes/purchased.ts";
+import cors from "cors";
 
-connect("mongodb://127.0.0.1:27017/cartifyDepiDB")
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:4173",
+  "https://cartify-depi.vercel.app", // Add your deployed frontend URL when you have it
+];
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: Function) => {
+    // `origin` will be undefined for server-to-server requests or some tools like curl
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Accept",
+    "X-Requested-With",
+  ],
+};
+
+///
+
+const uri = process.env.ATLAS_URI ?? "mongodb://127.0.0.1:27017/cartifyDepiDB";
+// connect("mongodb://127.0.0.1:27017/cartifyDepiDB")
+connect(uri)
   .then(async () => {
-    console.log("MongoDB connected");
+    console.log("MongoDB connected", uri);
 
     // Run seeder
     await seedProducts();
@@ -23,11 +57,17 @@ connect("mongodb://127.0.0.1:27017/cartifyDepiDB")
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
+///
+app.use(cors(corsOptions));
+///
+
+app.use(cors());
 
 app.use("/user", userRouter);
 app.use("/product", productRouter);
 app.use("/cart", requireAuth, cartRouter);
 app.use("/wishingList", requireAuth, wishingListRouter);
+app.use("/purchased", requireAuth, purchasedRouter);
 app.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 
 app.get("/", (req, res) => {

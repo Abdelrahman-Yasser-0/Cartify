@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { FiGrid, FiList, FiSliders } from "react-icons/fi";
+import { FiGrid, FiList, FiSliders, FiHeart } from "react-icons/fi";
 import { MdOutlineStarRate } from "react-icons/md";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { productsData } from "../productsData";
+import { fetchProducts } from "../../api/productApi";
 import { products } from "../types";
+import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 type ViewMode = "grid" | "list";
 
 type ProductCardProps = {
   product: products;
   viewMode: ViewMode;
+  onAddToCart: (product: products) => void;
 };
 
-const ProductCard = ({ product, viewMode }: ProductCardProps) => {
+const ProductCard = ({ product, viewMode, onAddToCart }: ProductCardProps) => {
   const {
     title,
     brand,
@@ -26,6 +29,16 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
     shortDescription,
   } = product;
   const parsedRating = parseFloat(rate);
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
+  const isFavorite = isInWishlist(product.id);
+
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
 
   return (
     <div
@@ -41,16 +54,27 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
         } overflow-hidden`}
       >
         {discount && (
-          <span className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+          <span className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
             -{discount}%
           </span>
         )}
-        <img
-          src={imgurl}
-          alt={title}
-          className="object-cover w-full h-full transition duration-200 hover:scale-105"
-          loading="lazy"
-        />
+        <button
+          onClick={handleToggleFavorite}
+          className="absolute top-3 right-3 z-10 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
+          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          <FiHeart 
+            className={`text-lg ${isFavorite ? 'fill-teal-600 text-teal-600' : 'text-gray-600'}`}
+          />
+        </button>
+        <Link to={`/product_detailes/${product.id || "1"}`}>
+          <img
+            src={imgurl}
+            alt={title}
+            className="object-cover w-full h-full transition duration-200 hover:scale-105"
+            loading="lazy"
+          />
+        </Link>
       </div>
 
       <div
@@ -68,7 +92,9 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
             </span>
           </div>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <Link to={`/product_detailes/${product.id || "1"}`}>
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-teal-600 transition">{title}</h3>
+        </Link>
         <p className="text-sm text-gray-500">
           {shortDescription || "Discover premium tech tailored to your needs."}
         </p>
@@ -83,7 +109,11 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
           )}
         </div>
         <div className="flex gap-3 pt-2 flex-wrap">
-          <button className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white">
+          <button
+            className="btn btn-primary bg-teal-600 hover:bg-teal-500 border-none text-white"
+            disabled={!product.inStock}
+            onClick={() => onAddToCart(product)}
+          >
             Add to Cart
           </button>
           <Link
@@ -100,7 +130,11 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
 
 const ProductListing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [allProducts] = useState<products[]>(productsData);
+  const { addItem } = useCart();
+  const [allProducts, setAllProducts] = useState<products[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [priceBounds, setPriceBounds] = useState({ min: 0, max: 0 });
 
   const categories = useMemo(
     () =>
@@ -113,18 +147,6 @@ const ProductListing = () => {
     () => Array.from(new Set(allProducts.map((product) => product.brand))),
     [allProducts]
   );
-  const priceBounds = useMemo(() => {
-    const prices = allProducts.map((product) => product.price);
-    if (!prices.length) {
-      return { min: 0, max: 0 };
-    }
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    return {
-      min: Number.isFinite(minPrice) ? Math.floor(minPrice) : 0,
-      max: Number.isFinite(maxPrice) ? Math.ceil(maxPrice) : 0,
-    };
-  }, [allProducts]);
 
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") ?? "");
@@ -134,23 +156,52 @@ const ProductListing = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.get("brands") ? searchParams.get("brands")!.split(",") : []
   );
-  const [priceFilter, setPriceFilter] = useState<number>(() => {
-    const param = searchParams.get("maxPrice");
-    if (param === null) return priceBounds.max;
-    const parsed = Number(param);
-    return !isNaN(parsed) ? parsed : priceBounds.max;
-  });
+  const [priceFilter, setPriceFilter] = useState<number>(0);
   const [ratingFilter, setRatingFilter] = useState(
     Number(searchParams.get("rating")) || 0
   );
   const [sortOption, setSortOption] = useState(
     searchParams.get("sort") || "popular"
   );
+  const [saleOnly, setSaleOnly] = useState(
+    searchParams.get("sale") === "true"
+  );
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = isFetching;
 
   const arraysEqual = (a: string[], b: string[]) =>
     a.length === b.length && a.every((value, index) => value === b[index]);
+
+  useEffect(() => {
+    setIsFetching(true);
+    fetchProducts()
+      .then((data) => {
+        setAllProducts(data);
+        const prices = data.map((product) => product.price);
+        if (prices.length) {
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+          setPriceBounds({
+            min: Number.isFinite(minPrice) ? Math.floor(minPrice) : 0,
+            max: Number.isFinite(maxPrice) ? Math.ceil(maxPrice) : 0,
+          });
+          const param = searchParams.get("maxPrice");
+          const parsed = param ? Number(param) : NaN;
+          const initialPrice = !isNaN(parsed)
+            ? parsed
+            : Number.isFinite(maxPrice)
+            ? Math.ceil(maxPrice)
+            : 0;
+          setPriceFilter(initialPrice);
+        }
+      })
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : "Failed to load products.";
+        setError(message);
+      })
+      .finally(() => setIsFetching(false));
+  }, []);
 
   useEffect(() => {
     const urlCategories = searchParams.get("category")
@@ -169,8 +220,11 @@ const ProductListing = () => {
     const urlRating = Number(searchParams.get("rating")) || 0;
     const maxPriceParam = searchParams.get("maxPrice");
     const parsedUrlPrice = maxPriceParam !== null ? Number(maxPriceParam) : NaN;
-    const urlPrice = !isNaN(parsedUrlPrice) ? parsedUrlPrice : priceBounds.max;
+    const urlPrice = !isNaN(parsedUrlPrice)
+      ? parsedUrlPrice
+      : priceBounds.max || priceFilter;
     const urlSort = searchParams.get("sort") || "popular";
+    const urlSale = searchParams.get("sale") === "true";
 
     if (!arraysEqual(urlCategories, selectedCategories)) {
       setSelectedCategories(urlCategories);
@@ -184,11 +238,14 @@ const ProductListing = () => {
     if (urlRating !== ratingFilter) {
       setRatingFilter(urlRating);
     }
-    if (urlPrice !== priceFilter) {
+    if (urlPrice !== priceFilter && priceBounds.max) {
       setPriceFilter(urlPrice);
     }
     if (urlSort !== sortOption) {
       setSortOption(urlSort);
+    }
+    if (urlSale !== saleOnly) {
+      setSaleOnly(urlSale);
     }
   }, [searchParams, priceBounds.max]);
 
@@ -206,11 +263,14 @@ const ProductListing = () => {
     if (ratingFilter) {
       params.set("rating", String(ratingFilter));
     }
-    if (priceFilter !== priceBounds.max) {
+    if (priceFilter !== priceBounds.max && priceBounds.max > 0) {
       params.set("maxPrice", String(priceFilter));
     }
     if (sortOption !== "popular") {
       params.set("sort", sortOption);
+    }
+    if (saleOnly) {
+      params.set("sale", "true");
     }
     setSearchParams(params, { replace: true });
   }, [
@@ -220,21 +280,9 @@ const ProductListing = () => {
     ratingFilter,
     priceFilter,
     sortOption,
+    saleOnly,
     priceBounds.max,
     setSearchParams,
-  ]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timeout = setTimeout(() => setIsLoading(false), 200);
-    return () => clearTimeout(timeout);
-  }, [
-    selectedCategories,
-    selectedBrands,
-    searchTerm,
-    ratingFilter,
-    priceFilter,
-    sortOption,
   ]);
 
   const filteredProducts = useMemo(() => {
@@ -252,12 +300,16 @@ const ProductListing = () => {
       const matchesRating = ratingFilter
         ? parseFloat(product.rate) >= ratingFilter
         : true;
+      const matchesSale = saleOnly
+        ? (typeof product.discount === 'number' && product.discount > 0)
+        : true;
       return (
         matchesCategory &&
         matchesBrand &&
         matchesSearch &&
         matchesPrice &&
-        matchesRating
+        matchesRating &&
+        matchesSale
       );
     });
   }, [
@@ -267,6 +319,7 @@ const ProductListing = () => {
     searchTerm,
     priceFilter,
     ratingFilter,
+    saleOnly,
   ]);
 
   const sortedProducts = useMemo(() => {
@@ -321,6 +374,12 @@ const ProductListing = () => {
         onRemove: () => setSearchTerm(""),
       });
     }
+    if (saleOnly) {
+      chips.push({
+        label: "Sale Items Only",
+        onRemove: () => setSaleOnly(false),
+      });
+    }
     return chips;
   }, [
     selectedCategories,
@@ -329,15 +388,17 @@ const ProductListing = () => {
     priceFilter,
     priceBounds.max,
     searchTerm,
+    saleOnly,
   ]);
 
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setSelectedBrands([]);
     setRatingFilter(0);
-    setPriceFilter(priceBounds.max);
+    setPriceFilter(priceBounds.max || 0);
     setSearchTerm("");
     setSortOption("popular");
+    setSaleOnly(false);
   };
 
   const Filters = (
@@ -350,6 +411,21 @@ const ProductListing = () => {
         >
           Clear All
         </button>
+      </div>
+
+      <div className="space-y-4">
+        <h4 className="font-medium text-gray-700">Special Filters</h4>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm checkbox-success"
+              checked={saleOnly}
+              onChange={(event) => setSaleOnly(event.target.checked)}
+            />
+            Sale Items Only
+          </label>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -474,7 +550,7 @@ const ProductListing = () => {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="text-3xl font-semibold text-gray-900">
-                  All Products
+                  {saleOnly ? "Sale Items" : "All Products"}
                 </h1>
                 <p className="text-gray-500 text-sm">
                   Showing {sortedProducts.length} of {allProducts.length} items
@@ -500,6 +576,12 @@ const ProductListing = () => {
               />
             </div>
           </div>
+
+          {error && (
+            <div className="alert alert-error bg-rose-50 text-rose-700 border border-rose-200">
+              <span>{error}</span>
+            </div>
+          )}
 
           {activeFilters.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -595,16 +677,20 @@ const ProductListing = () => {
                       key={product.id || product.title}
                       product={product}
                       viewMode={viewMode}
+                      onAddToCart={(p) => addItem(p, 1)}
                     />
                   ))}
                 </div>
               ) : (
                 <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
                   <p className="text-xl font-semibold text-gray-800">
-                    No products match these filters
+                    {saleOnly ? "No sale items available" : "No products match these filters"}
                   </p>
                   <p className="text-gray-500 text-sm mt-2">
-                    Try adjusting the filters or clear them to see all products.
+                    {saleOnly 
+                      ? "Check back later for amazing deals!"
+                      : "Try adjusting the filters or clear them to see all products."
+                    }
                   </p>
                   <button
                     className="btn btn-primary bg-teal-600 border-none mt-6 text-white"

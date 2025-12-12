@@ -43,11 +43,19 @@ cartRouter.put("/editProductQuantity", async (req, res) => {
     if (existingProduct) {
       console.log(existingProduct);
       existingProduct.quantity += req.body.quantity;
+      
+      // Remove item from cart if quantity becomes 0 or negative
+      if (existingProduct.quantity <= 0) {
+        user.cart = user.cart.filter((item) => item.productId != req.body.productId);
+      }
     } else {
-      user?.cart.push({
-        productId: req.body.productId,
-        quantity: req.body.quantity,
-      });
+      // Only add new items if quantity is positive
+      if (req.body.quantity > 0) {
+        user?.cart.push({
+          productId: req.body.productId,
+          quantity: req.body.quantity,
+        });
+      }
     }
     await user?.save();
     console.log("done");
@@ -59,8 +67,7 @@ cartRouter.put("/editProductQuantity", async (req, res) => {
     res.status(400).send({ message: errorMessage });
   }
 });
-
-// get the user cart
+// get the user cart detailed
 cartRouter.get("/", async (req, res) => {
   const userPayload = req.user;
 
@@ -70,6 +77,27 @@ cartRouter.get("/", async (req, res) => {
   const userIdFromPayload = userPayload.id;
 
   const user = await User.findById(userIdFromPayload);
+  if (!user) {
+    return res.status(400).send({ message: "user not found" });
+  } else if (user.cart.length == 0) {
+    return res.status(400).send({ message: "cart is empty" });
+  }
+
+  return res.status(200).send({ userCart: user?.cart });
+});
+
+// get the user cart detailed
+cartRouter.get("/detailed", async (req, res) => {
+  const userPayload = req.user;
+
+  if (!userPayload) {
+    return res.status(500).send({ message: " user not found" });
+  }
+  const userIdFromPayload = userPayload.id;
+
+  const user = await User.findById(userIdFromPayload).populate(
+    "cart.productId"
+  );
   if (!user) {
     return res.status(400).send({ message: "user not found" });
   } else if (user.cart.length == 0) {
