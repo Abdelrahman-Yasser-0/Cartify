@@ -6,12 +6,43 @@ import userRouter from "./routes/user.ts";
 import productRouter from "./routes/product.ts";
 import cartRouter from "./routes/cart.ts";
 import { requireAuth } from "./middlewares/authentcation.ts";
+// import userRouter from "./routes/users.ts";
+
 import wishingListRouter from "./routes/wishingList.ts";
 import adminRouter from "./routes/admin.ts";
 import { requireRole } from "./middlewares/authorization.ts";
 import seedProducts from "./seeders/productsSeeder.ts";
 import seedUsers from "./seeders/userAndAdminSeeder.ts";
 import purchasedRouter from "./routes/purchased.ts";
+import cors from "cors";
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:4173",
+  "https://cartify-depi.vercel.app", // Add your deployed frontend URL when you have it
+];
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: Function) => {
+    // `origin` will be undefined for server-to-server requests or some tools like curl
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Accept",
+    "X-Requested-With",
+  ],
+};
+
+///
 
 const uri = process.env.ATLAS_URI ?? "mongodb://127.0.0.1:27017/cartifyDepiDB";
 // connect("mongodb://127.0.0.1:27017/cartifyDepiDB")
@@ -28,6 +59,13 @@ connect(uri)
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
+///
+app.use(cors(corsOptions));
+///
+
+app.use(cors());
+
+app.use(cors());
 
 app.use("/user", userRouter);
 app.use("/product", productRouter);

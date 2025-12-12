@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IoIosCash } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 type Props = {
   setStep?: React.Dispatch<React.SetStateAction<number>>;
@@ -12,6 +13,10 @@ type Props = {
 };
 
 const CheckoutForms = (props: Props) => {
+  const { checkout } = useCart();
+  const navigate = useNavigate();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  
   // Shipping state (persists across steps since same component remains mounted)
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -85,7 +90,8 @@ const CheckoutForms = (props: Props) => {
     goNext();
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async (e: React.MouseEvent) => {
+    e.preventDefault();
     const payload = {
       shipping: {
         fullName,
@@ -99,7 +105,18 @@ const CheckoutForms = (props: Props) => {
       },
       delivery: deliveryOption,
     };
-    // console.log("Placing order:", payload);
+    console.log("Placing order:", payload);
+    
+    setIsPlacingOrder(true);
+    try {
+      await checkout();
+      navigate("/order_placed");
+    } catch (error) {
+      console.error("Failed to place order:", error);
+      alert("Failed to place order. Please try again.");
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   const step = props.currentStep ?? 1;
@@ -378,16 +395,18 @@ const CheckoutForms = (props: Props) => {
               type="button"
               onClick={goBack}
               className="btn btn-ghost border-gray-200"
+              disabled={isPlacingOrder}
             >
               Back
             </button>
-            <Link
-              to="/order_placed"
+            <button
+              type="button"
               onClick={handlePlaceOrder}
               className="btn bg-teal-600 text-white hover:bg-teal-500"
+              disabled={isPlacingOrder}
             >
-              Place Order
-            </Link>
+              {isPlacingOrder ? "Placing Order..." : "Place Order"}
+            </button>
           </div>
         </div>
       )}

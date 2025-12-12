@@ -3,16 +3,39 @@ import Sidebar from "../../components/Admin/Sidebar";
 import Header from "./../../components/Header";
 import { FaBoxOpen } from "react-icons/fa6";
 import { FiSearch, FiFilter, FiDownload, FiMoreVertical } from "react-icons/fi";
-import { useState } from "react";
-import { productsData } from "../productsData";
+import { useState, useEffect } from "react";
+import { fetchProducts } from "../../api/productApi";
+import { deleteProduct } from "../../api/adminApi";
+import { products } from "../types";
 
 const Admin_Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
+  const [products, setProducts] = useState<products[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock product data - you can replace this with actual data fetching
-  const products = productsData.map((product) => ({
+  // Fetch products from backend
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const fetchedProducts = await fetchProducts();
+        setProducts(fetchedProducts);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load products");
+        console.error("Error loading products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  // Map products to display format
+  const mappedProducts = products.map((product) => ({
     id: product.id,
     name: product.title,
     image: product.imgurl,
@@ -27,7 +50,29 @@ const Admin_Products = () => {
       : "Out of Stock",
   }));
 
-  const filteredProducts = products.filter((product) => {
+  // Handle delete product
+  const handleDelete = async (productId: string) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to delete products");
+      return;
+    }
+
+    try {
+      await deleteProduct(productId, token);
+      // Remove product from local state
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete product");
+      console.error("Error deleting product:", err);
+    }
+  };
+
+  const filteredProducts = mappedProducts.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.sku?.toLowerCase() || "").includes(searchTerm.toLowerCase());
@@ -40,7 +85,7 @@ const Admin_Products = () => {
   });
 
   const categories = Array.from(
-    new Set(products.map((p) => p.category))
+    new Set(mappedProducts.map((p) => p.category))
   ).sort();
 
   const getStatusColor = (status: string) => {
@@ -119,21 +164,41 @@ const Admin_Products = () => {
 
           {/* Products Table */}
           <div className="border rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="table w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th>Product</th>
-                    <th>SKU</th>
-                    <th>Category</th>
-                    <th>Stock</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProducts.map((product) => (
+            {loading ? (
+              <div className="p-8 text-center">
+                <span className="loading loading-spinner loading-lg"></span>
+                <p className="mt-4 text-gray-500">Loading products...</p>
+              </div>
+            ) : error ? (
+              <div className="p-8 text-center">
+                <p className="text-red-600">Error: {error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="btn btn-primary mt-4"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="p-8 text-center">
+                <p className="text-gray-500">No products found</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="table w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th>Product</th>
+                      <th>SKU</th>
+                      <th>Category</th>
+                      <th>Stock</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProducts.map((product) => (
                     <tr key={product.id} className="hover">
                       <td>
                         <div className="flex items-center gap-3">
@@ -188,16 +253,25 @@ const Admin_Products = () => {
                               </Link>
                             </li>
                             <li>
-                              <a className="text-red-600">Delete</a>
+                              <a
+                                className="text-red-600"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleDelete(product.id);
+                                }}
+                              >
+                                Delete
+                              </a>
                             </li>
                           </ul>
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>

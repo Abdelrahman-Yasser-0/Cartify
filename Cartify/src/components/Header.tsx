@@ -6,6 +6,7 @@ import { FiSearch } from "react-icons/fi";
 import { FiMenu } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 
 const navCategories = [
   "Electronics",
@@ -21,6 +22,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { totalItems } = useCart();
+  const { totalItems: wishlistItems } = useWishlist();
 
   // Show a compact admin header on admin routes instead of the regular header
 
@@ -141,7 +143,7 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <a className="hover:text-teal-600 rounded">Deals</a>
+                <Link to="/product_listing?sale=true" className="hover:text-teal-600 rounded">Deals</Link>
               </li>
             </ul>
           </div>
@@ -166,9 +168,14 @@ const Header = () => {
         <div className="navbar-end flex gap-1 text-xl w-44  justify-end">
           <Link
             to="/favorites"
-            className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
+            className="relative text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
           >
             <FiHeart className="hidden p-0 lg:block" />
+            {wishlistItems > 0 && (
+              <span className="absolute -top-1 -right-1 text-[10px] font-semibold bg-teal-600 text-white rounded-full px-1.5 ">
+                {wishlistItems}
+              </span>
+            )}
           </Link>
           <Link
             to="/cart"
