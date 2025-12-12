@@ -103,12 +103,11 @@ const Auth_Login = () => {
     //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     password = password.trim();
     return (
-      // containLowerCase(password) &&
-      // containUpperCase(password) &&
-      // containNumber(password) &&
-      // // containSpecialChar(password) &&
-      // passLenGt8(password)
-      true
+      containLowerCase(password) &&
+      containUpperCase(password) &&
+      containNumber(password) &&
+      // containSpecialChar(password) &&
+      passLenGt8(password)
     );
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
