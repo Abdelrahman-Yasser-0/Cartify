@@ -23,7 +23,7 @@ purchasedRouter.get("/", async (req, res) => {
   );
   if (!user) {
     return res.status(400).send({ message: "user not found" });
-  } else if (user.wishingList.length == 0) {
+  } else if (user.purchased.length == 0) {
     return res.status(400).send({ message: "purchased is empty" });
   }
 

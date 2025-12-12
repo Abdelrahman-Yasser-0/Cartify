@@ -1,42 +1,74 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsFillBoxFill } from "react-icons/bs";
 import { FiChevronRight } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
-type Purchase = {
+type Product = {
   _id: string;
-  productId: string | object;
-  quantity: number;
-  status: string;
-  date: number;
+  title: string;
+  brand: string;
+  price: number;
+  imgurl: string;
+  description: string;
+  category: string;
 };
 
-type User = {
-  purchased?: Purchase[];
+type Purchase = {
+  _id: string;
+  productId: Product;
+  quantity: number;
+  status: string;
+  date: string;
 };
 
 const Account_Orders = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Read user object from localStorage
-    const userRaw = localStorage.getItem("currentuser");
-    if (userRaw) {
-      try {
-        const user: User = JSON.parse(userRaw);
-        setPurchases(user.purchased || []);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        setPurchases([]);
+    const fetchPurchases = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/auth/login");
+        return;
       }
-    }
+
+      try {
+        const response = await fetch("http://127.0.0.1:3000/purchased", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.status == 200) {
+          const purchasesData = data.userpurchased;
+          console.log(purchasesData);
+
+          setPurchases(purchasesData || []);
+        } else {
+          console.log("Failed to fetch purchases");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPurchases();
   }, []);
 
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
@@ -67,7 +99,11 @@ const Account_Orders = () => {
 
         {/* Order List */}
         <div className="flex flex-col gap-4">
-          {purchases.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Loading orders...</p>
+            </div>
+          ) : purchases.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500">No orders found</p>
             </div>
@@ -80,16 +116,36 @@ const Account_Orders = () => {
               >
                 {/* Left Side - Order Details */}
                 <div className="flex items-center gap-4 flex-1">
-                  {/* Package Icon */}
-                  <div className="w-12 h-12 bg-cyan-50 border-2 border-cyan-200 rounded-lg flex items-center justify-center shrink-0">
-                    <BsFillBoxFill className="text-cyan-600 text-xl" />
-                  </div>
+                  {/* Product Image or Package Icon */}
+                  {purchase.productId?.imgurl ? (
+                    <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100 relative">
+                      <img
+                        src={purchase.productId.imgurl}
+                        alt={purchase.productId.title || "Product"}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                          const fallback = e.currentTarget
+                            .nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
+                        }}
+                      />
+                      <div className="hidden w-full h-full absolute inset-0 bg-cyan-50 border-2 border-cyan-200 rounded-lg items-center justify-center">
+                        <BsFillBoxFill className="text-cyan-600 text-xl" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 bg-cyan-50 border-2 border-cyan-200 rounded-lg flex items-center justify-center shrink-0">
+                      <BsFillBoxFill className="text-cyan-600 text-xl" />
+                    </div>
+                  )}
 
                   {/* Order Info */}
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
                     <div className="flex items-center gap-3 flex-wrap">
                       <h3 className="font-semibold text-base text-gray-900">
-                        Order #{purchase._id.slice(-8)}
+                        {purchase.productId?.title ||
+                          `Order #${purchase._id.slice(-8)}`}
                       </h3>
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
@@ -103,13 +159,23 @@ const Account_Orders = () => {
                       Ordered on {formatDate(purchase.date)}
                     </p>
                     <p className="text-sm text-gray-600">
-                      Quantity: {purchase.quantity}
+                      {purchase.quantity}{" "}
+                      {purchase.quantity === 1 ? "item" : "items"} • $
+                      {(
+                        (purchase.productId?.price || 0) * purchase.quantity
+                      ).toFixed(2)}
                     </p>
                   </div>
                 </div>
 
-                {/* Right Side - Arrow */}
+                {/* Right Side - Price and Arrow */}
                 <div className="flex items-center gap-4 shrink-0">
+                  <span className="font-semibold text-lg text-gray-900">
+                    $
+                    {(
+                      (purchase.productId?.price || 0) * purchase.quantity
+                    ).toFixed(2)}
+                  </span>
                   <FiChevronRight className="text-gray-400 text-xl" />
                 </div>
               </Link>
