@@ -92,7 +92,6 @@ const Account_Orders = () => {
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-screen-2xl px-5 py-8">
-        {/* Header Section */}
         <div className="flex flex-col gap-2 mb-6">
           <h1 className="font-semibold text-2xl">Order History</h1>
           <p className="text-sm text-gray-500">
@@ -100,7 +99,6 @@ const Account_Orders = () => {
           </p>
         </div>
 
-        {/* Order List */}
         <div className="flex flex-col gap-4">
           {loading ? (
             <div className="text-center py-12">
@@ -117,9 +115,7 @@ const Account_Orders = () => {
                 to={`/account/orders/${purchase._id}`}
                 className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
               >
-                {/* Left Side - Order Details */}
                 <div className="flex items-center gap-4 flex-1">
-                  {/* Product Image or Package Icon */}
                   {purchase.productId?.imgurl ? (
                     <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100 relative">
                       <img
@@ -142,8 +138,6 @@ const Account_Orders = () => {
                       <BsFillBoxFill className="text-cyan-600 text-xl" />
                     </div>
                   )}
-
-                  {/* Order Info */}
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
                     <div className="flex items-center gap-3 flex-wrap">
                       <h3 className="font-semibold text-base text-gray-900">
@@ -171,7 +165,6 @@ const Account_Orders = () => {
                   </div>
                 </div>
 
-                {/* Right Side - Price and Arrow */}
                 <div className="flex items-center gap-4 shrink-0">
                   <span className="font-semibold text-lg text-gray-900">
                     $
