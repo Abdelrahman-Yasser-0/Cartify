@@ -40,7 +40,8 @@ const Header = () => {
     navigate(destination);
   };
 
-  const currentuser: any = localStorage.getItem("user");
+  const storedUser = localStorage.getItem("user");
+  const currentuser = storedUser ? JSON.parse(storedUser) : null;
 
   return location.pathname.startsWith("/admin") ? (
     <div className="navbar border border-gray-300 bg-base-100 bg-opacity-85 backdrop-blur-sm fixed z-50">
@@ -197,8 +198,8 @@ const Header = () => {
             to={`${
               currentuser
                 ? currentuser.role == "admin"
-                  ? "/account/overview"
-                  : "/admin/overview"
+                  ? "/admin/overview"
+                  : "/account/overview"
                 : "/auth/login"
             }`}
             className="text-xl hover:bg-gray-200 duration-100 rounded-md p-3"
