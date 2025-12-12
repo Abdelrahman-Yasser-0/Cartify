@@ -60,10 +60,7 @@ const Auth_Login = () => {
 
     // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return (
-      !containWhiteSpace(email) &&
-      containAtSymbol(email) &&
-      validDomain(email) &&
-      validExtinsion(email)
+      true
     );
   };
 

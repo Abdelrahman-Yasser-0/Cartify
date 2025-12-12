@@ -6,6 +6,8 @@ import userRouter from "./routes/user.ts";
 import productRouter from "./routes/product.ts";
 import cartRouter from "./routes/cart.ts";
 import { requireAuth } from "./middlewares/authentcation.ts";
+// import userRouter from "./routes/users.ts";
+
 import wishingListRouter from "./routes/wishingList.ts";
 import adminRouter from "./routes/admin.ts";
 import { requireRole } from "./middlewares/authorization.ts";
@@ -60,6 +62,8 @@ app.use(express.urlencoded());
 ///
 app.use(cors(corsOptions));
 ///
+
+app.use(cors());
 
 app.use(cors());
 

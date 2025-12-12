@@ -2,7 +2,7 @@ import { products as ProductType } from "../pages/types";
 import { fetchProductById } from "./productApi";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://cartifybackend.vercel.app";
+(import.meta.env as { VITE_API_BASE_URL?: string }).VITE_API_BASE_URL || "https://cartifybackend.vercel.app";
 
 type CartEntry = { productId: string; quantity: number };
 

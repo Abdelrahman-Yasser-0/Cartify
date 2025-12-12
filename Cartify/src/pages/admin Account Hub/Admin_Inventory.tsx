@@ -1,35 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../../components/Admin/Sidebar";
 import Header from "./../../components/Header";
-import { FiSearch } from "react-icons/fi";
-import { productsData } from "../productsData";
+import { getProductStats } from "../../api/adminApi";
+import { FaBox, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const Admin_Inventory = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<{
+    totalProducts: number;
+    inStock: number;
+    outOfStock: number;
+  } | null>(null);
 
-  // Map products data
-  const products = productsData.map((product) => ({
-    id: product.id,
-    name: product.title,
-    image: product.imgurl,
-    sku: product.sku,
-    category: product.category,
-    stock: product.stock,
-  }));
-
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.sku?.toLowerCase() || "").includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
-
-  const getStockStatus = (stock: number) => {
-    if (stock === 0) return { text: "Out of Stock", color: "bg-red-100 text-red-800" };
-    if (stock < 10) return { text: "Low Stock", color: "bg-yellow-100 text-yellow-800" };
-    if (stock < 20) return { text: "Medium Stock", color: "bg-blue-100 text-blue-800" };
-    return { text: "In Stock", color: "bg-green-100 text-green-800" };
-  };
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("You must be logged in to view inventory stats");
+        }
+        const data = await getProductStats(token);
+        setStats({
+          totalProducts: data.totalProducts[0]?.count || 0,
+          inStock: data.stockStats[0]?.inStockProducts || 0,
+          outOfStock: data.stockStats[0]?.outOfStockProducts || 0,
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load inventory stats");
+        console.error("Error loading stats:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
 
   return (
     <div>
@@ -39,86 +46,75 @@ const Admin_Inventory = () => {
         <div className="mt-24 mx-12 lg:ml-96 flex flex-col z-10 w-3/4 gap-5">
           <div className="flex flex-col gap-3">
             <h1 className="text-2xl font-semibold">Inventory</h1>
-            <p className="text-gray-500">Manage your product inventory and stock levels</p>
+            <p className="text-gray-500">View your inventory statistics and stock levels</p>
           </div>
 
-          {/* Search */}
-          <div className="border rounded-xl flex flex-col p-5 gap-5">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="flex-1 w-full">
-                <div className="relative">
-                  <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="input input-bordered w-full pl-10"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+          {loading ? (
+            <div className="border rounded-xl p-8 text-center bg-white">
+              <span className="loading loading-spinner loading-lg"></span>
+              <p className="mt-4 text-gray-500">Loading inventory stats...</p>
+            </div>
+          ) : error ? (
+            <div className="border rounded-xl p-8 text-center bg-white">
+              <p className="text-red-600">Error: {error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn btn-primary mt-4"
+              >
+                Retry
+              </button>
+            </div>
+          ) : stats ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Total Products Box */}
+              <div className="border rounded-xl p-6 bg-white">
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-100 p-3 rounded-lg">
+                    <FaBox className="text-blue-600 text-xl" />
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-sm">Total Products</p>
+                    <p className="text-2xl font-semibold text-gray-900 mt-1">
+                      {stats.totalProducts}
+                    </p>
+                    <p className="text-gray-400 text-xs mt-0.5">Items on website</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* In Stock Box */}
+              <div className="border rounded-xl p-6 bg-white">
+                <div className="flex items-center gap-4">
+                  <div className="bg-green-100 p-3 rounded-lg">
+                    <FaCheckCircle className="text-green-600 text-xl" />
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-sm">In Stock</p>
+                    <p className="text-2xl font-semibold text-gray-900 mt-1">
+                      {stats.inStock}
+                    </p>
+                    <p className="text-gray-400 text-xs mt-0.5">Available products</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Out of Stock Box */}
+              <div className="border rounded-xl p-6 bg-white">
+                <div className="flex items-center gap-4">
+                  <div className="bg-red-100 p-3 rounded-lg">
+                    <FaTimesCircle className="text-red-600 text-xl" />
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-sm">Out of Stock</p>
+                    <p className="text-2xl font-semibold text-gray-900 mt-1">
+                      {stats.outOfStock}
+                    </p>
+                    <p className="text-gray-400 text-xs mt-0.5">Unavailable products</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Inventory Table */}
-          <div className="border rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="table w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th>Product</th>
-                    <th>SKU</th>
-                    <th>Category</th>
-                    <th>Stock</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProducts.map((product) => {
-                    const stockStatus = getStockStatus(product.stock);
-                    return (
-                      <tr key={product.id} className="hover">
-                        <td>
-                          <div className="flex items-center gap-3">
-                            <div className="avatar">
-                              <div className="w-12 h-12 rounded-lg">
-                                <img
-                                  src={product.image}
-                                  alt={product.name}
-                                  className="object-cover"
-                                />
-                              </div>
-                            </div>
-                            <div className="font-medium">{product.name}</div>
-                          </div>
-                        </td>
-                        <td className="text-gray-600">{product.sku}</td>
-                        <td>{product.category}</td>
-                        <td
-                          className={
-                            product.stock < 10
-                              ? "text-red-600 font-semibold"
-                              : product.stock < 20
-                              ? "text-yellow-600 font-semibold"
-                              : "text-green-600 font-semibold"
-                          }
-                        >
-                          {product.stock}
-                        </td>
-                        <td>
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${stockStatus.color}`}
-                          >
-                            {stockStatus.text}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </div>
