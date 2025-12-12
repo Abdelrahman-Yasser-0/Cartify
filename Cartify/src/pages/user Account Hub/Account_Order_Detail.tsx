@@ -113,7 +113,6 @@ const Account_Order_Detail = () => {
     return (
       <div className="w-full flex justify-center bg-gray-50 min-h-screen">
         <div className="w-full max-w-screen-2xl px-5 py-8">
-          {/* Back to Orders Button */}
           <Link
             to="/account/overview"
             className="flex items-center gap-2 text-gray-700 hover:text-cyan-600 transition-colors mb-6"
@@ -122,7 +121,6 @@ const Account_Order_Detail = () => {
             <span className="text-sm font-medium">Back to Orders</span>
           </Link>
 
-          {/* Order Not Found Message */}
           <div className="bg-white rounded-lg p-8 shadow-sm text-center">
             <BsFillBoxFill className="text-gray-400 text-5xl mx-auto mb-4" />
             <h2 className="font-semibold text-xl text-gray-900 mb-2">
@@ -140,7 +138,6 @@ const Account_Order_Detail = () => {
   return (
     <div className="w-full flex justify-center bg-gray-50 min-h-screen">
       <div className="w-full max-w-screen-2xl px-5 py-8">
-        {/* Back to Orders Button */}
         <Link
           to="/account/overview"
           className="flex items-center gap-2 text-gray-700 hover:text-cyan-600 transition-colors mb-6"
@@ -149,7 +146,6 @@ const Account_Order_Detail = () => {
           <span className="text-sm font-medium">Back to Orders</span>
         </Link>
 
-        {/* Order Summary Card */}
         <div className="bg-gray-100 rounded-lg p-5 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
@@ -170,7 +166,6 @@ const Account_Order_Detail = () => {
           </div>
         </div>
 
-        {/* Order Details Card */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="font-semibold text-lg text-gray-900 mb-6">
             Order Details
@@ -178,7 +173,6 @@ const Account_Order_Detail = () => {
 
           {purchase.productId ? (
             <div className="flex flex-col gap-6">
-              {/* Product Image and Basic Info */}
               <div className="flex gap-4 pb-4 border-b border-gray-200">
                 {purchase.productId.imgurl ? (
                   <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-gray-100">
@@ -215,7 +209,6 @@ const Account_Order_Detail = () => {
                 </div>
               </div>
 
-              {/* Order Information */}
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center pb-4 border-b border-gray-200">
                   <span className="text-gray-600 font-medium">Status:</span>

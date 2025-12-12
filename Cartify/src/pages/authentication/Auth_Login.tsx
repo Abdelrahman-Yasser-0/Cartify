@@ -25,6 +25,7 @@ import { METHODS } from "http";
  */
 
 const Auth_Login = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [pass_see, setPass_see] = useState<boolean>(false);
@@ -116,6 +117,7 @@ const Auth_Login = () => {
     if (validateEmail(email) && vaildatePassword(password)) {
       //send data using api
       try {
+        setLoading(true);
         const response = await fetch(
           "https://cartifybackend.vercel.app/user/login",
           {
@@ -129,6 +131,7 @@ const Auth_Login = () => {
         const data = await response.json();
 
         if (response.status == 200) {
+          setLoading(false);
           //sucuss
           setLoginError(false);
           console.log("Login is Correct", data);
@@ -136,12 +139,15 @@ const Auth_Login = () => {
           localStorage.setItem("user", JSON.stringify(data.user));
           navigate("/");
         } else if (response.status == 404) {
+          setLoading(false);
           console.log("the user is not created");
           setLoginError(true);
         } else if (response.status == 401) {
+          setLoading(false);
           setLoginError(true);
         }
       } catch (error) {
+        setLoading(false);
         console.log(error);
       }
     }
@@ -210,6 +216,7 @@ const Auth_Login = () => {
                 autoComplete="email"
                 onChange={(e) => {
                   setEmail(e.target.value);
+                  setLoginError(false);
                 }}
                 onBlur={() => {
                   setEmailTouched(true);
@@ -306,7 +313,10 @@ const Auth_Login = () => {
                 placeholder="Password"
                 name="password"
                 autoComplete="new-password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setLoginError(false);
+                }}
                 onBlur={() => {
                   setPasswordTouched(true);
                 }}
@@ -424,9 +434,16 @@ const Auth_Login = () => {
               : "btn-disabled"
           }`}
           type="submit"
-          onClick={() => setLoginError(true)}
+          disabled={loading}
         >
-          Log in
+          {loading ? (
+            <div className="flex items-center gap-2">
+              Validating
+              <span className="loading loading-dots loading-sm"></span>
+            </div>
+          ) : (
+            "Log in"
+          )}
         </button>
 
         <div className="flex w-full justify-center gap-3">

@@ -11,6 +11,7 @@ import { json } from "stream/consumers";
 const Account_Profile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [country, setCountry] = useState<string>("");
@@ -192,6 +193,7 @@ const Account_Profile = () => {
       };
 
       try {
+        setSaving(true);
         const response = await fetch(
           "https://cartifybackend.vercel.app/user/me",
           {
@@ -207,19 +209,23 @@ const Account_Profile = () => {
         const data = await response.json();
 
         if (response.status == 200) {
+          setSaving(false);
           console.log("Update Successful", data);
 
           localStorage.setItem("user", JSON.stringify(data.user));
 
           setIsEditing(false);
         } else if (response.status == 400) {
+          setSaving(false);
           setValidEmail(false);
           console.log("it is already used");
           console.log(validemail);
         } else {
+          setSaving(false);
           console.log("Update failed:", data.message);
         }
       } catch (error) {
+        setSaving(false);
         console.log("Network error", error);
       }
     } else {
@@ -652,25 +658,39 @@ const Account_Profile = () => {
           {/*--------------------------------Submit button-------------------------------- */}
           <div className={` flex flex-1 min-w-0  gap-5 justify-between `}>
             <div>
-              <button
-                className={`btn bg-teal-600 btn-sm text-white  ${
-                  isEditing ? "" : "hidden"
-                }`}
-                type="submit"
-              >
-                Save Edit
-              </button>
-              <button
-                className={`btn bg-teal-600 btn-sm text-white ${
-                  isEditing && "hidden"
-                }`}
-                type="button"
-                onClick={() => {
-                  setIsEditing(true);
-                }}
-              >
-                Edit Profile
-              </button>
+              {!isEditing ? (
+                <button
+                  className="btn bg-teal-600 btn-sm text-white"
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                <button
+                  className="btn bg-teal-600 btn-sm text-white"
+                  type="submit"
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <div className="flex items-center gap-2">
+                      Saving
+                      <span className="loading loading-dots loading-sm"></span>
+                    </div>
+                  ) : (
+                    "Save Edit"
+                  )}
+                </button>
+              )}
+              {isEditing && !saving && (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </button>
+              )}
             </div>
 
             <button
@@ -681,7 +701,6 @@ const Account_Profile = () => {
               <CiLogout className="shrink-0" /> Log Out
             </button>
           </div>
-          <div></div>
         </form>
       </div>
     </div>
