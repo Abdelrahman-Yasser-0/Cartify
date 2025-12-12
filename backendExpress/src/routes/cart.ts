@@ -59,8 +59,7 @@ cartRouter.put("/editProductQuantity", async (req, res) => {
     res.status(400).send({ message: errorMessage });
   }
 });
-
-// get the user cart
+// get the user cart detailed
 cartRouter.get("/", async (req, res) => {
   const userPayload = req.user;
 
@@ -70,6 +69,27 @@ cartRouter.get("/", async (req, res) => {
   const userIdFromPayload = userPayload.id;
 
   const user = await User.findById(userIdFromPayload);
+  if (!user) {
+    return res.status(400).send({ message: "user not found" });
+  } else if (user.cart.length == 0) {
+    return res.status(400).send({ message: "cart is empty" });
+  }
+
+  return res.status(200).send({ userCart: user?.cart });
+});
+
+// get the user cart detailed
+cartRouter.get("/detailed", async (req, res) => {
+  const userPayload = req.user;
+
+  if (!userPayload) {
+    return res.status(500).send({ message: " user not found" });
+  }
+  const userIdFromPayload = userPayload.id;
+
+  const user = await User.findById(userIdFromPayload).populate(
+    "cart.productId"
+  );
   if (!user) {
     return res.status(400).send({ message: "user not found" });
   } else if (user.cart.length == 0) {
@@ -153,8 +173,8 @@ cartRouter.put("/buy", async (req, res) => {
         user.purchased.push({
           productId: productId,
           quantity: qty,
-          status: "on deliver",
-          date: Date.now(),
+          status: "It is being delivered and you will be contacted....",
+          date: new Date(),
         });
       }
 
