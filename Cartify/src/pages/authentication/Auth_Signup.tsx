@@ -157,7 +157,7 @@ const Auth_Signup = () => {
       };
       //send data using api
       try {
-        const response = await fetch("http://127.0.0.1:3000/user/register", {
+        const response = await fetch("https://cartifybackend.vercel.app/user/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
