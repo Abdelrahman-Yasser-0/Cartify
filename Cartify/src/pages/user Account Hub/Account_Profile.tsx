@@ -1,28 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { RiAccountCircleFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import Account_Addresses from "./Account_Addresses";
+import { useNavigate } from "react-router-dom";
+import { CiLogout } from "react-icons/ci";
+import { json } from "stream/consumers";
 
 const Account_Profile = () => {
-  const userstring = localStorage.getItem("user");
-  const user = userstring ? JSON.parse(userstring) : null;
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [email, setEmail] = useState<string>(user ? user.email : "");
-  const [country, setCountry] = useState<string>(user ? user.country : "");
-  const [city, setCity] = useState<string>(user ? user.city : "");
-  const [apartment, setApartment] = useState<string>(
-    user ? user.apartment : ""
-  );
-  const [zip, setZip] = useState<string>(user ? user.zip : "");
-  const [phoneNumber, setPhoneNumber] = useState<string>(
-    user ? user.phoneNumber : ""
-  );
-  const [streetAddress, setStreetAddress] = useState<string>(
-    user ? user.streetAddress : ""
-  );
-  const [fullName, setfullName] = useState<string>(user ? user.fullname : "");
+  const [email, setEmail] = useState<string>("");
+  const [country, setCountry] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [apartment, setApartment] = useState<string>("");
+  const [zip, setZip] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [streetAddress, setStreetAddress] = useState<string>("");
+  const [fullName, setfullName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
@@ -35,6 +33,7 @@ const Account_Profile = () => {
   const [phnoeNumberTouched, setPhoneNumberTouched] = useState<boolean>(false);
   const [streetAddressTouched, setstreetAddressTouched] =
     useState<boolean>(false);
+  const [validemail, setValidEmail] = useState<boolean>(true);
 
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;
@@ -51,7 +50,7 @@ const Account_Profile = () => {
   //   return usernameRegex.test(email);
   // };
   const validDomain = (email: string): boolean => {
-    const domainRegex = /@(gmail|yahoo|outlook|hotmail)\.com$/i;
+    const domainRegex = /@(gmail|yahoo|outlook|hotmail|example)\.com$/i;
     return domainRegex.test(email);
   };
   const validExtinsion = (email: string): boolean => {
@@ -155,7 +154,15 @@ const Account_Profile = () => {
   //     console.log("no not valied");
   //   }
   // };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const logout = (): void => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/auth/login");
+  };
+  console.log(saving);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (
@@ -167,31 +174,61 @@ const Account_Profile = () => {
       zip.length > 0 &&
       /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber)
     ) {
-      if (password.length > 0) {
-        if (!vaildatePassword(password)) {
-          console.log("Invalid password format");
-          return;
-        }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.log("No token found");
+        return;
       }
-
-      // 3. Save Logic (Runs for everyone now!)
-      const updatedUser = {
-        ...user,
-        fullname: fullName,
+      const requestBody = {
+        name: fullName,
         email: email,
-        country: country,
-        city: city,
-        streetAddress: streetAddress,
-        apartment: apartment,
-        zip: zip,
-        phoneNumber: phoneNumber,
-
-        password: password.length > 0 ? password : user.password,
+        phone: phoneNumber,
+        password: password.length > 0 ? password : "",
+        shippingAddress: {
+          country: country,
+          city: city,
+          streetAddress: streetAddress,
+          apartment: apartment,
+          zip: zip,
+        },
       };
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setIsEditing(false);
-      console.log("Saved Successfully!");
+      try {
+        setSaving(true);
+        const response = await fetch(
+          "https://cartifybackend.vercel.app/user/me",
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status == 200) {
+          setSaving(false);
+          console.log("Update Successful", data);
+
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          setIsEditing(false);
+        } else if (response.status == 400) {
+          setSaving(false);
+          setValidEmail(false);
+          console.log("it is already used");
+          console.log(validemail);
+        } else {
+          setSaving(false);
+          console.log("Update failed:", data.message);
+        }
+      } catch (error) {
+        setSaving(false);
+        console.log("Network error", error);
+      }
     } else {
       console.log("Validation Failed: Check empty fields");
     }
@@ -201,6 +238,69 @@ const Account_Profile = () => {
   // console.log("email valid :" + validateEmail(email));
   // console.log("space :" + !containWhiteSpace(email));
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/auth/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "https://cartifybackend.vercel.app/user/me",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status == 200) {
+          const cuurentuser = data;
+          console.log(cuurentuser);
+
+          setfullName(cuurentuser.name || "");
+          setEmail(cuurentuser.email || "");
+          setPhoneNumber(cuurentuser.phone || "");
+
+          if (cuurentuser.shippingAddress) {
+            setCountry(cuurentuser.shippingAddress.country || "");
+            setCity(cuurentuser.shippingAddress.city || "");
+            setStreetAddress(cuurentuser.shippingAddress.streetAddress || "");
+            setApartment(cuurentuser.shippingAddress.apartment || "");
+            setZip(cuurentuser.shippingAddress.zip || "");
+          }
+          localStorage.setItem("currentuser", JSON.stringify(cuurentuser));
+        } else {
+          console.log("Failed to fetch user");
+          navigate("/auth/login");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p>
+          Loding Profile
+          <span className="loading loading-spinner loading-md"></span>
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-screen-2xl min-h-screen ">
@@ -295,7 +395,7 @@ const Account_Profile = () => {
               </div>
               <label
                 className={`input input-bordered flex items-center gap-2 ${
-                  !validateEmail(email) && emailTouched
+                  (!validateEmail(email) || !validemail) && emailTouched
                     ? "input input-error"
                     : "input"
                 }`}
@@ -317,6 +417,7 @@ const Account_Profile = () => {
                   placeholder="Enter Your Email"
                   onChange={(e) => {
                     setEmail(e.target.value);
+                    setValidEmail(true);
                   }}
                   onBlur={() => {
                     setEmailTouched(true);
@@ -327,7 +428,9 @@ const Account_Profile = () => {
               </label>
               <div
                 className={`w-full ${
-                  !validateEmail(email) && emailTouched ? "" : "hidden"
+                  (!validateEmail(email) || !validemail) && emailTouched
+                    ? ""
+                    : "hidden"
                 }  bg-gray-100 rounded-lg mt-3 p-3 `}
               >
                 <ul className={`flex flex-col gap-2`}>
@@ -342,6 +445,16 @@ const Account_Profile = () => {
                     <p className="text-xs">
                       Email address cannot contain spaces
                     </p>
+                  </li>
+                  <li
+                    className={`flex gap-2  items-center ${
+                      validemail && "hidden"
+                    }`}
+                  >
+                    {!validemail && (
+                      <IoClose className="text-red-600 text-[16px] shrink-0" />
+                    )}
+                    <p className="text-xs">Email is already in use</p>
                   </li>
                   <li
                     className={`flex gap-2  items-center ${
@@ -544,24 +657,46 @@ const Account_Profile = () => {
           </div>
 
           {/*--------------------------------Submit button-------------------------------- */}
-          <div className={` flex flex-1 min-w-0  gap-5 `}>
+          <div className={` flex flex-1 min-w-0  gap-5 justify-between `}>
+            <div>
+              {!isEditing ? (
+                <button
+                  className="btn bg-teal-600 btn-sm text-white"
+                  type="button"
+                  onClick={(e) => {
+                    setIsEditing(true);
+                    e.preventDefault(); // Prevents default form actions
+                    e.stopPropagation(); // Stops the click from bubbling up
+                  }}
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                <button
+                  className="btn bg-teal-600 btn-sm text-white"
+                  type="submit"
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <div className="flex items-center gap-2">
+                      Saving
+                      <span className="loading loading-dots loading-sm"></span>
+                    </div>
+                  ) : (
+                    "Save Edit"
+                  )}
+                </button>
+              )}
+            </div>
+
             <button
-              className={`btn bg-teal-600 btn-sm  ${isEditing ? "" : "hidden"}`}
-              type="submit"
-            >
-              Save Edit
-            </button>
-            <button
-              className={`btn bg-teal-600 btn-sm ${isEditing && "hidden"}`}
+              className="btn btn-error text-white btn-sm"
               type="button"
-              onClick={() => {
-                setIsEditing(true);
-              }}
+              onClick={() => logout()}
             >
-              Edit Profile
+              <CiLogout className="shrink-0" /> Log Out
             </button>
           </div>
-          <div></div>
         </form>
       </div>
     </div>

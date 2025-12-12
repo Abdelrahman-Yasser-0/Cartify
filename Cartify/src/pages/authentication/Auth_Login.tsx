@@ -24,13 +24,17 @@ import { METHODS } from "http";
  */
 
 const Auth_Login = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [pass_see, setPass_see] = useState<boolean>(false);
   const [emailTouched, setEmailTouched] = useState<boolean>(false); //just used to handel when the user interacted with the input or not if the user interacted it is setted to false for the rest of the run until the user refresh the website
   const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
-  const [loginError, setLoginError] = useState<boolean>(false);
+
   const navigate = useNavigate();
+
+  const [loginError, setLoginError] = useState<boolean>(false);
+
   const containWhiteSpace = (email: string): boolean => {
     const spaceRegex = /\s/;
     return spaceRegex.test(email);
@@ -59,9 +63,7 @@ const Auth_Login = () => {
     //the regex logic
 
     // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return (
-      true
-    );
+    return true;
   };
 
   const passLenGt8 = (password: string): boolean => {
@@ -108,16 +110,21 @@ const Auth_Login = () => {
     if (validateEmail(email) && vaildatePassword(password)) {
       //send data using api
       try {
-        const response = await fetch("https://cartifybackend.vercel.app/user/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: email, password: password }),
-        });
+        setLoading(true);
+        const response = await fetch(
+          "https://cartifybackend.vercel.app/user/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: email, password: password }),
+          }
+        );
         const data = await response.json();
 
         if (response.status == 200) {
+          setLoading(false);
           //sucuss
           setLoginError(false);
           console.log("Login is Correct", data);
@@ -125,11 +132,15 @@ const Auth_Login = () => {
           localStorage.setItem("user", JSON.stringify(data.user));
           navigate("/");
         } else if (response.status == 404) {
-          console.log("yes the user is not created");
+          setLoading(false);
+          console.log("the user is not created");
+          setLoginError(true);
         } else if (response.status == 401) {
+          setLoading(false);
           setLoginError(true);
         }
       } catch (error) {
+        setLoading(false);
         console.log(error);
       }
     }
@@ -198,6 +209,7 @@ const Auth_Login = () => {
                 autoComplete="email"
                 onChange={(e) => {
                   setEmail(e.target.value);
+                  setLoginError(false);
                 }}
                 onBlur={() => {
                   setEmailTouched(true);
@@ -294,7 +306,10 @@ const Auth_Login = () => {
                 placeholder="Password"
                 name="password"
                 autoComplete="new-password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setLoginError(false);
+                }}
                 onBlur={() => {
                   setPasswordTouched(true);
                 }}
@@ -412,9 +427,16 @@ const Auth_Login = () => {
               : "btn-disabled"
           }`}
           type="submit"
-          onClick={() => setLoginError(true)}
+          disabled={loading}
         >
-          Log in
+          {loading ? (
+            <div className="flex items-center gap-2">
+              Validating
+              <span className="loading loading-dots loading-sm"></span>
+            </div>
+          ) : (
+            "Log in"
+          )}
         </button>
 
         <div className="flex w-full justify-center gap-3">

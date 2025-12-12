@@ -18,6 +18,7 @@ import { users } from "../usersData";
 import Auth_signup_found from "./Auth_signup_found";
 
 const Auth_Signup = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [city, setCity] = useState<string>("");
@@ -157,13 +158,17 @@ const Auth_Signup = () => {
       };
       //send data using api
       try {
-        const response = await fetch("https://cartifybackend.vercel.app/user/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
+        setLoading(true);
+        const response = await fetch(
+          "https://cartifybackend.vercel.app/user/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
         const data = await response.json();
 
         if (response.status == 201) {
@@ -171,14 +176,17 @@ const Auth_Signup = () => {
           console.log("Signup is Correct", data);
           setValidSignup(true);
           setStepper((prev) => (prev += 1));
+          setLoading(false);
         } else if (response.status == 400) {
           //user was found before
           console.log("user is created before");
           console.log(data.message);
           setValidSignup(false);
           setStepper((prev) => (prev += 1));
+          setLoading(false);
         }
       } catch (error) {
+        setLoading(false);
         console.log(error);
       }
 
@@ -585,7 +593,7 @@ const Auth_Signup = () => {
         >
           <p>Already have an account?</p>
           <Link
-            to=""
+            to="/auth/login"
             className={`link link-primary !no-underline !text-cyan-600 
              `}
           >
@@ -620,8 +628,16 @@ const Auth_Signup = () => {
               ) && "btn-disabled"
             }`}
             type="submit"
+            disabled={loading}
           >
-            Create Account
+            {loading ? (
+              <div className="flex items-center gap-2">
+                Creating
+                <span className="loading loading-dots loading-sm"></span>
+              </div>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </div>
       </form>

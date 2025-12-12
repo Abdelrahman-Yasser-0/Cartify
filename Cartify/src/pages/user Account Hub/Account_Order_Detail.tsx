@@ -1,32 +1,89 @@
 import { Link, useParams } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { BsFillBoxFill } from "react-icons/bs";
-import { FaTruck } from "react-icons/fa";
-import { FaHome } from "react-icons/fa";
-import { FaCheckCircle } from "react-icons/fa";
-import { orderDetails, orders } from "../productsData";
+import { useState, useEffect } from "react";
+
+type Product = {
+  _id: string;
+  title: string;
+  brand: string;
+  price: number;
+  imgurl: string;
+  description: string;
+  category: string;
+};
+
+type Purchase = {
+  _id: string;
+  productId: Product;
+  quantity: number;
+  status: string;
+  date: string;
+};
 
 const Account_Order_Detail = () => {
   const { id } = useParams<{ id: string }>();
+  const [purchase, setPurchase] = useState<Purchase | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Find the order from the orders array
-  const order = orders.find((o) => o.id === id);
+  useEffect(() => {
+    const fetchPurchase = async () => {
+      const token = localStorage.getItem("token");
 
-  // If order not found, use orderDetails as fallback (for ORD-2024-1156)
-  // Otherwise, merge order data with orderDetails template
-  const currentOrderDetails = order
-    ? {
-        ...orderDetails,
-        id: order.id,
-        status: order.status,
-        placedAt: order.orderDate,
-        expectedAt: order.expectedDate,
-        summary: {
-          ...orderDetails.summary,
-          total: order.totalPrice,
-        },
+      if (!token || !id) {
+        setPurchase(null);
+        setLoading(false);
+        return;
       }
-    : orderDetails;
+
+      try {
+        const response = await fetch(
+          "https://cartifybackend.vercel.app/purchased",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status == 200) {
+          const allPurchases = data.userpurchased;
+          // Find the specific purchase by _id from the list
+          const foundPurchase = allPurchases?.find(
+            (p: Purchase) => p._id === id
+          );
+
+          console.log(foundPurchase);
+          setPurchase(foundPurchase || null);
+        } else {
+          console.log("Failed to fetch purchase");
+          setPurchase(null);
+        }
+      } catch (error) {
+        console.log(error);
+        setPurchase(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPurchase();
+  }, [id]);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Delivered":
@@ -40,47 +97,47 @@ const Account_Order_Detail = () => {
     }
   };
 
-  // Generate delivery timeline based on order status
-  const getDeliveryTimeline = () => {
-    const timeline = [
-      {
-        status: "Processing",
-        date: currentOrderDetails.placedAt,
-        icon: BsFillBoxFill,
-        completed: true,
-      },
-      {
-        status: "Shipped",
-        date: currentOrderDetails.placedAt, // Same day as order placed
-        icon: FaTruck,
-        completed: true,
-      },
-      {
-        status: "Out for Delivery",
-        date: currentOrderDetails.expectedAt,
-        icon: FaHome,
-        completed: currentOrderDetails.status === "Delivered",
-      },
-      {
-        status: "Delivered",
-        date:
-          currentOrderDetails.status === "Delivered"
-            ? currentOrderDetails.expectedAt
-            : null,
-        time: currentOrderDetails.status === "Delivered" ? "2:45 PM" : null,
-        icon: FaCheckCircle,
-        completed: currentOrderDetails.status === "Delivered",
-      },
-    ];
-    return timeline;
-  };
+  if (loading) {
+    return (
+      <div className="w-full flex justify-center bg-gray-50 min-h-screen">
+        <div className="w-full max-w-screen-2xl px-5 py-8">
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading order details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const timeline = getDeliveryTimeline();
+  if (!purchase) {
+    return (
+      <div className="w-full flex justify-center bg-gray-50 min-h-screen">
+        <div className="w-full max-w-screen-2xl px-5 py-8">
+          <Link
+            to="/account/overview"
+            className="flex items-center gap-2 text-gray-700 hover:text-cyan-600 transition-colors mb-6"
+          >
+            <FiArrowLeft className="text-lg" />
+            <span className="text-sm font-medium">Back to Orders</span>
+          </Link>
+
+          <div className="bg-white rounded-lg p-8 shadow-sm text-center">
+            <BsFillBoxFill className="text-gray-400 text-5xl mx-auto mb-4" />
+            <h2 className="font-semibold text-xl text-gray-900 mb-2">
+              Order not found
+            </h2>
+            <p className="text-gray-600">
+              The order you're looking for doesn't exist or has been removed.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex justify-center bg-gray-50 min-h-screen">
       <div className="w-full max-w-screen-2xl px-5 py-8">
-        {/* Back to Orders Button */}
         <Link
           to="/account/overview"
           className="flex items-center gap-2 text-gray-700 hover:text-cyan-600 transition-colors mb-6"
@@ -89,177 +146,137 @@ const Account_Order_Detail = () => {
           <span className="text-sm font-medium">Back to Orders</span>
         </Link>
 
-        {/* Order Summary Card */}
         <div className="bg-gray-100 rounded-lg p-5 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <h2 className="font-semibold text-lg text-gray-900">
-                Order {currentOrderDetails.id}
+                Order #{purchase._id.slice(-8)}
               </h2>
               <p className="text-sm text-gray-600">
-                Placed on {currentOrderDetails.placedAt}
+                Placed on {formatDate(purchase.date)}
               </p>
             </div>
             <span
               className={`px-3 py-1 rounded text-sm font-medium ${getStatusColor(
-                currentOrderDetails.status
+                purchase.status
               )}`}
             >
-              {currentOrderDetails.status}
+              {purchase.status}
             </span>
           </div>
         </div>
 
-        {/* Delivery Status Timeline Card */}
-        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
-          <div className="flex flex-col gap-2 mb-6">
-            <h2 className="font-semibold text-lg text-gray-900">
-              Delivery Status
-            </h2>
-            <p className="text-sm text-gray-600">Track your order progress</p>
-          </div>
-
-          {/* Timeline */}
-          <div className="relative pl-8">
-            {/* Vertical Line */}
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-cyan-500"></div>
-
-            {/* Timeline Items */}
-            <div className="flex flex-col gap-8">
-              {timeline.map((item, index) => {
-                const IconComponent = item.icon;
-                const isLast = index === timeline.length - 1;
-                const isCompleted = item.completed;
-
-                return (
-                  <div
-                    key={item.status}
-                    className="relative flex items-start gap-4"
-                  >
-                    {/* Icon */}
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${
-                        isCompleted
-                          ? item.status === "Delivered"
-                            ? "bg-green-500 text-white"
-                            : "bg-cyan-100 border-2 border-cyan-500 text-cyan-600"
-                          : "bg-gray-100 border-2 border-gray-300 text-gray-400"
-                      }`}
-                    >
-                      <IconComponent className="text-sm" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 pt-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-medium text-gray-900">
-                          {item.status}
-                        </h3>
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        {item.date && (
-                          <p className="text-sm text-gray-600">{item.date}</p>
-                        )}
-                        {item.status === "Delivered" && item.time && (
-                          <p className="text-sm text-gray-600">
-                            Delivered at {item.date} at {item.time}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Order Items and Price Summary Card */}
-        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
+        <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="font-semibold text-lg text-gray-900 mb-6">
-            Order Items
+            Order Details
           </h2>
 
-          {/* Items List */}
-          <div className="flex flex-col gap-4 mb-6">
-            {currentOrderDetails.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-4 pb-4 border-b border-gray-200 last:border-0"
-              >
-                {/* Product Image */}
-                <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Product Info */}
+          {purchase.productId ? (
+            <div className="flex flex-col gap-6">
+              <div className="flex gap-4 pb-4 border-b border-gray-200">
+                {purchase.productId.imgurl ? (
+                  <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-gray-100">
+                    <img
+                      src={purchase.productId.imgurl}
+                      alt={purchase.productId.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        const fallback = e.currentTarget
+                          .nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = "flex";
+                      }}
+                    />
+                    <div className="hidden w-full h-full bg-cyan-50 border-2 border-cyan-200 rounded-lg items-center justify-center">
+                      <BsFillBoxFill className="text-cyan-600 text-2xl" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 bg-cyan-50 border-2 border-cyan-200 rounded-lg flex items-center justify-center shrink-0">
+                    <BsFillBoxFill className="text-cyan-600 text-2xl" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-900 mb-1">
-                    {item.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Quantity: {item.quantity}
+                  <p className="text-sm text-gray-600 mb-1">
+                    {purchase.productId.brand}
                   </p>
-                </div>
-
-                {/* Price */}
-                <div className="shrink-0">
-                  <p className="font-semibold text-gray-900">
-                    ${item.price.toFixed(2)}
+                  <h3 className="font-semibold text-base text-gray-900 mb-2">
+                    {purchase.productId.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {purchase.productId.description}
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
 
-          {/* Price Breakdown */}
-          <div className="border-t border-gray-200 pt-4 space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="text-gray-900">
-                ${currentOrderDetails.summary.subtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Shipping</span>
-              <span className="text-gray-900">
-                ${currentOrderDetails.summary.shipping.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Tax</span>
-              <span className="text-gray-900">
-                ${currentOrderDetails.summary.tax.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between pt-3 border-t border-gray-200">
-              <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-semibold text-gray-900">
-                ${currentOrderDetails.summary.total.toFixed(2)}
-              </span>
-            </div>
-          </div>
-        </div>
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                  <span className="text-gray-600 font-medium">Status:</span>
+                  <span
+                    className={`px-3 py-1 rounded text-sm font-medium ${getStatusColor(
+                      purchase.status
+                    )}`}
+                  >
+                    {purchase.status}
+                  </span>
+                </div>
 
-        {/* Shipping Address Card */}
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <h2 className="font-semibold text-lg text-gray-900 mb-4">
-            Shipping Address
-          </h2>
-          <div className="flex flex-col gap-1 text-gray-700">
-            <p className="font-medium">
-              {currentOrderDetails.shippingAddress.name}
-            </p>
-            <p>{currentOrderDetails.shippingAddress.street}</p>
-            <p>
-              {currentOrderDetails.shippingAddress.city},{" "}
-              {currentOrderDetails.shippingAddress.country}
-            </p>
-          </div>
+                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                  <span className="text-gray-600 font-medium">Date:</span>
+                  <span className="text-gray-900">
+                    {formatDate(purchase.date)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                  <span className="text-gray-600 font-medium">Quantity:</span>
+                  <span className="text-gray-900">{purchase.quantity}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                  <span className="text-gray-600 font-medium">Unit Price:</span>
+                  <span className="text-gray-900">
+                    ${purchase.productId.price.toFixed(2)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-gray-900 font-semibold text-lg">
+                    Total Price:
+                  </span>
+                  <span className="text-gray-900 font-semibold text-lg">
+                    $
+                    {(
+                      (purchase.productId.price || 0) * purchase.quantity
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                <span className="text-gray-600 font-medium">Status:</span>
+                <span
+                  className={`px-3 py-1 rounded text-sm font-medium ${getStatusColor(
+                    purchase.status
+                  )}`}
+                >
+                  {purchase.status}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                <span className="text-gray-600 font-medium">Date:</span>
+                <span className="text-gray-900">
+                  {formatDate(purchase.date)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 font-medium">Quantity:</span>
+                <span className="text-gray-900">{purchase.quantity}</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
