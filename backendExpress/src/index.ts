@@ -15,10 +15,10 @@ import purchasedRouter from "./routes/purchased.ts";
 import cors from "cors";
 
 const allowedOrigins = [
-  "http://localhost:5173/",
-  "http://localhost:3000/",
-  "http://localhost:4173/",
-  "https://cartify-depi.vercel.app/", // Add your deployed frontend URL when you have it
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:4173",
+  "https://cartify-depi.vercel.app", // Add your deployed frontend URL when you have it
 ];
 
 const corsOptions = {
