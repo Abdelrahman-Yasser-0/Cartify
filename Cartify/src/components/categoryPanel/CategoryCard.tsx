@@ -18,9 +18,6 @@ function CategoryCard({
         {category.icon}
       </p>
       <h3 className="font-semibold text-base-content mb-1">{category.name}</h3>
-      <p className="text-sm text-base-content/60">
-        {category.itemCount} item{category.itemCount !== 1 ? "s" : ""}
-      </p>
     </Link>
   );
 }
