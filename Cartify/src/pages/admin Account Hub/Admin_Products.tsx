@@ -39,9 +39,9 @@ const Admin_Products = () => {
     image: product.imgurl,
     sku: product.sku,
     category: product.category,
-    stock: product.quantity,
+    quantity: product.quantity,
     price: product.price,
-    status: product.inStock
+    status: product.quantity !== 0
       ? product.quantity > 10
         ? "Active"
         : "Low Stock"
@@ -211,10 +211,10 @@ const Admin_Products = () => {
                       <td>{product.category}</td>
                       <td
                         className={
-                          product.stock < 10 ? "text-red-600 font-semibold" : ""
+                          product.quantity < 10 ? "text-red-600 font-semibold" : ""
                         }
                       >
-                        {product.stock}
+                        {product.quantity}
                       </td>
                       <td>EGP {product.price.toFixed(2)}</td>
                       <td>
