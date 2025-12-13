@@ -52,7 +52,6 @@ const Account_Order_Detail = () => {
 
         if (response.status == 200) {
           const allPurchases = data.userpurchased;
-          // Find the specific purchase by _id from the list
           const foundPurchase = allPurchases?.find(
             (p: Purchase) => p._id === id
           );
@@ -236,7 +235,7 @@ const Account_Order_Detail = () => {
                 <div className="flex justify-between items-center pb-4 border-b border-gray-200">
                   <span className="text-gray-600 font-medium">Unit Price:</span>
                   <span className="text-gray-900">
-                    ${purchase.productId.price.toFixed(2)}
+                    EGP {purchase.productId.price.toFixed(2)}
                   </span>
                 </div>
 
@@ -245,7 +244,7 @@ const Account_Order_Detail = () => {
                     Total Price:
                   </span>
                   <span className="text-gray-900 font-semibold text-lg">
-                    $
+                    EGP{" "}
                     {(
                       (purchase.productId.price || 0) * purchase.quantity
                     ).toFixed(2)}

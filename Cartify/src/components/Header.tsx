@@ -24,8 +24,6 @@ const Header = () => {
   const { totalItems } = useCart();
   const { totalItems: wishlistItems } = useWishlist();
 
-  // Show a compact admin header on admin routes instead of the regular header
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setSearchTerm(params.get("q") ?? "");
@@ -62,7 +60,6 @@ const Header = () => {
         <div className="drawer justify-end w-7">
           <input id="my-drawer-5" type="checkbox" className="drawer-toggle " />
           <div className="drawer-content ">
-            {/* Page content here */}
             <label htmlFor="my-drawer-5" className="drawer-button lg:hidden">
               <FiMenu className="" />
             </label>
@@ -74,27 +71,25 @@ const Header = () => {
               className="drawer-overlay"
             ></label>
             <ul className="menu bg-base-200 min-h-full w-80 p-4 text-black">
-              {/* Sidebar content here */}
               <li>
-                <Link to="/">Overview</Link>
+                <Link to="/admin/overview">Overview</Link>
               </li>
               <li>
-                <Link to="/product_listing">Products</Link>
+                <Link to="/admin/products">Products</Link>
               </li>
               <li>
-                <Link to="/cart">Inventory</Link>
+                <Link to="/admin/inventory">Inventory</Link>
               </li>
               <div className="w-full h-px bg-gray-300"></div>
 
               <a className="p-3 text-gray-500">Website</a>
 
               <li>
-                <Link to="/">Settings</Link>
+                <Link to="/admin/settings">Settings</Link>
               </li>
             </ul>
           </div>
         </div>
-        {/* paste before this */}
       </div>
     </div>
   ) : (
@@ -211,7 +206,6 @@ const Header = () => {
         <div className="drawer drawer-end justify-end w-7">
           <input id="my-drawer-5" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
-            {/* Page content here */}
             <label htmlFor="my-drawer-5" className="drawer- lg:hidden">
               <FiMenu className="" />
             </label>
@@ -223,7 +217,6 @@ const Header = () => {
               className="drawer-overlay"
             ></label>
             <ul className="menu bg-base-200 min-h-full w-80 p-4 text-black">
-              {/* Sidebar content here */}
               <li>
                 <Link to="/">Home</Link>
               </li>
@@ -288,7 +281,6 @@ const Header = () => {
             </ul>
           </div>
         </div>
-        {/* paste before this */}
       </div>
     </div>
   );

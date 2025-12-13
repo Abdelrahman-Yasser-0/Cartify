@@ -52,10 +52,6 @@ const Auth_Signup = () => {
     return atSymbolRegex.test(email);
   };
 
-  // const validUserName = (email: string): boolean => {
-  //   const usernameRegex = /^[a-zA-Z0-9._%+-]+@/;
-  //   return usernameRegex.test(email);
-  // };
   const validDomain = (email: string): boolean => {
     const domainRegex = /@(gmail|yahoo|outlook|hotmail)\.com$/i;
     return domainRegex.test(email);
@@ -66,10 +62,6 @@ const Auth_Signup = () => {
   };
 
   const validateEmail = (email: string): boolean => {
-    //this function checks the email and being called every time the email changes cuz the email is a usestate so every element related to it rerenders
-    //the regex logic
-
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return (
       !containWhiteSpace(email) &&
       containAtSymbol(email) &&
@@ -108,9 +100,6 @@ const Auth_Signup = () => {
   };
 
   const vaildatePassword = (password: string): boolean => {
-    //the regex logic
-    // const passwordRegex =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     password = password.trim();
     return (
       containLowerCase(password) &&
@@ -121,7 +110,6 @@ const Auth_Signup = () => {
     );
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //submition handelr
     e.preventDefault();
     if (
       validateEmail(email) &&
@@ -156,7 +144,6 @@ const Auth_Signup = () => {
           sms: false,
         },
       };
-      //send data using api
       try {
         setLoading(true);
         const response = await fetch(
@@ -172,13 +159,11 @@ const Auth_Signup = () => {
         const data = await response.json();
 
         if (response.status == 201) {
-          //sucuss
           console.log("Signup is Correct", data);
           setValidSignup(true);
           setStepper((prev) => (prev += 1));
           setLoading(false);
         } else if (response.status == 400) {
-          //user was found before
           console.log("user is created before");
           console.log(data.message);
           setValidSignup(false);
@@ -189,43 +174,22 @@ const Auth_Signup = () => {
         setLoading(false);
         console.log(error);
       }
-
-      // const userData: user = {
-      //   fullname: fullName,
-      //   email: email,
-      //   password: password,
-      //   country: country,
-      //   city: city,
-      //   streetAddress: streetAddress,
-      //   apartment: apartment,
-      //   zip: zip,
-      //   phoneNumber: phoneNumber,
-      //   id: users.length + 1,
-      // };
-      // users.push(userData);
     } else {
       console.log("no not valied");
     }
   };
-  // console.log("Email state :" + !validateEmail(email) && emailTouched);
-  // console.log("email toched :" + emailTouched);
-  // console.log("email valid :" + validateEmail(email));
-  // console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="flex w-full min-h-screen justify-center items-center gap-24 pt-10">
-      {/*--------------------------------Left Img-------------------------------- */}
       <div className=" overflow-hidden max-w-md lg:block hidden  ">
         <img src={main_img} alt="img_Not_Found 404" className="w-full" />
       </div>
-      {/*--------------------------------Form-------------------------------- */}
       <form
         onSubmit={handleSubmit}
         className={`lg:basis-[30%] lg:max-w-sm w-[80%] p-5 border rounded-2xl flex flex-col gap-5 ${
           stepper === 3 && "hidden"
         }`}
       >
-        {/*--------------------------------Header-------------------------------- */}
         <Link to="/" className={`flex gap-4 cursor-pointer `}>
           <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
           <h2 className="py-1.5">Cartify</h2>
@@ -236,7 +200,6 @@ const Auth_Signup = () => {
             Sign up for Cartify to get started
           </p>
         </div>
-        {/*--------------------------------Stepper-------------------------------- */}
         <ul className="steps steps-horizontal">
           <li className="step step-accent">Account</li>
           <li className={`step ${stepper >= 2 && "step-accent"}`}>
@@ -249,11 +212,8 @@ const Auth_Signup = () => {
             Done
           </li>
         </ul>
-        {/*--------------------------------Input Fields-------------------------------- */}
         <div className={`flex flex-col gap-4 ${stepper != 1 && "hidden"}`}>
-          {/*--------------------------------Full Name-------------------------------- */}
           <div>
-            {/*--------------------------------Input Label Name-------------------------------- */}
             <div className="label">
               <span
                 className={`label-text ${
@@ -265,7 +225,6 @@ const Auth_Signup = () => {
                 Full Name
               </span>
             </div>
-            {/*--------------------------------Input -------------------------------- */}
             <label
               className={`input input-bordered flex items-center gap-2 ${
                 !validateFullName(fullName) && fullNameTouched
@@ -288,7 +247,6 @@ const Auth_Signup = () => {
                 }}
               />
             </label>
-            {/*--------------------------------Error List -------------------------------- */}
             <div
               className={`w-full ${
                 !validateFullName(fullName) && fullNameTouched ? "" : "hidden"
@@ -314,7 +272,6 @@ const Auth_Signup = () => {
               </ul>
             </div>
           </div>
-          {/*--------------------------------Email-------------------------------- */}
           <div>
             <div className="label">
               <span
@@ -406,7 +363,6 @@ const Auth_Signup = () => {
               </ul>
             </div>
           </div>
-          {/*--------------------------------Password-------------------------------- */}
           <div>
             <div className="label">
               <span
@@ -550,7 +506,6 @@ const Auth_Signup = () => {
         <div
           className={`w-full flex flex-col gap-4 ${stepper != 2 && "hidden"}`}
         >
-          {/*--------------------------------Header-------------------------------- */}
           <div className="flex flex-col gap-2">
             <h1 className="font-semibold text-base">Shipping Address </h1>
             <p className="text-sm text-gray-500">
@@ -585,7 +540,6 @@ const Auth_Signup = () => {
           />
         </div>
 
-        {/*--------------------------------Create acc -------------------------------- */}
         <div
           className={`flex w-full justify-center gap-3 ${
             stepper >= 3 && "hidden"
@@ -600,7 +554,6 @@ const Auth_Signup = () => {
             log in
           </Link>
         </div>
-        {/*--------------------------------Submit button-------------------------------- */}
         <div
           className={`${
             stepper != 2 && "hidden"

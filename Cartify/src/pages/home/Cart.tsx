@@ -73,9 +73,9 @@ const Cart = () => {
                         </button>
                       </div>
                       <p className="font-semibold text-gray-900">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        EGP {(item.product.price * item.quantity).toFixed(2)}
                         <span className="text-sm text-gray-500 ml-2">
-                          ${item.product.price.toFixed(2)} each
+                          EGP {item.product.price.toFixed(2)} each
                         </span>
                       </p>
                       <div className="flex items-center gap-3">
@@ -115,22 +115,22 @@ const Cart = () => {
                 </h2>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>EGP {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Shipping</span>
                   <span>
-                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : `EGP ${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Estimated Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>EGP {tax.toFixed(2)}</span>
                 </div>
                 <div className="w-full h-px bg-gray-200" />
                 <div className="flex justify-between text-lg font-semibold text-gray-900">
                   <span>Total</span>
-                  <span>${grandTotal.toFixed(2)}</span>
+                  <span>EGP {grandTotal.toFixed(2)}</span>
                 </div>
                 <Link
                   to="/checkout"

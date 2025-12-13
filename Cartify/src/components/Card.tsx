@@ -47,7 +47,6 @@ const Card = ({ product }: CardProps) => {
         }}
       >
         <figure className="w-full overflow-hidden aspect-square relative">
-          {/* Favorite Button */}
           <button
             onClick={handleToggleFavorite}
             className="absolute top-3 right-3 z-10 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
@@ -79,7 +78,7 @@ const Card = ({ product }: CardProps) => {
 
             <p className="text-gray-400 text-sm">{rate}</p>
           </div>
-          <p className="text-lg font-medium">${price.toFixed(2)}</p>
+          <p className="text-lg font-medium">EGP {price.toFixed(2)}</p>
 
           <div className="card-actions justify-end ">
             <button

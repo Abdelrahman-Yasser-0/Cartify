@@ -28,11 +28,8 @@ const Account_Addresses = ({
 }: Auth_Signup_2_props) => {
   return (
     <div className="">
-      {/*--------------------------------Country+City-------------------------------- */}
       <div className=" w-full flex flex-col  md:flex-row gap-3 ">
-        {/*--------------------------------Country-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -42,7 +39,6 @@ const Account_Addresses = ({
               Country
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2 w-full min-w-0 ${
               !(country.length > 0) && countryTouched
@@ -67,9 +63,7 @@ const Account_Addresses = ({
             />
           </label>
         </div>
-        {/*--------------------------------City-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -79,7 +73,6 @@ const Account_Addresses = ({
               City
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2  min-w-0${
               !(city.length > 0) && cityTouched ? "input input-error" : "input"
@@ -89,7 +82,6 @@ const Account_Addresses = ({
               type="text"
               className="grow"
               name="city"
-              // "address-level2" is the standard code for City
               autoComplete="shipping address-level2"
               placeholder="e.g., New Cairo"
               onChange={(e) => {
@@ -104,9 +96,7 @@ const Account_Addresses = ({
           </label>
         </div>
       </div>
-      {/*--------------------------------Street Address-------------------------------- */}
       <div className="w-full flex-1 min-w-0">
-        {/*--------------------------------Input Label Name-------------------------------- */}
         <div className="label">
           <span
             className={`label-text ${
@@ -118,7 +108,6 @@ const Account_Addresses = ({
             Street Address
           </span>
         </div>
-        {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
             !(streetAddress.length > 0) && streetAddressTouched
@@ -144,9 +133,7 @@ const Account_Addresses = ({
         </label>
       </div>
       <div className=" w-full flex flex-col  md:flex-row gap-3 ">
-        {/*--------------------------------Apartment, Suite, etc.-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -156,7 +143,6 @@ const Account_Addresses = ({
               Apartment, Suite, etc.
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2 w-full min-w-0 ${
               !(apartment.length > 0) && apartmentouched
@@ -181,9 +167,7 @@ const Account_Addresses = ({
             />
           </label>
         </div>
-        {/*--------------------------------ZIP-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -193,7 +177,6 @@ const Account_Addresses = ({
               ZIP/ Postal Code
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2  min-w-0${
               !(zip.length > 0) && zipTouched ? "input input-error" : "input"
@@ -217,9 +200,7 @@ const Account_Addresses = ({
           </label>
         </div>
       </div>
-      {/*--------------------------------Phone Number-------------------------------- */}
       <div className="w-full flex-1 min-w-0">
-        {/*--------------------------------Input Label Name-------------------------------- */}
         <div className="label">
           <span
             className={`label-text ${
@@ -231,7 +212,6 @@ const Account_Addresses = ({
             Phone Number
           </span>
         </div>
-        {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
             !/^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&

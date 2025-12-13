@@ -8,21 +8,6 @@ import { IoClose } from "react-icons/io5";
 import { users } from "../usersData";
 import { METHODS } from "http";
 
-/**
- * --------------------------------------------------------------------------
- * What happens when a usestate gets changed ???
- * --------------------------------------------------------------------------
- * 1-The pages related to this usestate gets updated
- *
- *  1.1-Every statment outside the return get reexcuted ex:All consts (validateEmail, isEmailError) are re-calculated with the new state.
- *      console.logs run again But the Use State elments dosnt get recalc it is outside of the scope.
- *
- *  1.2-The statments inside the Return also gets updated if and only if the statment is reltated to the use State directly or indirectly
- *      if there is a function use this usestate inside the componetn even if the element dosnt use the use state directly and use the function only it gets updated
- *      cuz it uses the funciton which is using the use state
- * --------------------------------------------------------------------------
- */
-
 const Auth_Login = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<string>("");
@@ -45,10 +30,6 @@ const Auth_Login = () => {
     return atSymbolRegex.test(email);
   };
 
-  // const validUserName = (email: string): boolean => {
-  //   const usernameRegex = /^[a-zA-Z0-9._%+-]+@/;
-  //   return usernameRegex.test(email);
-  // };
   const validDomain = (email: string): boolean => {
     const domainRegex = /@(gmail|yahoo|outlook|hotmail|example)\.com$/i;
     return domainRegex.test(email);
@@ -59,10 +40,6 @@ const Auth_Login = () => {
   };
 
   const validateEmail = (email: string): boolean => {
-    //this function checks the email and being called every time the email changes cuz the email is a usestate so every element related to it rerenders
-    //the regex logic
-
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return true;
   };
 
@@ -86,15 +63,8 @@ const Auth_Login = () => {
     const containNumber = /\d/;
     return containNumber.test(password);
   };
-  // const containSpecialChar = (password: string): boolean => {
-  //   const containspeacialchar = /[@$!%*?&]/;
-  //   return containspeacialchar.test(password);
-  // };
 
   const vaildatePassword = (password: string): boolean => {
-    //the regex logic
-    // const passwordRegex =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     password = password.trim();
     if (password == "adminpassword") {
       return true;
@@ -103,15 +73,12 @@ const Auth_Login = () => {
       containLowerCase(password) &&
       containUpperCase(password) &&
       containNumber(password) &&
-      // containSpecialChar(password) &&
       passLenGt8(password)
     );
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //submition handelr
     e.preventDefault();
     if (validateEmail(email) && vaildatePassword(password)) {
-      //send data using api
       try {
         setLoading(true);
         const response = await fetch(
@@ -128,7 +95,6 @@ const Auth_Login = () => {
 
         if (response.status == 200) {
           setLoading(false);
-          //sucuss
           setLoginError(false);
           console.log("Login is Correct", data);
           localStorage.setItem("token", data.token);
@@ -148,23 +114,16 @@ const Auth_Login = () => {
       }
     }
   };
-  // console.log("Email state :" + !validateEmail(email) && emailTouched);
-  // console.log("email toched :" + emailTouched);
-  // console.log("email valid :" + validateEmail(email));
-  // console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="flex w-full min-h-screen justify-center items-center gap-24p pt-10">
-      {/*--------------------------------Left Img-------------------------------- */}
       <div className=" overflow-hidden max-w-md lg:block hidden  ">
         <img src={main_img} alt="img_Not_Found 404" className="w-full" />
       </div>
-      {/*--------------------------------Form-------------------------------- */}
       <form
         onSubmit={handleSubmit}
         className="lg:basis-[30%] lg:max-w-sm w-[80%] p-5 border rounded-2xl flex flex-col gap-5"
       >
-        {/*--------------------------------Header-------------------------------- */}
         <Link to="/" className="flex gap-4 cursor-pointer">
           <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
           <h2 className="py-1.5">Cartify</h2>
@@ -173,11 +132,8 @@ const Auth_Login = () => {
         <p className="text-sm text-gray-500">
           Log in to your Cartify account to continue
         </p>
-        {/*--------------------------------Input Fields-------------------------------- */}
         <div className="flex flex-col gap-4">
-          {/*--------------------------------Email-------------------------------- */}
           <div>
-            {/*--------------------------------Input Label Name-------------------------------- */}
             <div className="label">
               <span
                 className={`label-text ${
@@ -187,7 +143,6 @@ const Auth_Login = () => {
                 Email
               </span>
             </div>
-            {/*--------------------------------Input -------------------------------- */}
             <label
               className={`input input-bordered flex items-center gap-2 ${
                 !validateEmail(email) && emailTouched
@@ -219,7 +174,6 @@ const Auth_Login = () => {
                 }}
               />
             </label>
-            {/*--------------------------------Error List -------------------------------- */}
             <div
               className={`w-full ${
                 !validateEmail(email) && emailTouched ? "" : "hidden"
@@ -382,22 +336,9 @@ const Auth_Login = () => {
                     Password must contain at one single Number
                   </p>
                 </li>
-                {/* <li
-                  className={`flex gap-2  items-center ${
-                    containSpecialChar(password) && "hidden"
-                  }`}
-                >
-                  {!containSpecialChar(password) && (
-                    <IoClose className="text-red-600 text-[16px] shrink-0" />
-                  )}
-                  <p className="text-xs">
-                    Password must contain at least one Special character
-                  </p>
-                </li> */}
               </ul>
             </div>
           </div>
-          {/*--------------------------------Remeber me + Forgot Password-------------------------------- */}
           <div className="flex w-full justify-between">
             <div>
               <label className="cursor-pointer label flex gap-4">

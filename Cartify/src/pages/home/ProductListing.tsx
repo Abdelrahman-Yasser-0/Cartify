@@ -100,11 +100,11 @@ const ProductCard = ({ product, viewMode, onAddToCart }: ProductCardProps) => {
         </p>
         <div className="flex items-baseline gap-3">
           <p className="text-2xl font-semibold text-gray-900">
-            ${price.toFixed(2)}
+            EGP {price.toFixed(2)}
           </p>
           {originalPrice && (
             <p className="text-sm text-gray-400 line-through">
-              ${originalPrice.toFixed(2)}
+              EGP {originalPrice.toFixed(2)}
             </p>
           )}
         </div>
@@ -364,7 +364,7 @@ const ProductListing = () => {
     }
     if (priceFilter !== priceBounds.max) {
       chips.push({
-        label: `≤ $${priceFilter}`,
+        label: `≤ EGP ${priceFilter}`,
         onRemove: () => setPriceFilter(priceBounds.max),
       });
     }
@@ -477,8 +477,8 @@ const ProductListing = () => {
             className="range range-success"
           />
           <div className="flex justify-between text-sm text-gray-500 mt-2">
-            <span>${priceBounds.min}</span>
-            <span>${priceFilter}</span>
+            <span>EGP {priceBounds.min}</span>
+            <span>EGP {priceFilter}</span>
           </div>
         </div>
       </div>

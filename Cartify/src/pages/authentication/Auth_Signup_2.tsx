@@ -27,11 +27,8 @@ const Auth_Signup_2 = ({
 }: Auth_Signup_2_props) => {
   return (
     <div>
-      {/*--------------------------------Country+City-------------------------------- */}
       <div className=" w-full flex flex-col  md:flex-row gap-3 ">
-        {/*--------------------------------Country-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -41,7 +38,6 @@ const Auth_Signup_2 = ({
               Country
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2 w-full min-w-0 ${
               !(country.length > 0) && countryTouched
@@ -64,9 +60,7 @@ const Auth_Signup_2 = ({
             />
           </label>
         </div>
-        {/*--------------------------------City-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -76,7 +70,6 @@ const Auth_Signup_2 = ({
               City
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2  min-w-0${
               !(city.length > 0) && cityTouched ? "input input-error" : "input"
@@ -86,7 +79,6 @@ const Auth_Signup_2 = ({
               type="text"
               className="grow"
               name="city"
-              // "address-level2" is the standard code for City
               autoComplete="shipping address-level2"
               placeholder="e.g., New Cairo"
               onChange={(e) => {
@@ -99,9 +91,7 @@ const Auth_Signup_2 = ({
           </label>
         </div>
       </div>
-      {/*--------------------------------Street Address-------------------------------- */}
       <div className="w-full flex-1 min-w-0">
-        {/*--------------------------------Input Label Name-------------------------------- */}
         <div className="label">
           <span
             className={`label-text ${
@@ -113,7 +103,6 @@ const Auth_Signup_2 = ({
             Street Address
           </span>
         </div>
-        {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
             !(streetAddress.length > 0) && streetAddressTouched
@@ -137,9 +126,7 @@ const Auth_Signup_2 = ({
         </label>
       </div>
       <div className=" w-full flex flex-col  md:flex-row gap-3 ">
-        {/*--------------------------------Apartment, Suite, etc.-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -149,7 +136,6 @@ const Auth_Signup_2 = ({
               Apartment, Suite, etc.
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2 w-full min-w-0 ${
               !(apartment.length > 0) && apartmentouched
@@ -172,9 +158,7 @@ const Auth_Signup_2 = ({
             />
           </label>
         </div>
-        {/*--------------------------------ZIP-------------------------------- */}
         <div className="w-full flex-1 min-w-0">
-          {/*--------------------------------Input Label Name-------------------------------- */}
           <div className="label">
             <span
               className={`label-text ${
@@ -184,7 +168,6 @@ const Auth_Signup_2 = ({
               ZIP/ Postal Code
             </span>
           </div>
-          {/*--------------------------------Input -------------------------------- */}
           <label
             className={`input input-bordered flex items-center gap-2  min-w-0${
               !(zip.length > 0) && zipTouched ? "input input-error" : "input"
@@ -206,9 +189,7 @@ const Auth_Signup_2 = ({
           </label>
         </div>
       </div>
-      {/*--------------------------------Phone Number-------------------------------- */}
       <div className="w-full flex-1 min-w-0">
-        {/*--------------------------------Input Label Name-------------------------------- */}
         <div className="label">
           <span
             className={`label-text ${
@@ -220,7 +201,6 @@ const Auth_Signup_2 = ({
             Phone Number
           </span>
         </div>
-        {/*--------------------------------Input -------------------------------- */}
         <label
           className={`input input-bordered flex items-center gap-2  min-w-0${
             !/^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber) &&

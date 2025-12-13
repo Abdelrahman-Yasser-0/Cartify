@@ -9,12 +9,7 @@ const OrderPlaced = () => {
   const { clearCart } = useCart();
 
   useEffect(() => {
-    // Empty the cart when the page is shown
     if (clearCart) clearCart();
-    // clearCart may be recreated by the cart context provider on each update.
-    // We only want to run this once on mount — avoid running when the function
-    // identity changes (which can cause an update loop).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

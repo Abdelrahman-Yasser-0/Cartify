@@ -66,7 +66,6 @@ const Admin_Inventory = () => {
             </div>
           ) : stats ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {/* Total Products Box */}
               <div className="border rounded-xl p-6 bg-white">
                 <div className="flex items-center gap-4">
                   <div className="bg-blue-100 p-3 rounded-lg">
@@ -82,7 +81,6 @@ const Admin_Inventory = () => {
                 </div>
               </div>
 
-              {/* In Stock Box */}
               <div className="border rounded-xl p-6 bg-white">
                 <div className="flex items-center gap-4">
                   <div className="bg-green-100 p-3 rounded-lg">
@@ -91,14 +89,13 @@ const Admin_Inventory = () => {
                   <div>
                     <p className="text-gray-500 text-sm">In Stock</p>
                     <p className="text-2xl font-semibold text-gray-900 mt-1">
-                      {stats.inStock}
+                      {stats.outOfStock}
                     </p>
                     <p className="text-gray-400 text-xs mt-0.5">Available products</p>
                   </div>
                 </div>
               </div>
 
-              {/* Out of Stock Box */}
               <div className="border rounded-xl p-6 bg-white">
                 <div className="flex items-center gap-4">
                   <div className="bg-red-100 p-3 rounded-lg">
@@ -107,7 +104,7 @@ const Admin_Inventory = () => {
                   <div>
                     <p className="text-gray-500 text-sm">Out of Stock</p>
                     <p className="text-2xl font-semibold text-gray-900 mt-1">
-                      {stats.outOfStock}
+                      {stats.inStock}
                     </p>
                     <p className="text-gray-400 text-xs mt-0.5">Unavailable products</p>
                   </div>

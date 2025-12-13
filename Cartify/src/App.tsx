@@ -46,7 +46,6 @@ const App = () => {
   return (
     <div>
       <Routes>
-        //-----------------------------------------------------Home-----------------------------------------------------//
         <Route path="/" element={<Home />} />
         <Route path="/product_detailes/:id" element={<ProductDetailes />} />
         <Route path="/product_listing" element={<ProductListing />} />
@@ -54,7 +53,6 @@ const App = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order_placed" element={<OrderPlaced />} />
         <Route path="/favorites" element={<Favorites />} />
-        //-----------------------------------------------------Admin-----------------------------------------------------//
         <Route path="/admin/analytics" element={<Admin_Analytics />} />
         <Route path="/admin/categories" element={<Admin_Categories />} />
         <Route
@@ -81,7 +79,6 @@ const App = () => {
           element={<Admin_Roles_and_Permissions />}
         />
         <Route path="/admin/settings" element={<Admin_Settings />} />
-        //-----------------------------------------------------User-----------------------------------------------------//
         <Route path="/account/orders/:id" element={<Account_Order_Detail />} />
         <Route path="/account/orders" element={<Account_Orders />} />
         <Route path="/account/overview" element={<Account_Overview />} />
@@ -93,11 +90,9 @@ const App = () => {
         <Route path="/account/profile" element={<Account_Profile />} />
         <Route path="/account/security" element={<Account_Security />} />
         <Route path="/track-order" element={<Track_Order />} />
-        //-----------------------------------------------------Auth-----------------------------------------------------//
         <Route path="/auth/login" element={<Auth_Login />} />
         <Route path="/auth/signup" element={<Auth_Signup />} />
         <Route path="/auth/signup/admin" element={<Auth_Signup_Admin />} />
-        //-----------------------------------------------------Support_Legal--------------------------------------------------//
         <Route path="/accessibility" element={<Accessibility />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />

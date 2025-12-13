@@ -17,7 +17,6 @@ export const fetchUserWishlist = async (
   });
   if (!res.ok) {
     const message = (await res.json().catch(() => ({}))).message;
-    // If unauthorized or user not found, clear invalid auth data
     if (res.status === 401 || res.status === 404) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -25,7 +24,6 @@ export const fetchUserWishlist = async (
     throw new Error(message || `Failed to fetch wishlist (${res.status})`);
   }
   const data = await res.json();
-  // Extract productIds from wishingList array of objects
   if (Array.isArray(data.wishingList)) {
     return data.wishingList.map((item: { productId: string }) => item.productId);
   }

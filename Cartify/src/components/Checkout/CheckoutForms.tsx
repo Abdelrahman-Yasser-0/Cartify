@@ -12,12 +12,21 @@ type Props = {
   >;
 };
 
+type ValidationErrors = {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  street?: string;
+  building?: string;
+  city?: string;
+  zip?: string;
+};
+
 const CheckoutForms = (props: Props) => {
   const { checkout } = useCart();
   const navigate = useNavigate();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   
-  // Shipping state (persists across steps since same component remains mounted)
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -26,7 +35,8 @@ const CheckoutForms = (props: Props) => {
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
 
-  // Delivery state (local fallback if parent doesn't provide)
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
   const [deliveryOptionLocal, setDeliveryOptionLocal] = useState<
     "standard" | "priority" | "express"
   >("standard");
@@ -34,13 +44,12 @@ const CheckoutForms = (props: Props) => {
   const deliveryOption = props.deliveryOption ?? deliveryOptionLocal;
   const setDeliveryOption = props.setDeliveryOption ?? setDeliveryOptionLocal;
 
-  // Payment state
   const [cardNumber, setCardNumber] = useState("");
   const [date, setDate] = useState("");
   const [cvv, setCvv] = useState("");
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/[^\d]/g, ""); // only numbers
+    let value = e.target.value.replace(/[^\d]/g, "");
 
     if (value.length > 2) {
       value = value.slice(0, 2) + "/" + value.slice(2, 4);
@@ -50,7 +59,7 @@ const CheckoutForms = (props: Props) => {
   };
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/[^\d]/g, ""); // only numbers
+    let value = e.target.value.replace(/[^\d]/g, "");
 
     if (value.length > 2) {
       value = value.slice(0, 2) + "/" + value.slice(2, 4);
@@ -67,9 +76,75 @@ const CheckoutForms = (props: Props) => {
     if (props.setStep) props.setStep((s) => Math.max(1, s - 1));
   };
 
-  // Handlers for each step
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[\d\s\+\-\(\)]{10,}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ""));
+  };
+
+  const validateZip = (zip: string): boolean => {
+    const zipRegex = /^\d{4,}$/;
+    return zipRegex.test(zip);
+  };
+
+  const validateShippingForm = (): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    if (!fullName.trim()) {
+      newErrors.fullName = "Full name is required";
+    } else if (fullName.trim().length < 2) {
+      newErrors.fullName = "Full name must be at least 2 characters";
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!validatePhone(phone)) {
+      newErrors.phone = "Please enter a valid phone number";
+    }
+
+    if (!street.trim()) {
+      newErrors.street = "Street address is required";
+    } else if (street.trim().length < 5) {
+      newErrors.street = "Street address must be at least 5 characters";
+    }
+
+    if (!building.trim()) {
+      newErrors.building = "Building number is required";
+    }
+
+    if (!city.trim()) {
+      newErrors.city = "City is required";
+    } else if (city.trim().length < 2) {
+      newErrors.city = "City must be at least 2 characters";
+    }
+
+    if (!zip.trim()) {
+      newErrors.zip = "ZIP code is required";
+    } else if (!validateZip(zip)) {
+      newErrors.zip = "ZIP code must be at least 4 digits";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateShippingForm()) {
+      return;
+    }
+
     const data = {
       fullName,
       email,
@@ -80,13 +155,11 @@ const CheckoutForms = (props: Props) => {
       zip,
       country: "Egypt",
     };
-    // console.log("Saved Shipping Info:", data);
     goNext();
   };
 
   const handleDeliverySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log("Delivery option:", deliveryOption);
     goNext();
   };
 
@@ -124,44 +197,65 @@ const CheckoutForms = (props: Props) => {
   return (
     <div className="w-full">
       {step === 1 && (
-        <form onSubmit={handleShippingSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleShippingSubmit} className="flex flex-col gap-6" noValidate>
           <h2 className="text-lg">Shipping Information</h2>
 
           <label className="form-control w-full">
             <span className="label-text font-semibold">Full Name</span>
             <input
               type="text"
-              className="input bg-gray-100"
+              className={`input bg-gray-100 ${errors.fullName ? "border-red-500" : ""}`}
               placeholder="John Doe"
-              required
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                if (errors.fullName) {
+                  setErrors({ ...errors, fullName: undefined });
+                }
+              }}
             />
+            {errors.fullName && (
+              <span className="label-text text-red-500 text-sm mt-1">{errors.fullName}</span>
+            )}
           </label>
 
           <div className="flex flex-col gap-5 lg:flex-row">
             <label className="form-control w-full">
               <span className="label-text font-semibold">Email</span>
               <input
-                type="email"
-                className="input bg-gray-100"
+                type="text"
+                className={`input bg-gray-100 ${errors.email ? "border-red-500" : ""}`}
                 placeholder="john@example.com"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors({ ...errors, email: undefined });
+                  }
+                }}
               />
+              {errors.email && (
+                <span className="label-text text-red-500 text-sm mt-1">{errors.email}</span>
+              )}
             </label>
 
             <label className="form-control w-full">
               <span className="label-text font-semibold">Phone</span>
               <input
                 type="text"
-                className="input bg-gray-100"
+                className={`input bg-gray-100 ${errors.phone ? "border-red-500" : ""}`}
                 placeholder="+20 123 456 7890"
-                required
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (errors.phone) {
+                    setErrors({ ...errors, phone: undefined });
+                  }
+                }}
               />
+              {errors.phone && (
+                <span className="label-text text-red-500 text-sm mt-1">{errors.phone}</span>
+              )}
             </label>
           </div>
 
@@ -169,12 +263,19 @@ const CheckoutForms = (props: Props) => {
             <span className="label-text font-semibold">Street Address</span>
             <input
               type="text"
-              className="input bg-gray-100"
+              className={`input bg-gray-100 ${errors.street ? "border-red-500" : ""}`}
               placeholder="123 Main Street"
-              required
               value={street}
-              onChange={(e) => setStreet(e.target.value)}
+              onChange={(e) => {
+                setStreet(e.target.value);
+                if (errors.street) {
+                  setErrors({ ...errors, street: undefined });
+                }
+              }}
             />
+            {errors.street && (
+              <span className="label-text text-red-500 text-sm mt-1">{errors.street}</span>
+            )}
           </label>
 
           <div className="flex flex-col gap-5 lg:flex-row">
@@ -182,24 +283,38 @@ const CheckoutForms = (props: Props) => {
               <span className="label-text font-semibold">Building Number</span>
               <input
                 type="text"
-                className="input bg-gray-100"
+                className={`input bg-gray-100 ${errors.building ? "border-red-500" : ""}`}
                 placeholder="123"
-                required
                 value={building}
-                onChange={(e) => setBuilding(e.target.value)}
+                onChange={(e) => {
+                  setBuilding(e.target.value);
+                  if (errors.building) {
+                    setErrors({ ...errors, building: undefined });
+                  }
+                }}
               />
+              {errors.building && (
+                <span className="label-text text-red-500 text-sm mt-1">{errors.building}</span>
+              )}
             </label>
 
             <label className="form-control w-full">
               <span className="label-text font-semibold">City</span>
               <input
                 type="text"
-                className="input bg-gray-100"
+                className={`input bg-gray-100 ${errors.city ? "border-red-500" : ""}`}
                 placeholder="Cairo"
-                required
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  if (errors.city) {
+                    setErrors({ ...errors, city: undefined });
+                  }
+                }}
               />
+              {errors.city && (
+                <span className="label-text text-red-500 text-sm mt-1">{errors.city}</span>
+              )}
             </label>
           </div>
 
@@ -208,12 +323,19 @@ const CheckoutForms = (props: Props) => {
               <span className="label-text font-semibold">ZIP Code</span>
               <input
                 type="text"
-                className="input bg-gray-100"
+                className={`input bg-gray-100 ${errors.zip ? "border-red-500" : ""}`}
                 placeholder="12345"
-                required
                 value={zip}
-                onChange={(e) => setZip(e.target.value)}
+                onChange={(e) => {
+                  setZip(e.target.value);
+                  if (errors.zip) {
+                    setErrors({ ...errors, zip: undefined });
+                  }
+                }}
               />
+              {errors.zip && (
+                <span className="label-text text-red-500 text-sm mt-1">{errors.zip}</span>
+              )}
             </label>
 
             <label className="form-control w-full select-none">
@@ -239,7 +361,7 @@ const CheckoutForms = (props: Props) => {
       )}
 
       {step === 2 && (
-        <form onSubmit={handleDeliverySubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleDeliverySubmit} className="flex flex-col gap-6" noValidate>
           <h2 className="text-lg">Delivery Options</h2>
           <div className="flex flex-col gap-3">
             <label className="inline-flex items-center bg-gray-400/20 p-4 rounded-lg">
@@ -257,7 +379,7 @@ const CheckoutForms = (props: Props) => {
                     5-7 business days
                   </p>
                 </div>
-                <p className="align-middle font-semibold text-sm">$9.99</p>
+                <p className="align-middle font-semibold text-sm">EGP 9.99</p>
               </div>
             </label>
 
@@ -276,7 +398,7 @@ const CheckoutForms = (props: Props) => {
                     3-4 business days
                   </p>
                 </div>
-                <p className="align-middle font-semibold text-sm">$14.99</p>
+                <p className="align-middle font-semibold text-sm">EGP 14.99</p>
               </div>
             </label>
 
@@ -295,7 +417,7 @@ const CheckoutForms = (props: Props) => {
                     1-2 business days
                   </p>
                 </div>
-                <p className="align-middle font-semibold text-sm">$19.99</p>
+                <p className="align-middle font-semibold text-sm">EGP 19.99</p>
               </div>
             </label>
           </div>
@@ -319,7 +441,7 @@ const CheckoutForms = (props: Props) => {
       )}
 
       {step === 3 && (
-        <form onSubmit={handleDeliverySubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleDeliverySubmit} className="flex flex-col gap-6" noValidate>
           <h2 className="text-lg">Delivery Options</h2>
           <div className="flex flex-col gap-3">
             <label className="inline-flex items-center bg-gray-400/20 p-4 rounded-lg">

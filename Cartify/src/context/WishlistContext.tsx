@@ -97,7 +97,6 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem(storageKey, JSON.stringify(hydrated));
     } catch (error) {
       console.error("Failed to load wishlist", error);
-      // If user not found or auth error, clear local storage
       if (error instanceof Error && (error.message.includes("User not found") || error.message.includes("404"))) {
         setItems([]);
         localStorage.removeItem(storageKey);
@@ -113,13 +112,11 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     if (!anonItems.length) return;
     try {
-      // Try to add each item individually, ignoring "already exists" errors
       await Promise.allSettled(
         anonItems.map(async (item) => {
           try {
             await addToWishlist(getProductId(item), token);
           } catch (error) {
-            // Ignore "already exists" errors, but log others
             if (error instanceof Error && !error.message.includes("already exists")) {
               console.error(`Failed to add ${item.title} to wishlist:`, error);
             }
@@ -138,7 +135,6 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     const prev = previousUserIdRef.current;
     lastAuthSnapshot.current = { userId, token };
 
-    // Logout or no auth: clear wishlist
     if (!userId || !token) {
       if (prev) {
         setItems([]);
@@ -148,7 +144,6 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Login or user switch: merge anon wishlist then load remote
     if (!prev || prev !== userId) {
       let anonItems: products[] = [];
       try {
@@ -162,13 +157,11 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
         await loadRemoteWishlist();
       } catch (error) {
         console.error("Failed to sync wishlist on auth change", error);
-        // Keep local items if sync fails
       }
       previousUserIdRef.current = userId;
       return;
     }
 
-    // Same user: just refresh remote wishlist (but don't fail if it errors)
     try {
       await loadRemoteWishlist();
     } catch (error) {
@@ -187,7 +180,6 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
         setToast({ id: Date.now(), message: `${product.title} added to favorites`, type: 'add' });
       } catch (error) {
         console.error("Failed to add item to wishlist", error);
-        // If product already exists, still show success (it's already in favorites)
         if (error instanceof Error && error.message.includes("already exists")) {
           setToast({ id: Date.now(), message: `${product.title} is already in favorites`, type: 'add' });
         }
@@ -252,7 +244,6 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       window.removeEventListener("storage", onStorage);
       window.clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const totalItems = useMemo(() => items.length, [items]);

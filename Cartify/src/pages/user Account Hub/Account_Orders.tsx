@@ -157,7 +157,7 @@ const Account_Orders = () => {
                     </p>
                     <p className="text-sm text-gray-600">
                       {purchase.quantity}{" "}
-                      {purchase.quantity === 1 ? "item" : "items"} • $
+                      {purchase.quantity === 1 ? "item" : "items"} • EGP{" "}
                       {(
                         (purchase.productId?.price || 0) * purchase.quantity
                       ).toFixed(2)}
@@ -167,7 +167,7 @@ const Account_Orders = () => {
 
                 <div className="flex items-center gap-4 shrink-0">
                   <span className="font-semibold text-lg text-gray-900">
-                    $
+                    EGP{" "}
                     {(
                       (purchase.productId?.price || 0) * purchase.quantity
                     ).toFixed(2)}

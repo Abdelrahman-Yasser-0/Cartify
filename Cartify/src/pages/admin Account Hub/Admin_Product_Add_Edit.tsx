@@ -18,61 +18,66 @@ const Admin_Product_Add_Edit = () => {
   const [formData, setFormData] = useState<Partial<products>>({
     title: "",
     brand: "",
-    description: "",
-    shortDescription: "",
-    category: "",
+    rate: "0",
     price: 0,
-    originalPrice: 0,
-    discount: 0,
-    sku: "",
-    stock: 0,
-    inStock: true,
+    originalPrice: undefined,
+    discount: undefined,
     imgurl: "",
+    sku: "",
+    quantity: 0,
+    category: "",
     colors: [],
-    specifications: {},
+    description: "",
+    specifications: [],
+    reviews: [],
+    shortDescription: "",
+    isNew: false,
+    isBestSeller: false,
+    isFeatured: false,
   });
 
   const [images, setImages] = useState<string[]>([]);
   const [specifications, setSpecifications] = useState<
     { key: string; value: string }[]
   >([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const categories: string[] = ["Electronics", "Audio", "Wearables", "Computers", "Gaming", "Photography"];
   const [loading, setLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
-  // Fetch categories from backend
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const productsList = await fetchProducts();
-        const uniqueCategories = Array.from(
-          new Set(productsList.map((p) => p.category).filter(Boolean))
-        ).sort();
-        setCategories(uniqueCategories);
-      } catch (err) {
-        console.error("Error loading categories:", err);
-        setCategories([]);
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
-    loadCategories();
-  }, []);
 
   useEffect(() => {
     if (isEditMode && id) {
       const loadProduct = async () => {
         try {
           const product = await fetchProductById(id);
-          setFormData(product);
+          setFormData({
+            ...product,
+            isNew: product.isNew || false,
+            isBestSeller: product.isBestSeller || false,
+            isFeatured: product.isFeatured || false,
+            originalPrice: product.originalPrice,
+            discount: product.discount,
+          });
           setImages(product.imgurl ? [product.imgurl] : []);
           if (product.specifications) {
-            setSpecifications(
-              Object.entries(product.specifications).map(([key, value]) => ({
-                key,
-                value: String(value),
-              }))
-            );
+            if (Array.isArray(product.specifications)) {
+              setSpecifications(
+                product.specifications.map((spec) => {
+                  if (typeof spec === "string" && spec.includes(":")) {
+                    const [key, ...valueParts] = spec.split(":");
+                    return { key: key.trim(), value: valueParts.join(":").trim() };
+                  }
+                  return { key: "", value: spec };
+                })
+              );
+            } else {
+              setSpecifications(
+                Object.entries(product.specifications).map(([key, value]) => ({
+                  key,
+                  value: String(value),
+                }))
+              );
+            }
           }
         } catch (err) {
           console.error("Error loading product:", err);
@@ -89,12 +94,18 @@ const Admin_Product_Add_Edit = () => {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "price" || name === "originalPrice" || name === "stock"
+        type === "checkbox"
+          ? checked
+          : name === "price" || name === "originalPrice" || name === "quantity" || name === "discount"
           ? parseFloat(value) || 0
+          : name === "rate"
+          ? value
           : value,
     }));
   };
@@ -150,8 +161,42 @@ const Admin_Product_Add_Edit = () => {
     }));
   };
 
+  const addReview = () => {
+    setFormData((prev) => ({
+      ...prev,
+      reviews: [
+        ...(prev.reviews || []),
+        {
+          author: "",
+          rating: 5,
+          comment: "",
+          date: new Date().toISOString().split("T")[0],
+        },
+      ],
+    }));
+  };
+
+  const updateReview = (
+    index: number,
+    field: "author" | "rating" | "comment" | "date",
+    value: string | number
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      reviews: prev.reviews?.map((review, i) =>
+        i === index ? { ...review, [field]: value } : review
+      ) || [],
+    }));
+  };
+
+  const removeReview = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      reviews: prev.reviews?.filter((_, i) => i !== index) || [],
+    }));
+  };
+
   const handlePublish = async () => {
-    // Validation
     if (!formData.title || !formData.price || !formData.brand) {
       alert(
         "Please fill in all required fields (Product Name, Brand, Price)"
@@ -159,7 +204,7 @@ const Admin_Product_Add_Edit = () => {
       return;
     }
 
-    if (!formData.stock && formData.stock !== 0) {
+    if (!formData.quantity && formData.quantity !== 0) {
       alert("Please enter stock quantity");
       return;
     }
@@ -172,26 +217,24 @@ const Admin_Product_Add_Edit = () => {
 
     setLoading(true);
     try {
-      // Convert specifications object to array of strings
       const specsArray = specifications
         .filter((spec) => spec.key && spec.value)
         .map((spec) => `${spec.key}: ${spec.value}`);
 
-      // Prepare product data for backend
       const productData = {
         title: formData.title!,
         brand: formData.brand!,
         price: formData.price!,
-        quantity: formData.stock || 0,
+        quantity: formData.quantity || 0,
         rate: formData.rate || "0",
-        discount: formData.discount || 0,
         imgurl: images[0] || "",
+        category: formData.category,
         sku: formData.sku || "",
-        category: formData.category || "not categorised",
         colors: formData.colors || [],
         description: formData.description || "",
         specifications: specsArray,
-        shortDescription: formData.shortDescription || "",
+        reviews: formData.reviews || [],
+        shortDescription: formData.shortDescription || ""
       };
 
       await createProduct(productData, token);
@@ -211,7 +254,6 @@ const Admin_Product_Add_Edit = () => {
       <div className="flex flex-row max-w-screen-2xl mx-auto">
         <Sidebar />
         <div className="mt-24 mx-12 lg:ml-96 flex flex-col z-10 w-full gap-5">
-          {/* Header Section */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <Link
@@ -231,7 +273,6 @@ const Admin_Product_Add_Edit = () => {
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex justify-end gap-3">
             <button
               onClick={handlePublish}
@@ -249,7 +290,6 @@ const Admin_Product_Add_Edit = () => {
             </button>
           </div>
 
-          {/* Tabs */}
           <div className="border-b border-gray-200">
             <div className="flex gap-6">
               {[
@@ -274,9 +314,7 @@ const Admin_Product_Add_Edit = () => {
             </div>
           </div>
 
-          {/* Tab Content */}
           <div className="border rounded-xl p-6 bg-white">
-            {/* Basic Info Tab */}
             {activeTab === "basic" && (
               <div className="flex flex-col gap-6">
                 <div>
@@ -347,7 +385,6 @@ const Admin_Product_Add_Edit = () => {
                         className="select select-bordered w-full"
                         value={formData.category || ""}
                         onChange={handleInputChange}
-                        disabled={loadingCategories}
                       >
                         <option value="">Select category</option>
                         {categories.map((cat) => (
@@ -360,7 +397,7 @@ const Admin_Product_Add_Edit = () => {
 
                     <div>
                       <label className="label">
-                        <span className="label-text font-medium">Brand</span>
+                        <span className="label-text font-medium">Brand *</span>
                       </label>
                       <input
                         type="text"
@@ -373,21 +410,74 @@ const Admin_Product_Add_Edit = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="label">
-                      <span className="label-text font-medium">SKU</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="sku"
-                      placeholder="e.g. PROD-001"
-                      className="input input-bordered w-full"
-                      value={formData.sku || ""}
-                      onChange={handleInputChange}
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="label">
+                        <span className="label-text font-medium">Rating</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="rate"
+                        placeholder="e.g. 4.5"
+                        className="input input-bordered w-full"
+                        value={formData.rate || "0"}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="label">
+                        <span className="label-text font-medium">SKU</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="sku"
+                        placeholder="e.g. PROD-001"
+                        className="input input-bordered w-full"
+                        value={formData.sku || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
                   </div>
 
-                  {/* Specifications Section */}
+                  <div className="mt-2">
+                    <label className="label">
+                      <span className="label-text font-medium">Product Flags</span>
+                    </label>
+                    <div className="flex flex-wrap gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="isNew"
+                          className="checkbox checkbox-primary"
+                          checked={formData.isNew || false}
+                          onChange={handleInputChange}
+                        />
+                        <span className="label-text">New Product</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="isBestSeller"
+                          className="checkbox checkbox-primary"
+                          checked={formData.isBestSeller || false}
+                          onChange={handleInputChange}
+                        />
+                        <span className="label-text">Best Seller</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="isFeatured"
+                          className="checkbox checkbox-primary"
+                          checked={formData.isFeatured || false}
+                          onChange={handleInputChange}
+                        />
+                        <span className="label-text">Featured</span>
+                      </label>
+                    </div>
+                  </div>
+
                   <div className="mt-4">
                     <div className="flex justify-between items-center mb-3">
                       <label className="label">
@@ -446,11 +536,109 @@ const Admin_Product_Add_Edit = () => {
                       )}
                     </div>
                   </div>
+
+                  <div className="mt-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="label">
+                        <span className="label-text font-medium">Reviews</span>
+                      </label>
+                      <button
+                        onClick={addReview}
+                        className="btn btn-sm btn-outline"
+                        type="button"
+                      >
+                        <FiPlus size={16} />
+                        Add Review
+                      </button>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      {formData.reviews && formData.reviews.length > 0 ? (
+                        formData.reviews.map((review, index) => (
+                          <div
+                            key={index}
+                            className="border rounded-lg p-4 bg-gray-50"
+                          >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                              <div>
+                                <label className="label py-1">
+                                  <span className="label-text text-xs">Author</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="Author name"
+                                  className="input input-bordered w-full input-sm"
+                                  value={review.author}
+                                  onChange={(e) =>
+                                    updateReview(index, "author", e.target.value)
+                                  }
+                                />
+                              </div>
+                              <div>
+                                <label className="label py-1">
+                                  <span className="label-text text-xs">Rating (1-5)</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max="5"
+                                  placeholder="5"
+                                  className="input input-bordered w-full input-sm"
+                                  value={review.rating}
+                                  onChange={(e) =>
+                                    updateReview(
+                                      index,
+                                      "rating",
+                                      parseInt(e.target.value) || 5
+                                    )
+                                  }
+                                />
+                              </div>
+                            </div>
+                            <div className="mb-3">
+                              <label className="label py-1">
+                                <span className="label-text text-xs">Comment</span>
+                              </label>
+                              <textarea
+                                placeholder="Review comment"
+                                className="textarea textarea-bordered w-full textarea-sm"
+                                rows={2}
+                                value={review.comment}
+                                onChange={(e) =>
+                                  updateReview(index, "comment", e.target.value)
+                                }
+                              />
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <input
+                                type="date"
+                                className="input input-bordered input-sm"
+                                value={review.date}
+                                onChange={(e) =>
+                                  updateReview(index, "date", e.target.value)
+                                }
+                              />
+                              <button
+                                onClick={() => removeReview(index)}
+                                className="btn btn-sm btn-ghost text-error"
+                                type="button"
+                              >
+                                <FiX size={18} />
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-400 text-sm">
+                          No reviews added. Click "Add Review" to add one.
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Media Tab */}
             {activeTab === "media" && (
               <div className="flex flex-col gap-6">
                 <div>
@@ -537,7 +725,6 @@ const Admin_Product_Add_Edit = () => {
               </div>
             )}
 
-            {/* Pricing Tab */}
             {activeTab === "pricing" && (
               <div className="flex flex-col gap-6">
                 <div>
@@ -549,44 +736,22 @@ const Admin_Product_Add_Edit = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="label">
                       <span className="label-text font-medium">Price *</span>
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                        $
+                        EGP
                       </span>
                       <input
                         type="number"
                         name="price"
                         placeholder="0.00"
                         step="0.01"
-                        className="input input-bordered w-full pl-8"
+                        className="input input-bordered w-full pl-12"
                         value={formData.price || ""}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="label">
-                      <span className="label-text font-medium">
-                        Original Price
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                        $
-                      </span>
-                      <input
-                        type="number"
-                        name="originalPrice"
-                        placeholder="0.00"
-                        step="0.01"
-                        className="input input-bordered w-full pl-8"
-                        value={formData.originalPrice || ""}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -615,7 +780,6 @@ const Admin_Product_Add_Edit = () => {
               </div>
             )}
 
-            {/* Inventory Tab */}
             {activeTab === "inventory" && (
               <div className="flex flex-col gap-6">
                 <div>
@@ -633,17 +797,17 @@ const Admin_Product_Add_Edit = () => {
                   </label>
                   <input
                     type="number"
-                    name="stock"
+                    name="quantity"
                     placeholder="0"
+                    min="0"
                     className="input input-bordered w-full"
-                    value={formData.stock || ""}
+                    value={formData.quantity || ""}
                     onChange={handleInputChange}
                   />
                 </div>
               </div>
             )}
 
-            {/* Colors Tab */}
             {activeTab === "colors" && (
               <div className="flex flex-col gap-6">
                 <div>

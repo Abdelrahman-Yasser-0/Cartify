@@ -9,7 +9,6 @@ const Auth_signup_confirm = ({ stepper }: { stepper: number }) => {
         stepper != 3 && "hidden"
       }`}
     >
-      {/*--------------------------------Stepper-------------------------------- */}
       <ul className="steps steps-horizontal">
         <li className="step step-accent">Account</li>
         <li className={`step ${stepper >= 2 && "step-accent"}`}>
@@ -22,7 +21,6 @@ const Auth_signup_confirm = ({ stepper }: { stepper: number }) => {
           Done
         </li>
       </ul>
-      {/*--------------------------------Congrats Message-------------------------------- */}
       <div className="w-full h-full flex flex-col items-center pt-4 text-center text-xl">
         <FaCircleCheck className="text-accent text-5xl shrink-0 " />
 

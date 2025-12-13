@@ -46,18 +46,15 @@ const ProductDetailes = () => {
       .finally(() => setIsLoading(false));
   }, [id]);
 
-  // Scroll to top when component mounts or product ID changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
   const rating = parseFloat(product?.rate?.split(" ")[0] || "0");
-  // Extract review count from rate string (format: "4.8 (1247)" or just "4.8")
   const reviewCountMatch = product?.rate?.match(/\((\d+)\)/);
   const reviewCount = reviewCountMatch ? reviewCountMatch[1] : "0";
   const reviewCountNum = parseInt(reviewCount, 10);
 
-  // Generate sample reviews if review count is high but reviews array is empty
   const reviewsToDisplay = useMemo(() => {
     if (product?.reviews && product.reviews.length > 0) {
       return product.reviews;
@@ -67,7 +64,6 @@ const ProductDetailes = () => {
       return [];
     }
 
-    // Generate 3 sample reviews
     const sampleReviews = [];
     const names = ["Alex M.", "Sarah K.", "Michael T.", "Emma L.", "David R."];
     const months = [
@@ -85,7 +81,6 @@ const ProductDetailes = () => {
       "Dec",
     ];
 
-    // Generate reviews based on product category
     const categoryReviews: Record<string, string[]> = {
       Audio: [
         "The sound quality is absolutely incredible! Crystal clear audio with deep bass. Best purchase I've made this year.",
@@ -125,7 +120,6 @@ const ProductDetailes = () => {
       "Highly recommend! Great value for money and the quality is top-notch.",
     ];
 
-    // Use product ID as seed for consistent reviews per product
     const seed = parseInt(product?.id || "0", 10);
     for (let i = 0; i < 3; i++) {
       const nameIndex = (seed + i) % names.length;
@@ -228,7 +222,6 @@ const ProductDetailes = () => {
       <Header />
       <div className="pt-20 pb-12 flex-1 mt-4">
         <div className="max-w-screen-2xl mx-auto px-12">
-          {/* Breadcrumbs */}
           <div className="mb-6 text-sm text-gray-600">
             <Link to="/" className="hover:text-teal-600">
               Home
@@ -245,9 +238,7 @@ const ProductDetailes = () => {
             <span className="text-gray-900">{product.title}</span>
           </div>
 
-          {/* Main Product Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            {/* Product Image */}
             <div className="w-full">
               <div className="bg-white rounded-lg p-8 flex items-center justify-center aspect-square">
                 <img
@@ -258,12 +249,9 @@ const ProductDetailes = () => {
               </div>
             </div>
 
-            {/* Product Information */}
             <div className="flex flex-col gap-6">
-              {/* Brand */}
               <h3 className="text-gray-500 text-lg">{product.brand}</h3>
 
-              {/* Title with Icons */}
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-semibold">{product.title}</h1>
                 <div className="flex gap-3">
@@ -282,7 +270,6 @@ const ProductDetailes = () => {
                 </div>
               </div>
 
-              {/* Rating */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center">{renderStars(rating)}</div>
                 <span className="text-gray-600">
@@ -292,15 +279,14 @@ const ProductDetailes = () => {
                 </span>
               </div>
 
-              {/* Price */}
               <div className="flex items-center gap-4">
                 <span className="text-4xl font-bold">
-                  ${product.price.toFixed(2)}
+                  EGP {product.price.toFixed(2)}
                 </span>
                 {product.originalPrice && (
                   <>
                     <span className="text-2xl text-gray-400 line-through">
-                      ${product.originalPrice.toFixed(2)}
+                      EGP {product.originalPrice.toFixed(2)}
                     </span>
                     {product.discount && (
                       <span className="bg-red-500 text-white px-3 py-1 rounded text-sm font-semibold">
@@ -311,28 +297,24 @@ const ProductDetailes = () => {
                 )}
               </div>
 
-              {/* Availability */}
               {product.inStock ? (
                 <div className="text-green-600 font-medium">In Stock</div>
               ) : (
                 <div className="text-red-600 font-medium">Out of Stock</div>
               )}
 
-              {/* SKU */}
               {product.sku && (
                 <div className="text-sm text-gray-600">
                   <span className="font-medium">SKU:</span> {product.sku}
                 </div>
               )}
 
-              {/* Short Description */}
               {product.shortDescription && (
                 <p className="text-gray-700 leading-relaxed">
                   {product.shortDescription}
                 </p>
               )}
 
-              {/* Color Options */}
               {product.colors && product.colors.length > 0 && (
                 <div className="flex flex-col gap-3">
                   <span className="font-medium">Color</span>
@@ -354,7 +336,6 @@ const ProductDetailes = () => {
                 </div>
               )}
 
-              {/* Quantity Selector */}
               <div className="flex flex-col gap-3">
                 <span className="font-medium">Quantity</span>
                 <div className="flex items-center gap-4">
@@ -376,7 +357,6 @@ const ProductDetailes = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex gap-4">
                 <button
                   className="flex-1 bg-teal-600 text-white py-4 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-teal-700 transition disabled:opacity-50"
@@ -395,14 +375,13 @@ const ProductDetailes = () => {
                 </button>
               </div>
 
-              {/* Additional Services */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
                 <div className="flex items-start gap-3">
                   <FiTruck className="text-2xl text-teal-600 mt-1" />
                   <div>
                     <div className="font-medium">Free Shipping</div>
                     <div className="text-sm text-gray-600">
-                      On orders over $50
+                      On orders over EGP 50
                     </div>
                   </div>
                 </div>
@@ -426,7 +405,6 @@ const ProductDetailes = () => {
             </div>
           </div>
 
-          {/* Product Details Tabs */}
           <div className="border-t pt-8">
             <div className="flex gap-8 border-b mb-6">
               <button
@@ -461,7 +439,6 @@ const ProductDetailes = () => {
               </button>
             </div>
 
-            {/* Tab Content */}
             <div className="min-h-[200px]">
               {activeTab === "description" && (
                 <div className="space-y-4 text-gray-700 leading-relaxed">

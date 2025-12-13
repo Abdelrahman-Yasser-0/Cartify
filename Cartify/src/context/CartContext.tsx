@@ -56,7 +56,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   });
   const [loading, setLoading] = useState(false);
   
-  // Initialize with current userId to prevent treating existing cart as anonymous on page refresh
   const getInitialUserId = () => {
     if (typeof window === "undefined") return null;
     try {
@@ -101,7 +100,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const entries = await fetchUserCart(token);
-      // Filter out items with zero or negative quantity
       const validEntries = entries.filter((entry) => entry.quantity > 0);
       const hydrated = await enrichCartEntries(validEntries);
       setItems(hydrated);
@@ -136,7 +134,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const prev = previousUserIdRef.current;
     lastAuthSnapshot.current = { userId, token };
 
-    // Logout or no auth: clear cart
     if (!userId || !token) {
       if (prev) {
         setItems([]);
@@ -146,7 +143,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Login or user switch: merge anon cart then load remote
     if (!prev || prev !== userId) {
       let anonItems: CartItem[] = [];
       try {
@@ -161,7 +157,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Same user: just refresh remote cart
     await loadRemoteCart();
   };
 
@@ -282,7 +277,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       window.removeEventListener("storage", onStorage);
       window.clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const subtotal = useMemo(

@@ -19,20 +19,20 @@ const OrderSummary = (props: Props) => {
       <h2 className="text-xl font-semibold text-gray-900">Order Summary</h2>
       <div className="flex justify-between text-sm text-gray-600">
         <span>Subtotal</span>
-        <span>${subtotal.toFixed(2)}</span>
+        <span>EGP {subtotal.toFixed(2)}</span>
       </div>
       <div className="flex justify-between text-sm text-gray-600">
         <span>Shipping</span>
-        <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+        <span>{shipping === 0 ? "Free" : `EGP ${shipping.toFixed(2)}`}</span>
       </div>
       <div className="flex justify-between text-sm text-gray-600">
         <span>Estimated Tax</span>
-        <span>${tax.toFixed(2)}</span>
+        <span>EGP {tax.toFixed(2)}</span>
       </div>
       <div className="w-full h-px bg-gray-200" />
       <div className="flex justify-between text-lg font-semibold text-gray-900">
         <span>Total</span>
-        <span>${grandTotal.toFixed(2)}</span>
+        <span>EGP {grandTotal.toFixed(2)}</span>
       </div>
       {location.pathname !== "/checkout" && (
         <div>

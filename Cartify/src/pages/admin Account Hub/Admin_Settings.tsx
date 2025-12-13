@@ -4,7 +4,6 @@ import Header from "./../../components/Header";
 import { FiSave } from "react-icons/fi";
 
 const Admin_Settings = () => {
-  // General Settings State
   const [generalSettings, setGeneralSettings] = useState({
     storeName: "Cartify",
     storeEmail: "admin@cartify.com",
@@ -16,7 +15,6 @@ const Admin_Settings = () => {
   };
 
   const handleSave = () => {
-    // In a real app, this would save to backend
     console.log("Saving settings:", generalSettings);
     alert("Settings saved successfully!");
   };
@@ -32,7 +30,6 @@ const Admin_Settings = () => {
             <p className="text-gray-500">Manage your store settings and preferences</p>
           </div>
 
-          {/* Save Button */}
           <div className="flex justify-end">
             <button
               onClick={handleSave}
@@ -43,7 +40,6 @@ const Admin_Settings = () => {
             </button>
           </div>
 
-          {/* Settings Content */}
           <div className="border rounded-xl p-6 bg-white">
             <div className="flex flex-col gap-6">
               <div>

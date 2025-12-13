@@ -16,7 +16,6 @@ const Admin_Products = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch products from backend
   useEffect(() => {
     const loadProducts = async () => {
       try {
@@ -34,23 +33,21 @@ const Admin_Products = () => {
     loadProducts();
   }, []);
 
-  // Map products to display format
   const mappedProducts = products.map((product) => ({
     id: product.id,
     name: product.title,
     image: product.imgurl,
     sku: product.sku,
     category: product.category,
-    stock: product.stock,
+    stock: product.quantity,
     price: product.price,
     status: product.inStock
-      ? product.stock > 10
+      ? product.quantity > 10
         ? "Active"
         : "Low Stock"
       : "Out of Stock",
   }));
 
-  // Handle delete product
   const handleDelete = async (productId: string) => {
     if (!window.confirm("Are you sure you want to delete this product?")) {
       return;
@@ -64,7 +61,6 @@ const Admin_Products = () => {
 
     try {
       await deleteProduct(productId, token);
-      // Remove product from local state
       setProducts((prev) => prev.filter((p) => p.id !== productId));
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to delete product");
@@ -112,7 +108,6 @@ const Admin_Products = () => {
             <p className="text-gray-500">Manage your product catalog</p>
           </div>
 
-          {/* Add Product Button */}
           <div className="flex justify-end">
             <Link
               to="/admin/product-add-edit"
@@ -122,7 +117,6 @@ const Admin_Products = () => {
             </Link>
           </div>
 
-          {/* Search and Filters */}
           <div className="border rounded-xl flex flex-col p-5 gap-5">
             <div className="flex flex-col md:flex-row gap-4 items-center">
               <div className="flex-1 w-full">
@@ -162,7 +156,6 @@ const Admin_Products = () => {
             </div>
           </div>
 
-          {/* Products Table */}
           <div className="border rounded-xl overflow-hidden">
             {loading ? (
               <div className="p-8 text-center">
@@ -223,7 +216,7 @@ const Admin_Products = () => {
                       >
                         {product.stock}
                       </td>
-                      <td>${product.price.toFixed(2)}</td>
+                      <td>EGP {product.price.toFixed(2)}</td>
                       <td>
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(

@@ -26,7 +26,6 @@ const Favorites = () => {
         <Header />
         <div className="flex-1 flex items-center justify-center py-52 px-6">
           <div className="max-w-2xl mx-auto text-center">
-            {/* Empty Heart Icon */}
             <div className="mb-8 flex justify-center">
               <div className="relative">
                 <div className="relative bg-teal-100 rounded-full p-8">
@@ -35,7 +34,6 @@ const Favorites = () => {
               </div>
             </div>
 
-            {/* Main Content */}
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Your Favorites List is Empty
             </h1>
@@ -44,7 +42,6 @@ const Favorites = () => {
               for easy access anytime.
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/product_listing"
@@ -72,7 +69,6 @@ const Favorites = () => {
       <Header />
       <div className="flex-1 pt-24 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
               <FiHeart className="text-teal-600 fill-teal-600" />
@@ -84,14 +80,12 @@ const Favorites = () => {
             </p>
           </div>
 
-          {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {items.map((product) => (
               <Card key={product.id} product={product} />
             ))}
           </div>
 
-          {/* Continue Shopping Button */}
           <div className="mt-12 text-center">
             <Link
               to="/product_listing"

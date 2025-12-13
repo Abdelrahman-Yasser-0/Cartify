@@ -10,7 +10,6 @@ const Auth_signup_found = ({ stepper }: { stepper: number }) => {
         stepper != 3 && "hidden"
       }`}
     >
-      {/*--------------------------------Stepper-------------------------------- */}
       <ul className="steps steps-horizontal">
         <li className="step step-error">Account</li>
         <li className={`step ${stepper >= 2 && "step-error"}`}>
@@ -23,7 +22,6 @@ const Auth_signup_found = ({ stepper }: { stepper: number }) => {
           Done
         </li>
       </ul>
-      {/*--------------------------------Congrats Message-------------------------------- */}
       <div className="w-full h-full flex flex-col items-center pt-4 text-center text-xl">
         <MdOutlineErrorOutline className="text-error text-5xl shrink-0 " />
 

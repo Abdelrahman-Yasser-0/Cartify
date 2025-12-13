@@ -10,7 +10,6 @@ const NotFound = () => {
       <div className="pt-20 pb-12 flex-1 flex items-center justify-center">
         <div className="max-w-screen-2xl mx-auto px-12 w-full">
           <div className="flex flex-col items-center justify-center text-center py-16">
-            {/* 404 Number */}
             <div className="relative mb-8">
               <h1 className="text-9xl font-bold text-gray-200 select-none">
                 404
@@ -20,7 +19,6 @@ const NotFound = () => {
               </div>
             </div>
 
-            {/* Error Message */}
             <div className="mb-8">
               <h2 className="text-3xl font-semibold text-gray-800 mb-4">
                 Page Not Found
@@ -31,7 +29,6 @@ const NotFound = () => {
               </p>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/"
@@ -49,7 +46,6 @@ const NotFound = () => {
               </Link>
             </div>
 
-            {/* Helpful Links */}
             <div className="mt-12 pt-8 border-t border-gray-200 w-full max-w-md">
               <p className="text-sm text-gray-500 mb-4">You might be looking for:</p>
               <div className="flex flex-wrap justify-center gap-4 text-sm">

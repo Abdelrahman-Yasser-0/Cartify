@@ -79,7 +79,6 @@ const Home = () => {
             )}
           </div>
           <Spacer />
-          {/*-------------------------------------SEC----------------------------------------------------- */}
           <div className="flex-col gap-8 flex ">
             <div className="flex justify-between">
               <div className="flex flex-col gap-2">
@@ -108,7 +107,6 @@ const Home = () => {
               </div>
             )}
           </div>
-          {/*-------------------------------------3rd----------------------------------------------------- */}
           <div className="flex-col gap-8 flex ">
             <div className="flex justify-between">
               <div className="flex flex-col gap-2">

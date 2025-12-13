@@ -45,10 +45,6 @@ const Account_Profile = () => {
     return atSymbolRegex.test(email);
   };
 
-  // const validUserName = (email: string): boolean => {
-  //   const usernameRegex = /^[a-zA-Z0-9._%+-]+@/;
-  //   return usernameRegex.test(email);
-  // };
   const validDomain = (email: string): boolean => {
     const domainRegex = /@(gmail|yahoo|outlook|hotmail|example)\.com$/i;
     return domainRegex.test(email);
@@ -59,10 +55,6 @@ const Account_Profile = () => {
   };
 
   const validateEmail = (email: string): boolean => {
-    //this function checks the email and being called every time the email changes cuz the email is a usestate so every element related to it rerenders
-    //the regex logic
-
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return (
       !containWhiteSpace(email) &&
       containAtSymbol(email) &&
@@ -101,9 +93,6 @@ const Account_Profile = () => {
   };
 
   const vaildatePassword = (password: string): boolean => {
-    //the regex logic
-    // const passwordRegex =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     password = password.trim();
     return (
       containLowerCase(password) &&
@@ -113,47 +102,6 @@ const Account_Profile = () => {
       passLenGt8(password)
     );
   };
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   //submition handelr
-  //   e.preventDefault();
-  //   if (
-  //     validateEmail(email) &&
-  //     country.length > 0 &&
-  //     city.length > 0 &&
-  //     streetAddress.length > 0 &&
-  //     apartment.length > 0 &&
-  //     zip.length > 0 &&
-  //     /^(\+20\s?0?|0)1[0125][0-9]{8}$/.test(phoneNumber)
-  //   ) {
-  //     //send data using api
-  //     if (password.length > 0) {
-  //       if (!vaildatePassword(password)) {
-  //         console.log("INvlaid pass");
-
-  //         return;
-  //       }
-  //       const updatedUser = {
-  //         ...user,
-  //         fullname: fullName,
-  //         email: email,
-  //         country: country,
-  //         city: city,
-  //         streetAddress: streetAddress,
-  //         apartment: apartment,
-  //         zip: zip,
-  //         phoneNumber: phoneNumber,
-  //         password: password.length > 0 ? password : user.password,
-  //       };
-
-  //       localStorage.setItem("user", JSON.stringify(updatedUser));
-
-  //       setIsEditing(false);
-  //       console.log("yes valied");
-  //     }
-  //   } else {
-  //     console.log("no not valied");
-  //   }
-  // };
 
   const logout = (): void => {
     localStorage.removeItem("token");
@@ -234,10 +182,6 @@ const Account_Profile = () => {
       console.log("Validation Failed: Check empty fields");
     }
   };
-  // console.log("Email state :" + !validateEmail(email) && emailTouched);
-  // console.log("email toched :" + emailTouched);
-  // console.log("email valid :" + validateEmail(email));
-  // console.log("space :" + !containWhiteSpace(email));
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -305,12 +249,10 @@ const Account_Profile = () => {
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-screen-2xl min-h-screen ">
-        {/*--------------------------------Form-------------------------------- */}
         <form
           onSubmit={handleSubmit}
           className={`max-w-screen-2xl p-5 flex flex-col gap-5`}
         >
-          {/*--------------------------------Input Fields-------------------------------- */}
           <div className={`flex flex-col gap-4  border rounded-2xl p-5`}>
             <div className="flex flex-col gap-2">
               <h1 className="font-semibold text-base">Personal Information </h1>
@@ -318,9 +260,7 @@ const Account_Profile = () => {
                 Update your personal details and your Address Information
               </p>
             </div>
-            {/*--------------------------------Full Name-------------------------------- */}
             <div>
-              {/*--------------------------------Input Label Name-------------------------------- */}
               <div className="label">
                 <span
                   className={`label-text ${
@@ -332,7 +272,6 @@ const Account_Profile = () => {
                   Full Name
                 </span>
               </div>
-              {/*--------------------------------Input -------------------------------- */}
               <label
                 className={`input input-bordered flex items-center gap-2 ${
                   !validateFullName(fullName) && fullNameTouched
@@ -357,7 +296,6 @@ const Account_Profile = () => {
                   value={fullName}
                 />
               </label>
-              {/*--------------------------------Error List -------------------------------- */}
               <div
                 className={`w-full ${
                   !validateFullName(fullName) && fullNameTouched ? "" : "hidden"
@@ -383,7 +321,6 @@ const Account_Profile = () => {
                 </ul>
               </div>
             </div>
-            {/*--------------------------------Email-------------------------------- */}
             <div>
               <div className="label">
                 <span
@@ -492,7 +429,6 @@ const Account_Profile = () => {
                 </ul>
               </div>
             </div>
-            {/*--------------------------------Password-------------------------------- */}
             <div>
               <div className="label">
                 <span
@@ -621,7 +557,6 @@ const Account_Profile = () => {
           <div
             className={`w-full flex flex-col gap-4  border rounded-2xl mt-5 p-5`}
           >
-            {/*--------------------------------Header-------------------------------- */}
             <div className="flex flex-col gap-2">
               <h1 className="font-semibold text-base">Shipping Address </h1>
               <p className="text-sm text-gray-500">
@@ -657,7 +592,6 @@ const Account_Profile = () => {
             />
           </div>
 
-          {/*--------------------------------Submit button-------------------------------- */}
           <div className={` flex flex-1 min-w-0  gap-5 justify-between `}>
             <div>
               {!isEditing ? (

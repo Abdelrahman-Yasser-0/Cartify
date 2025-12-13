@@ -27,7 +27,7 @@ const DiscoverBanner = () => {
 
           <p className="mt-6 text-gray-500 text-sm md:text-base">
             Shop the latest gadgets, audio equipment, and smart devices. Free
-            shipping on orders over $50.
+            shipping on orders over EGP 50.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">

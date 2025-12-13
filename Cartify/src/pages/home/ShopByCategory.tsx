@@ -8,7 +8,6 @@ import { IoGameControllerOutline } from "react-icons/io5";
 import { CiMobile2 } from "react-icons/ci";
 import { productsData } from "../productsData";
 
-// Map category names to icons
 const categoryIcons: Record<string, React.ReactNode> = {
   Audio: <CiHeadphones />,
   Wearables: <FiWatch />,
@@ -19,7 +18,6 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 
 function ShopByCategory() {
-  // Dynamically calculate categories and item counts from productsData
   const categories = useMemo(() => {
     const categoryCounts = productsData.reduce((acc, product) => {
       const category = product.category || "Other";
@@ -35,18 +33,6 @@ function ShopByCategory() {
   }, []);
 
   return (
-    // <div className="flex flex-col items-center p-16">
-    //   <h2 className="text-lg font-bold mb-5">Shop by Category</h2>
-    //   <p className="mb-8">Explore our wide range of products</p>
-    //   <div className="flex flex-row w-full justify-between	">
-    //     <CategoryCard />
-    //     <CategoryCard />
-    //     <CategoryCard />
-    //     <CategoryCard />
-    //     <CategoryCard />
-    //     <CategoryCard />
-    //   </div>
-    // </div>
 
     <section className="py-8 bg-gray-50		">
       <div className="container mx-auto px-4">

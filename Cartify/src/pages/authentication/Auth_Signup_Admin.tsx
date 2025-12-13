@@ -38,10 +38,6 @@ const Auth_Signup_Admin = () => {
     return atSymbolRegex.test(email);
   };
 
-  // const validUserName = (email: string): boolean => {
-  //   const usernameRegex = /^[a-zA-Z0-9._%+-]+@/;
-  //   return usernameRegex.test(email);
-  // };
   const validDomain = (email: string): boolean => {
     const domainRegex = /@(gmail|yahoo|outlook|hotmail)\.com$/i;
     return domainRegex.test(email);
@@ -52,10 +48,6 @@ const Auth_Signup_Admin = () => {
   };
 
   const validateEmail = (email: string): boolean => {
-    //this function checks the email and being called every time the email changes cuz the email is a usestate so every element related to it rerenders
-    //the regex logic
-
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return (
       !containWhiteSpace(email) &&
       containAtSymbol(email) &&
@@ -94,9 +86,6 @@ const Auth_Signup_Admin = () => {
   };
 
   const vaildatePassword = (password: string): boolean => {
-    //the regex logic
-    // const passwordRegex =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     password = password.trim();
     return (
       containLowerCase(password) &&
@@ -107,7 +96,6 @@ const Auth_Signup_Admin = () => {
     );
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //submition handelr
     e.preventDefault();
     if (validateEmail(email) && vaildatePassword(password) && "btn-disabled") {
       const requestBody = {
@@ -132,7 +120,6 @@ const Auth_Signup_Admin = () => {
           sms: false,
         },
       };
-      //send data using api
       try {
         const response = await fetch(
           "https://cartifybackend.vercel.app/user/register",
@@ -147,12 +134,10 @@ const Auth_Signup_Admin = () => {
         const data = await response.json();
 
         if (response.status == 201) {
-          //sucuss
           console.log("Signup is Correct", data);
           setValidSignup(true);
           setStepper((prev) => (prev += 1));
         } else if (response.status == 400) {
-          //user was found before
           console.log("user is created before");
           console.log(data.message);
           setValidSignup(false);
@@ -161,43 +146,24 @@ const Auth_Signup_Admin = () => {
       } catch (error) {
         console.log(error);
       }
-
-      // const userData: user = {
-      //   fullname: fullName,
-      //   email: email,
-      //   password: password,
-      //   country: country,
-      //   city: city,
-      //   streetAddress: streetAddress,
-      //   apartment: apartment,
-      //   zip: zip,
-      //   phoneNumber: phoneNumber,
-      //   id: users.length + 1,
-      // };
-      // users.push(userData);
     } else {
       console.log("no not valied");
     }
   };
-  // console.log("Email state :" + !validateEmail(email) && emailTouched);
-  // console.log("email toched :" + emailTouched);
   console.log("email valid :" + validateEmail(email));
   console.log("space :" + !containWhiteSpace(email));
 
   return (
     <div className="flex w-full min-h-screen justify-center items-center gap-24 pt-10">
-      {/*--------------------------------Left Img-------------------------------- */}
       <div className=" overflow-hidden max-w-md lg:block hidden  ">
         <img src={main_img} alt="img_Not_Found 404" className="w-full" />
       </div>
-      {/*--------------------------------Form-------------------------------- */}
       <form
         onSubmit={handleSubmit}
         className={`lg:basis-[30%] lg:max-w-sm w-[80%] p-5 border rounded-2xl flex flex-col gap-5 ${
           stepper === 3 && "hidden"
         }`}
       >
-        {/*--------------------------------Header-------------------------------- */}
         <Link to="/" className={`flex gap-4 cursor-pointer `}>
           <FiShoppingCart className="text-3xl sm:text-4xl bg-teal-600 rounded-md p-2 text-white" />
           <h2 className="py-1.5">Cartify</h2>
@@ -208,7 +174,6 @@ const Auth_Signup_Admin = () => {
             Sign up for Cartify to get started
           </p>
         </div>
-        {/*--------------------------------Stepper-------------------------------- */}
         <ul className="steps steps-horizontal">
           <li className="step step-accent">Account</li>
           <li
@@ -218,11 +183,8 @@ const Auth_Signup_Admin = () => {
             Done
           </li>
         </ul>
-        {/*--------------------------------Input Fields-------------------------------- */}
         <div className={`flex flex-col gap-4 ${stepper != 1 && "hidden"}`}>
-          {/*--------------------------------Full Name-------------------------------- */}
           <div>
-            {/*--------------------------------Input Label Name-------------------------------- */}
             <div className="label">
               <span
                 className={`label-text ${
@@ -234,7 +196,6 @@ const Auth_Signup_Admin = () => {
                 Full Name
               </span>
             </div>
-            {/*--------------------------------Input -------------------------------- */}
             <label
               className={`input input-bordered flex items-center gap-2 ${
                 !validateFullName(fullName) && fullNameTouched
@@ -257,7 +218,6 @@ const Auth_Signup_Admin = () => {
                 }}
               />
             </label>
-            {/*--------------------------------Error List -------------------------------- */}
             <div
               className={`w-full ${
                 !validateFullName(fullName) && fullNameTouched ? "" : "hidden"
@@ -283,7 +243,6 @@ const Auth_Signup_Admin = () => {
               </ul>
             </div>
           </div>
-          {/*--------------------------------Email-------------------------------- */}
           <div>
             <div className="label">
               <span
@@ -375,7 +334,6 @@ const Auth_Signup_Admin = () => {
               </ul>
             </div>
           </div>
-          {/*--------------------------------Password-------------------------------- */}
           <div>
             <div className="label">
               <span
@@ -500,7 +458,6 @@ const Auth_Signup_Admin = () => {
           </div>
         </div>
 
-        {/*--------------------------------Create acc -------------------------------- */}
         <div className={`flex w-full justify-center gap-3 `}>
           <p>Already have an account?</p>
           <Link
@@ -511,7 +468,6 @@ const Auth_Signup_Admin = () => {
             log in
           </Link>
         </div>
-        {/*--------------------------------Submit button-------------------------------- */}
         <div className={`flex flex-1 min-w-0  gap-5 w-full`}>
           <button
             className="btn w-1/4  btn-sm flex-auto flex-nowrap flex "

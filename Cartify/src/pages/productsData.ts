@@ -1,7 +1,6 @@
 import { products } from "./types";
 
 export const productsData: products[] = [
-  // 1. Headphones (Featured & Best Seller)
   {
     id: "1",
     title: "Premium Wireless Headphones",
@@ -26,7 +25,6 @@ export const productsData: products[] = [
     isFeatured: true,
     isBestSeller: true,
   },
-  // 2. Watch (Featured & Best Seller)
   {
     id: "2",
     title: "Smart Fitness Watch Ultra",
@@ -51,7 +49,6 @@ export const productsData: products[] = [
     isFeatured: true,
     isBestSeller: true,
   },
-  // 3. Laptop (Featured)
   {
     id: "3",
     title: "Ultra Slim Laptop Pro 15",
@@ -74,7 +71,6 @@ export const productsData: products[] = [
     inStock: true,
     isFeatured: true,
   },
-  // 4. Phone (Featured & Best Seller)
   {
     id: "4",
     title: "5G Smartphone Pro Max",
@@ -98,7 +94,6 @@ export const productsData: products[] = [
     isFeatured: true,
     isBestSeller: true,
   },
-  // 5. Keyboard (Best Seller) - NEW FROM IMAGE
   {
     id: "5",
     title: "RGB Mechanical Gaming Keyboard",
@@ -119,7 +114,6 @@ export const productsData: products[] = [
     inStock: true,
     isBestSeller: true,
   },
-  // 6. Earbuds (New Arrival) - NEW FROM IMAGE
   {
     id: "6",
     title: "True Wireless Earbuds Pro",
@@ -140,7 +134,6 @@ export const productsData: products[] = [
     inStock: true,
     isNew: true,
   },
-  // 7. Camera (New Arrival) - NEW FROM IMAGE
   {
     id: "7",
     title: "Professional Mirrorless Camera",
@@ -161,7 +154,6 @@ export const productsData: products[] = [
     inStock: true,
     isNew: true,
   },
-  // 8. Mouse (New Arrival) - NEW FROM IMAGE
   {
     id: "8",
     title: "Wireless Gaming Mouse",
@@ -232,7 +224,6 @@ export const orderDetails = {
   placedAt: "Nov 10, 2024",
   expectedAt: "Nov 12, 2024",
 
-  // User Info
   shippingAddress: {
     name: "Abdelrahman Yasser",
     street: "123 Main Street",
@@ -241,14 +232,12 @@ export const orderDetails = {
     phone: "+20 101 234 5678",
   },
 
-  // Payment Info
   paymentMethod: {
     type: "Credit Card",
     last4: "4242",
     brand: "Visa",
   },
 
-  // The Products in this order
   items: [
     {
       id: 1,
@@ -270,7 +259,6 @@ export const orderDetails = {
     },
   ],
 
-  // Money breakdown
   summary: {
     subtotal: 278.99,
     discount: 0,
